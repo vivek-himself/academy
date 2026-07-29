@@ -10,8 +10,14 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    // Supabase's Vercel integration exposes POSTGRES_PRISMA_URL (pooled,
-    // pgbouncer-ready) rather than a plain DATABASE_URL.
-    url: process.env["POSTGRES_PRISMA_URL"] ?? process.env["DATABASE_URL"],
+    // Schema operations (db push, migrations) need a *direct* connection —
+    // pgbouncer's pooled connection (POSTGRES_PRISMA_URL) can't run the
+    // advisory locks the schema engine needs and just hangs instead of
+    // failing. The Prisma Client at runtime (src/lib/prisma.ts) still uses
+    // the pooled URL, which is correct for serverless.
+    url:
+      process.env["POSTGRES_URL_NON_POOLING"] ??
+      process.env["DATABASE_URL"] ??
+      process.env["POSTGRES_PRISMA_URL"],
   },
 });
