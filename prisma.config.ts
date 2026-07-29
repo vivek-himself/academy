@@ -10,6 +10,8 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // Supabase's Vercel integration exposes POSTGRES_PRISMA_URL (pooled,
+    // pgbouncer-ready) rather than a plain DATABASE_URL.
+    url: process.env["POSTGRES_PRISMA_URL"] ?? process.env["DATABASE_URL"],
   },
 });
