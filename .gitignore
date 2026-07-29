@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# local-only SQLite leftover (project now runs on Postgres)
+*.db
+*.db-journal
+
+# local upload fallback (production uploads go to Vercel Blob)
+/public/uploads/*
+!/public/uploads/.gitkeep

@@ -1,0 +1,218 @@
+// Academy CMS schema
+// "Enum-like" fields are plain Strings (validated in app code) and lists are
+// stored as JSON strings (parsed with JSON.parse/stringify in the app layer)
+// so the app logic stays identical regardless of the underlying database.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
+model SiteSettings {
+  id                    String   @id @default("default")
+  siteName              String   @default("Academy")
+  tagline               String   @default("Marketing Mastery, One Class at a Time.")
+  logoUrl               String?
+  faviconUrl            String?
+  promoBarText          String   @default("Use promo code \"nqacademy\" to avail 50%off")
+  defaultSeoTitle       String?
+  defaultSeoDescription String?
+  socialLinksJson       String   @default("{\"linkedin\":\"#\",\"instagram\":\"#\"}")
+  updatedAt             DateTime @updatedAt
+}
+
+model MediaAsset {
+  id        String   @id @default(cuid())
+  url       String
+  width     Int?
+  height    Int?
+  format    String?
+  sizeBytes Int?
+  altText   String?
+  createdAt DateTime @default(now())
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  slug      String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now())
+}
+
+model Mentor {
+  id              String   @id @default(cuid())
+  name            String
+  role            String
+  bio             String
+  imageDesktopUrl String?
+  imageMobileUrl  String?
+  linkedinUrl     String?
+  websiteUrl      String?
+  courses         Course[]
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model Course {
+  id              String         @id @default(cuid())
+  slug            String         @unique
+  title           String
+  level           String         @default("Beginner")
+  categoryId      String?
+  category        Category?      @relation(fields: [categoryId], references: [id])
+  mentorId        String?
+  mentor          Mentor?        @relation(fields: [mentorId], references: [id])
+  rating          Float          @default(4.5)
+  reviewsCount    Int            @default(0)
+  students        Int            @default(0)
+  modulesCount    Int            @default(5)
+  duration        String         @default("1h 30m")
+  price           Float          @default(0)
+  originalPrice   Float?
+  imageDesktopUrl String?
+  imageMobileUrl  String?
+  description     String         @default("")
+  keyPointsJson   String         @default("[]")
+  modulesJson     String         @default("[]")
+  toolsJson       String         @default("[]")
+  reviews         CourseReview[]
+  seoTitle        String?
+  seoDescription  String?
+  published       Boolean        @default(true)
+  order           Int            @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model CourseReview {
+  id        String   @id @default(cuid())
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  name      String
+  rating    Int      @default(5)
+  date      String
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model BlogPost {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  excerpt         String
+  body            String
+  author          String   @default("Admin")
+  date            String
+  imageDesktopUrl String?
+  imageMobileUrl  String?
+  tagsJson        String   @default("[]")
+  category        String   @default("Academy")
+  seoTitle        String?
+  seoDescription  String?
+  published       Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Faq {
+  id       String  @id @default(cuid())
+  question String
+  answer   String?
+  page     String  @default("global")
+  order    Int     @default(0)
+}
+
+model Testimonial {
+  id        String  @id @default(cuid())
+  quote     String
+  name      String
+  role      String
+  avatarUrl String?
+  order     Int     @default(0)
+}
+
+model GrowthPage {
+  id                    String  @id @default(cuid())
+  slug                  String  @unique
+  eyebrow               String?
+  title                 String
+  titleHighlight        String
+  subtitle              String
+  checklistJson         String  @default("[]")
+  ctaLabel              String
+  heroImageDesktopUrl   String?
+  heroImageMobileUrl    String?
+  expectParagraph       String
+  dayTabsJson           String  @default("[]")
+  expectImageDesktopUrl String?
+  expectImageMobileUrl  String?
+  quickFactsJson        String  @default("[]")
+  benefitsTitle         String
+  benefitsJson          String  @default("[]")
+  benefitsCta           String
+  seoTitle              String?
+  seoDescription        String?
+}
+
+model PricingPlan {
+  id           String  @id @default(cuid())
+  name         String
+  tagline      String?
+  price        String
+  recommended  Boolean @default(false)
+  featuresJson String  @default("[]")
+  order        Int     @default(0)
+}
+
+model FooterLink {
+  id     String @id @default(cuid())
+  column String
+  label  String
+  href   String
+  order  Int    @default(0)
+}
+
+model HeroSlide {
+  id              String  @id @default(cuid())
+  title           String
+  subtitle        String
+  ctaLabel        String
+  ctaHref         String  @default("/courses")
+  imageDesktopUrl String?
+  imageMobileUrl  String?
+  order           Int     @default(0)
+}
+
+model HomepageStat {
+  id    String @id @default(cuid())
+  icon  String @default("users")
+  value String
+  label String
+  order Int    @default(0)
+}
+
+model TrustLogo {
+  id       String  @id @default(cuid())
+  name     String
+  imageUrl String?
+  order    Int     @default(0)
+}
+
+model ContentBlock {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  dataJson  String   @default("{}")
+  updatedAt DateTime @updatedAt
+}

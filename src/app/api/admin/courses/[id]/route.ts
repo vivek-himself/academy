@@ -1,0 +1,72 @@
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { requireAdminSession } from "@/lib/auth";
+
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const course = await prisma.course.findUnique({
+    where: { id },
+    include: { reviews: true },
+  });
+  if (!course) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  return NextResponse.json(course);
+}
+
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    await requireAdminSession();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  const body = await req.json();
+
+  if (body.slug) {
+    const clash = await prisma.course.findFirst({ where: { slug: body.slug, NOT: { id } } });
+    if (clash) {
+      return NextResponse.json({ error: "A course with this slug already exists." }, { status: 400 });
+    }
+  }
+
+  const course = await prisma.course.update({
+    where: { id },
+    data: {
+      slug: body.slug,
+      title: body.title,
+      level: body.level,
+      categoryId: body.categoryId || null,
+      mentorId: body.mentorId || null,
+      rating: body.rating,
+      reviewsCount: body.reviewsCount,
+      students: body.students,
+      modulesCount: body.modulesCount,
+      duration: body.duration,
+      price: body.price,
+      originalPrice: body.originalPrice || null,
+      imageDesktopUrl: body.imageDesktopUrl || null,
+      imageMobileUrl: body.imageMobileUrl || null,
+      description: body.description,
+      keyPointsJson: body.keyPointsJson,
+      modulesJson: body.modulesJson,
+      toolsJson: body.toolsJson,
+      seoTitle: body.seoTitle || null,
+      seoDescription: body.seoDescription || null,
+      published: body.published,
+    },
+  });
+
+  return NextResponse.json(course);
+}
+
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    await requireAdminSession();
+  } catch {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { id } = await params;
+  await prisma.course.delete({ where: { id } });
+  return NextResponse.json({ ok: true });
+}
