@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LogOut, ShieldCheck } from "lucide-react";
+import { LogOut } from "lucide-react";
+import Logo from "@/components/layout/Logo";
 import { navSections } from "./nav-config";
 
 export default function AdminSidebar() {
@@ -17,11 +18,8 @@ export default function AdminSidebar() {
 
   return (
     <aside className="flex h-screen w-64 shrink-0 flex-col border-r border-brand-border bg-white">
-      <div className="flex items-center gap-2 px-5 py-5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-purple text-white">
-          <ShieldCheck size={18} />
-        </span>
-        <span className="text-base font-extrabold tracking-tight text-brand-ink">ACADEMY</span>
+      <div className="flex items-center px-5 py-5">
+        <Logo className="h-8 w-auto" />
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 pb-4">

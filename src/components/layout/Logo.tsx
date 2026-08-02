@@ -1,15 +1,10 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
-export default function Logo() {
+export default function Logo({ className = "h-9 w-auto" }: { className?: string }) {
   return (
-    <Link href="/" className="flex items-center gap-2 shrink-0">
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-purple text-white">
-        <ShieldCheck size={20} strokeWidth={2.25} />
-      </span>
-      <span className="text-lg font-extrabold tracking-tight text-brand-ink">
-        ACADEMY
-      </span>
+    <Link href="/" className="flex items-center shrink-0">
+      <Image src="/logo.svg" alt="Academy" width={281} height={98} className={className} priority />
     </Link>
   );
 }

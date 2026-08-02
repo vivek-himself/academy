@@ -2,7 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ShieldCheck } from "lucide-react";
+import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -39,10 +39,8 @@ function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-surface px-4">
       <div className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-8 shadow-sm">
-        <div className="flex flex-col items-center gap-2">
-          <span className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-purple text-white">
-            <ShieldCheck size={22} />
-          </span>
+        <div className="flex flex-col items-center gap-3">
+          <Image src="/logo.svg" alt="Academy" width={281} height={98} className="h-10 w-auto" priority />
           <h1 className="text-lg font-bold text-brand-ink">Academy Admin</h1>
           <p className="text-center text-sm text-brand-muted">Sign in to manage your website content.</p>
         </div>
