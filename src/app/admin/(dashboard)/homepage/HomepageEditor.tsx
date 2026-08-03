@@ -10,9 +10,9 @@ import RepeaterField from "../../components/RepeaterField";
 type HeroSlide = { title: string; subtitle: string; ctaLabel: string; ctaHref: string; imageDesktopUrl: string; imageMobileUrl: string };
 type Stat = { icon: string; value: string; label: string };
 type TrustLogo = { name: string; imageUrl: string };
-type EyebrowBlock = { eyebrow: string; title: string; description: string; ctaLabel: string };
+type EyebrowBlock = { eyebrow: string; title: string; description: string; ctaLabel: string; imageUrl: string };
 type GrowSkill = { title: string; description: string; checklist: string[]; ctaLabel: string; imageUrl: string };
-type CtaBanner = { title: string; description: string; ctaLabel: string; href: string };
+type CtaBanner = { title: string; description: string; ctaLabel: string; href: string; imageUrl: string };
 
 function SectionCard({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
@@ -141,6 +141,12 @@ export default function HomepageEditor({
           onChange={(v) => setTechStack({ ...techStack, description: v })}
         />
         <TextField label="Button Label" maxLength={30} value={techStack.ctaLabel} onChange={(v) => setTechStack({ ...techStack, ctaLabel: v })} />
+        <ImageUploadField
+          label="Banner Image"
+          desktopValue={techStack.imageUrl}
+          onDesktopChange={(v) => setTechStack({ ...techStack, imageUrl: v })}
+          desktopSize="1200 × 500px — leave room on the left for the text overlay"
+        />
       </SectionCard>
 
       <SectionCard title="Grow Your Skill Section">
@@ -177,6 +183,12 @@ export default function HomepageEditor({
           onChange={(v) => setRandomPromo({ ...randomPromo, description: v })}
         />
         <TextField label="Button Label" maxLength={30} value={randomPromo.ctaLabel} onChange={(v) => setRandomPromo({ ...randomPromo, ctaLabel: v })} />
+        <ImageUploadField
+          label="Banner Image"
+          desktopValue={randomPromo.imageUrl}
+          onDesktopChange={(v) => setRandomPromo({ ...randomPromo, imageUrl: v })}
+          desktopSize="1200 × 500px — leave room on the left for the text overlay"
+        />
       </SectionCard>
 
       <SectionCard title="Default CTA Banner" description='The "Join a course now to get 35% off" banner reused across many pages.'>
@@ -192,6 +204,12 @@ export default function HomepageEditor({
           <TextField label="Button Label" maxLength={30} value={ctaBanner.ctaLabel} onChange={(v) => setCtaBanner({ ...ctaBanner, ctaLabel: v })} />
           <TextField label="Button Link" value={ctaBanner.href} onChange={(v) => setCtaBanner({ ...ctaBanner, href: v })} />
         </div>
+        <ImageUploadField
+          label="Banner Image"
+          desktopValue={ctaBanner.imageUrl}
+          onDesktopChange={(v) => setCtaBanner({ ...ctaBanner, imageUrl: v })}
+          desktopSize="1200 × 400px — leave room on the left for the text overlay"
+        />
       </SectionCard>
 
       {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}

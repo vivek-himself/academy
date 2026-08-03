@@ -40,6 +40,7 @@ export default async function Home() {
     title: "",
     description: "",
     ctaLabel: "Explore Course",
+    imageUrl: "",
   });
   const growSkill = safeJsonParse(blockMap["home_grow_skill"], {
     title: "",
@@ -53,6 +54,7 @@ export default async function Home() {
     title: "",
     description: "",
     ctaLabel: "Explore Course",
+    imageUrl: "",
   });
 
   return (

@@ -35,7 +35,7 @@ export default async function HomepageContentPage() {
         }
         stats={stats.map((s) => ({ icon: s.icon, value: s.value, label: s.label }))}
         trustLogos={trustLogos.map((l) => ({ name: l.name, imageUrl: l.imageUrl ?? "" }))}
-        techStack={safeJsonParse(blockMap["home_tech_stack"], { eyebrow: "", title: "", description: "", ctaLabel: "" })}
+        techStack={safeJsonParse(blockMap["home_tech_stack"], { eyebrow: "", title: "", description: "", ctaLabel: "", imageUrl: "" })}
         growSkill={safeJsonParse(blockMap["home_grow_skill"], {
           title: "",
           description: "",
@@ -43,8 +43,8 @@ export default async function HomepageContentPage() {
           ctaLabel: "",
           imageUrl: "",
         })}
-        randomPromo={safeJsonParse(blockMap["home_random_promo"], { eyebrow: "", title: "", description: "", ctaLabel: "" })}
-        ctaBanner={safeJsonParse(blockMap["cta_banner_default"], { title: "", description: "", ctaLabel: "", href: "" })}
+        randomPromo={safeJsonParse(blockMap["home_random_promo"], { eyebrow: "", title: "", description: "", ctaLabel: "", imageUrl: "" })}
+        ctaBanner={safeJsonParse(blockMap["cta_banner_default"], { title: "", description: "", ctaLabel: "", href: "", imageUrl: "" })}
       />
     </div>
   );
