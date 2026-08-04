@@ -10,6 +10,7 @@ import StringListField from "../../components/StringListField";
 import RepeaterField from "../../components/RepeaterField";
 import SaveBar from "../../components/SaveBar";
 import MediaMultiPickerModal from "../../components/MediaMultiPickerModal";
+import SectionJumpMenu from "../../components/SectionJumpMenu";
 
 type HeroSlide = { title: string; subtitle: string; ctaLabel: string; ctaHref: string; imageDesktopUrl: string; imageMobileUrl: string };
 const EMPTY_HERO_SLIDE: HeroSlide = { title: "", subtitle: "", ctaLabel: "", ctaHref: "/courses", imageDesktopUrl: "", imageMobileUrl: "" };
@@ -21,15 +22,51 @@ type CtaBanner = { title: string; description: string; ctaLabel: string; href: s
 type ReviewBadge = { label: string; rating: string; imageUrl: string };
 const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: "", imageUrl: "" };
 
-function SectionCard({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+function SectionCard({
+  id,
+  title,
+  description,
+  children,
+}: {
+  id: string;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="rounded-2xl border border-brand-border bg-white p-6">
+    <div id={id} className="scroll-mt-24 rounded-2xl border border-brand-border bg-white p-6">
       <h3 className="text-base font-bold text-brand-ink">{title}</h3>
       {description && <p className="mt-1 text-xs text-brand-muted">{description}</p>}
       <div className="mt-5 flex flex-col gap-5">{children}</div>
     </div>
   );
 }
+
+const JUMP_GROUPS = [
+  {
+    heading: "Top of Page",
+    items: [
+      { id: "hero-slideshow", label: "Hero Slideshow" },
+      { id: "stats-bar", label: "Stats Bar" },
+    ],
+  },
+  {
+    heading: "Trust & Social Proof",
+    items: [
+      { id: "review-badges", label: "Review Platform Badges" },
+      { id: "trust-logos", label: "Trust Logos" },
+    ],
+  },
+  {
+    heading: "Promo Banners",
+    items: [
+      { id: "tech-stack", label: "Tech Stack Banner" },
+      { id: "grow-skill", label: "Grow Your Skill Section" },
+      { id: "random-promo", label: "Random Promo Banner" },
+      { id: "cta-banner", label: "Default CTA Banner" },
+    ],
+  },
+];
 
 export default function HomepageEditor({
   heroSlides: initHeroSlides,
@@ -117,7 +154,10 @@ export default function HomepageEditor({
 
   return (
     <div className="flex flex-col gap-6">
+      <SectionJumpMenu groups={JUMP_GROUPS} />
+
       <SectionCard
+        id="hero-slideshow"
         title="Hero Slideshow"
         description="The banner at the top of the homepage. Add multiple slides to have it auto-advance every few seconds."
       >
@@ -183,7 +223,7 @@ export default function HomepageEditor({
         </button>
       </SectionCard>
 
-      <SectionCard title="Stats Bar" description="The 4 stat tiles shown just below the hero (exactly 4 recommended).">
+      <SectionCard id="stats-bar" title="Stats Bar" description="The 4 stat tiles shown just below the hero (exactly 4 recommended).">
         <RepeaterField
           label="Stats"
           items={stats}
@@ -198,6 +238,7 @@ export default function HomepageEditor({
       </SectionCard>
 
       <SectionCard
+        id="review-badges"
         title="Review Platform Badges"
         description="The Google / Capterra / G2 rating row below the stats. Upload each platform's official logo (from their press/brand page) — until you do, it falls back to plain text."
       >
@@ -243,6 +284,7 @@ export default function HomepageEditor({
       </SectionCard>
 
       <SectionCard
+        id="trust-logos"
         title="Trust Logos"
         description='The "As seen on" press logo row. Scrolls automatically in a loop on the homepage.'
       >
@@ -307,7 +349,7 @@ export default function HomepageEditor({
         )}
       </SectionCard>
 
-      <SectionCard title="Tech Stack Banner" description="The dark gradient banner with the app icon grid.">
+      <SectionCard id="tech-stack" title="Tech Stack Banner" description="The dark gradient banner with the app icon grid.">
         <TextField label="Eyebrow text" maxLength={40} value={techStack.eyebrow} onChange={(v) => setTechStack({ ...techStack, eyebrow: v })} />
         <TextField label="Title" maxLength={80} value={techStack.title} onChange={(v) => setTechStack({ ...techStack, title: v })} />
         <TextAreaField
@@ -326,7 +368,7 @@ export default function HomepageEditor({
         />
       </SectionCard>
 
-      <SectionCard title="Grow Your Skill Section">
+      <SectionCard id="grow-skill" title="Grow Your Skill Section">
         <TextField label="Title" maxLength={80} value={growSkill.title} onChange={(v) => setGrowSkill({ ...growSkill, title: v })} />
         <TextAreaField
           label="Description"
@@ -349,7 +391,7 @@ export default function HomepageEditor({
         />
       </SectionCard>
 
-      <SectionCard title="Random Promo Banner" description="The pink/amber gradient banner near the bottom.">
+      <SectionCard id="random-promo" title="Random Promo Banner" description="The pink/amber gradient banner near the bottom.">
         <TextField label="Eyebrow text" maxLength={40} value={randomPromo.eyebrow} onChange={(v) => setRandomPromo({ ...randomPromo, eyebrow: v })} />
         <TextField label="Title" maxLength={80} value={randomPromo.title} onChange={(v) => setRandomPromo({ ...randomPromo, title: v })} />
         <TextAreaField
@@ -368,7 +410,7 @@ export default function HomepageEditor({
         />
       </SectionCard>
 
-      <SectionCard title="Default CTA Banner" description='The "Join a course now to get 35% off" banner reused across many pages.'>
+      <SectionCard id="cta-banner" title="Default CTA Banner" description='The "Join a course now to get 35% off" banner reused across many pages.'>
         <TextField label="Title" maxLength={80} value={ctaBanner.title} onChange={(v) => setCtaBanner({ ...ctaBanner, title: v })} />
         <TextAreaField
           label="Description"
