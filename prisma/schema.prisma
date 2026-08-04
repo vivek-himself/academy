@@ -25,6 +25,9 @@ model User {
   email        String       @unique
   passwordHash String
   avatarUrl    String?
+  phone        String?
+  gender       String?
+  dateOfBirth  DateTime?
   enrollments  Enrollment[]
   createdAt    DateTime     @default(now())
 }

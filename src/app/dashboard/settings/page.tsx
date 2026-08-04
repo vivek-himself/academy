@@ -15,7 +15,12 @@ export default async function DashboardSettingsPage() {
   return (
     <div>
       <h1 className="mb-6 text-xl font-bold text-brand-ink">Settings</h1>
-      <SettingsForm initialName={user.name} />
+      <SettingsForm
+        initialName={user.name}
+        initialPhone={user.phone}
+        initialGender={user.gender}
+        initialDateOfBirth={user.dateOfBirth ? user.dateOfBirth.toISOString() : null}
+      />
     </div>
   );
 }

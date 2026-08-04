@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   }
 
   const token = await signStudentSession(user.id);
-  const res = NextResponse.json({ ok: true });
+  const res = NextResponse.json({ ok: true, name: user.name });
   res.cookies.set(STUDENT_COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

@@ -4,9 +4,11 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
 import { getCompletedModules, getProgress } from "@/lib/enrollment";
+import { isProfileComplete } from "@/lib/profile";
 import { safeJsonParse } from "@/lib/json";
 import DashboardCourseCard from "@/components/dashboard/DashboardCourseCard";
 import NotificationsBell, { type NotificationItem } from "@/components/dashboard/NotificationsBell";
+import ProfileIncompleteBanner from "@/components/dashboard/ProfileIncompleteBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -93,6 +95,8 @@ export default async function DashboardOverviewPage() {
           </div>
         ) : (
           <>
+            {!isProfileComplete(user) && <ProfileIncompleteBanner />}
+
             {categoryStats.size > 0 && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {[...categoryStats.entries()].slice(0, 3).map(([name, stat]) => (

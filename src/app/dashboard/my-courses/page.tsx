@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
 import { getProgress } from "@/lib/enrollment";
+import { isProfileComplete } from "@/lib/profile";
 import DashboardCourseCard from "@/components/dashboard/DashboardCourseCard";
+import ProfileIncompleteBanner from "@/components/dashboard/ProfileIncompleteBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -11,11 +13,15 @@ export default async function MyCoursesPage() {
   const session = await getStudentSession();
   if (!session) redirect("/login");
 
-  const enrollments = await prisma.enrollment.findMany({
-    where: { userId: session.userId },
-    include: { course: { include: { category: true, mentor: true } } },
-    orderBy: { lastAccessedAt: "desc" },
-  });
+  const [enrollments, user] = await Promise.all([
+    prisma.enrollment.findMany({
+      where: { userId: session.userId },
+      include: { course: { include: { category: true, mentor: true } } },
+      orderBy: { lastAccessedAt: "desc" },
+    }),
+    prisma.user.findUnique({ where: { id: session.userId } }),
+  ]);
+  if (!user) redirect("/login");
 
   const withProgress = enrollments.map((e) => ({
     enrollment: e,
@@ -48,6 +54,8 @@ export default async function MyCoursesPage() {
   return (
     <div className="flex flex-col gap-8">
       <h1 className="text-xl font-bold text-brand-ink">My Courses</h1>
+
+      {!isProfileComplete(user) && <ProfileIncompleteBanner />}
 
       {continueWatching.length > 0 && (
         <div>
