@@ -21,9 +21,9 @@ export default function AsSeenOn({ logos }: { logos: Logo[] }) {
                 <Image
                   src={logo.imageUrl}
                   alt={logo.name}
-                  width={144}
-                  height={38}
-                  className="h-[34px] w-auto object-contain opacity-70 grayscale"
+                  width={115}
+                  height={30}
+                  className="h-[27px] w-auto object-contain opacity-70 grayscale"
                   unoptimized
                 />
               ) : (
