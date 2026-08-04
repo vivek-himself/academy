@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Folder, FolderPlus, Upload, Loader2, Pencil, Trash2, ChevronRight, MoreHorizontal } from "lucide-react";
+import { Folder, FolderPlus, Upload, Loader2, Pencil, Trash2, ChevronRight, MoreHorizontal, X } from "lucide-react";
 
 type FolderType = { id: string; name: string; _count: { assets: number } };
 type Asset = {
@@ -14,10 +14,96 @@ type Asset = {
   sizeBytes: number | null;
 };
 
+type PromptState = { title: string; initialValue: string; confirmLabel: string; onSubmit: (value: string) => void };
+type ConfirmState = { title: string; message: string; confirmLabel: string; onConfirm: () => void };
+
 function formatSize(bytes: number | null) {
   if (!bytes) return "—";
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function PromptModal({ state, onClose }: { state: PromptState; onClose: () => void }) {
+  const [value, setValue] = useState(state.initialValue);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={onClose}>
+      <div
+        className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-5 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-bold text-brand-ink">{state.title}</h3>
+          <button type="button" onClick={onClose} aria-label="Close" className="text-brand-muted hover:text-brand-ink">
+            <X size={16} />
+          </button>
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (!value.trim()) return;
+            state.onSubmit(value.trim());
+            onClose();
+          }}
+        >
+          <input
+            autoFocus
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-full border border-brand-border px-4 py-2 text-xs font-semibold text-brand-ink hover:bg-brand-surface"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={!value.trim()}
+              className="rounded-full bg-brand-pink px-4 py-2 text-xs font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
+            >
+              {state.confirmLabel}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmModal({ state, onClose }: { state: ConfirmState; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={onClose}>
+      <div
+        className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-5 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="text-sm font-bold text-brand-ink">{state.title}</h3>
+        <p className="mt-2 text-sm text-brand-muted">{state.message}</p>
+        <div className="mt-4 flex justify-end gap-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-full border border-brand-border px-4 py-2 text-xs font-semibold text-brand-ink hover:bg-brand-surface"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              state.onConfirm();
+              onClose();
+            }}
+            className="rounded-full bg-red-500 px-4 py-2 text-xs font-semibold text-white hover:bg-red-600"
+          >
+            {state.confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function MediaLibraryClient({ initialFolders }: { initialFolders: FolderType[] }) {
@@ -26,6 +112,8 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
   const [assets, setAssets] = useState<Asset[] | null>(null);
   const [uploading, setUploading] = useState(false);
   const [assetMenuOpen, setAssetMenuOpen] = useState<string | null>(null);
+  const [promptState, setPromptState] = useState<PromptState | null>(null);
+  const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const loading = assets === null;
 
@@ -53,35 +141,52 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openFolder]);
 
-  async function handleCreateFolder() {
-    const name = prompt("Folder name:");
-    if (!name || !name.trim()) return;
-    const res = await fetch("/api/admin/media/folders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+  function handleCreateFolder() {
+    setPromptState({
+      title: "New folder",
+      initialValue: "",
+      confirmLabel: "Create",
+      onSubmit: async (name) => {
+        const res = await fetch("/api/admin/media/folders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (res.ok) refreshFolders();
+      },
     });
-    if (res.ok) refreshFolders();
   }
 
-  async function handleRenameFolder(folder: FolderType) {
-    const name = prompt("Rename folder:", folder.name);
-    if (!name || !name.trim() || name === folder.name) return;
-    const res = await fetch(`/api/admin/media/folders/${folder.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+  function handleRenameFolder(folder: FolderType) {
+    setPromptState({
+      title: "Rename folder",
+      initialValue: folder.name,
+      confirmLabel: "Save",
+      onSubmit: async (name) => {
+        if (name === folder.name) return;
+        const res = await fetch(`/api/admin/media/folders/${folder.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (res.ok) refreshFolders();
+      },
     });
-    if (res.ok) refreshFolders();
   }
 
-  async function handleDeleteFolder(folder: FolderType) {
-    if (!confirm(`Delete folder "${folder.name}"? Images inside will move to Uncategorized, not be deleted.`)) return;
-    const res = await fetch(`/api/admin/media/folders/${folder.id}`, { method: "DELETE" });
-    if (res.ok) {
-      if (openFolder?.id === folder.id) setOpenFolder(null);
-      refreshFolders();
-    }
+  function handleDeleteFolder(folder: FolderType) {
+    setConfirmState({
+      title: `Delete "${folder.name}"?`,
+      message: "Images inside will move to Uncategorized, not be deleted.",
+      confirmLabel: "Delete folder",
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/media/folders/${folder.id}`, { method: "DELETE" });
+        if (res.ok) {
+          if (openFolder?.id === folder.id) setOpenFolder(null);
+          refreshFolders();
+        }
+      },
+    });
   }
 
   async function handleUpload(files: FileList | File[]) {
@@ -100,15 +205,20 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     }
   }
 
-  async function handleRenameAsset(asset: Asset) {
-    const name = prompt("Rename image:", asset.name ?? asset.url.split("/").pop() ?? "");
-    if (!name || !name.trim()) return;
-    const res = await fetch(`/api/admin/media/${asset.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name }),
+  function handleRenameAsset(asset: Asset) {
+    setPromptState({
+      title: "Rename image",
+      initialValue: asset.name ?? asset.url.split("/").pop() ?? "",
+      confirmLabel: "Save",
+      onSubmit: async (name) => {
+        const res = await fetch(`/api/admin/media/${asset.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name }),
+        });
+        if (res.ok) refreshAssets();
+      },
     });
-    if (res.ok) refreshAssets();
   }
 
   async function handleMoveAsset(asset: Asset, folderId: string) {
@@ -123,13 +233,19 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     }
   }
 
-  async function handleDeleteAsset(asset: Asset) {
-    if (!confirm("Delete this image permanently? This can't be undone, and it may still be referenced elsewhere on your site.")) return;
-    const res = await fetch(`/api/admin/media/${asset.id}`, { method: "DELETE" });
-    if (res.ok) {
-      refreshAssets();
-      refreshFolders();
-    }
+  function handleDeleteAsset(asset: Asset) {
+    setConfirmState({
+      title: "Delete this image?",
+      message: "This can't be undone, and it may still be referenced elsewhere on your site.",
+      confirmLabel: "Delete image",
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/media/${asset.id}`, { method: "DELETE" });
+        if (res.ok) {
+          refreshAssets();
+          refreshFolders();
+        }
+      },
+    });
   }
 
   const showEmptyState = !loading && assets.length === 0 && (openFolder || folders.length === 0);
@@ -299,6 +415,9 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
           ))}
         </div>
       )}
+
+      {promptState && <PromptModal state={promptState} onClose={() => setPromptState(null)} />}
+      {confirmState && <ConfirmModal state={confirmState} onClose={() => setConfirmState(null)} />}
     </div>
   );
 }
