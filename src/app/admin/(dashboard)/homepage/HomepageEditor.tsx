@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { Plus, Trash2 } from "lucide-react";
 import { TextField, TextAreaField } from "../../components/FormField";
 import ImageUploadField from "../../components/ImageUploadField";
 import StringListField from "../../components/StringListField";
 import RepeaterField from "../../components/RepeaterField";
 import SaveBar from "../../components/SaveBar";
+import MediaMultiPickerModal from "../../components/MediaMultiPickerModal";
 
 type HeroSlide = { title: string; subtitle: string; ctaLabel: string; ctaHref: string; imageDesktopUrl: string; imageMobileUrl: string };
 const EMPTY_HERO_SLIDE: HeroSlide = { title: "", subtitle: "", ctaLabel: "", ctaHref: "/courses", imageDesktopUrl: "", imageMobileUrl: "" };
@@ -52,6 +54,7 @@ export default function HomepageEditor({
   const [heroSlides, setHeroSlides] = useState(initHeroSlides.length ? initHeroSlides : [EMPTY_HERO_SLIDE]);
   const [stats, setStats] = useState(initStats);
   const [trustLogos, setTrustLogos] = useState(initTrustLogos);
+  const [logoPickerOpen, setLogoPickerOpen] = useState(false);
   const [techStack, setTechStack] = useState(initTechStack);
   const [growSkill, setGrowSkill] = useState(initGrowSkill);
   const [randomPromo, setRandomPromo] = useState(initRandomPromo);
@@ -215,15 +218,58 @@ export default function HomepageEditor({
         </button>
       </SectionCard>
 
-      <SectionCard title="Trust Logos" description='The "As seen on" press logo row.'>
-        <RepeaterField
-          label="Logos"
-          items={trustLogos}
-          onChange={(items) => setTrustLogos(items as unknown as TrustLogo[])}
-          fields={[{ key: "name", label: "Publication name" }]}
-          emptyItem={{ name: "", imageUrl: "" }}
-          addLabel="Add logo"
-        />
+      <SectionCard
+        title="Trust Logos"
+        description='The "As seen on" press logo row. Scrolls automatically in a loop on the homepage.'
+      >
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {trustLogos.map((logo, i) => (
+            <div key={i} className="relative rounded-xl border border-brand-border p-3">
+              <button
+                type="button"
+                onClick={() => setTrustLogos(trustLogos.filter((_, idx) => idx !== i))}
+                aria-label="Remove"
+                className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white text-red-500 shadow hover:bg-red-50"
+              >
+                <Trash2 size={12} />
+              </button>
+              {logo.imageUrl ? (
+                <div className="relative mb-2 h-12 w-full">
+                  <Image src={logo.imageUrl} alt={logo.name} fill className="rounded-lg object-contain" unoptimized />
+                </div>
+              ) : (
+                <div className="mb-2 flex h-12 items-center justify-center rounded-lg bg-brand-surface text-[10px] text-brand-muted">
+                  No image
+                </div>
+              )}
+              <input
+                value={logo.name}
+                onChange={(e) => setTrustLogos(trustLogos.map((l, idx) => (idx === i ? { ...l, name: e.target.value } : l)))}
+                placeholder="Publication name"
+                className="w-full rounded-lg border border-brand-border px-2 py-1 text-xs outline-none focus:border-brand-pink"
+              />
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setLogoPickerOpen(true)}
+          className="flex w-fit items-center gap-1.5 rounded-full bg-brand-pink px-4 py-2 text-xs font-semibold text-white hover:bg-brand-pink-dark"
+        >
+          <Plus size={13} /> Add Images From Media Library
+        </button>
+        {logoPickerOpen && (
+          <MediaMultiPickerModal
+            onConfirm={(assets) => {
+              setTrustLogos([
+                ...trustLogos,
+                ...assets.map((a) => ({ name: a.name ?? "", imageUrl: a.url })),
+              ]);
+              setLogoPickerOpen(false);
+            }}
+            onClose={() => setLogoPickerOpen(false)}
+          />
+        )}
       </SectionCard>
 
       <SectionCard title="Tech Stack Banner" description="The dark gradient banner with the app icon grid.">
