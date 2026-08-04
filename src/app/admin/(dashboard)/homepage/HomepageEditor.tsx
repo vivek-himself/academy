@@ -55,6 +55,30 @@ export default function HomepageEditor({
   const [stats, setStats] = useState(initStats);
   const [trustLogos, setTrustLogos] = useState(initTrustLogos);
   const [logoPickerOpen, setLogoPickerOpen] = useState(false);
+  const [trimming, setTrimming] = useState(false);
+  const [trimStatus, setTrimStatus] = useState("");
+
+  async function handleTrimLogos() {
+    setTrimming(true);
+    setTrimStatus("");
+    try {
+      const res = await fetch("/api/admin/media/trim-logos", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      setTrimStatus(
+        data.trimmed.length > 0
+          ? `Trimmed ${data.trimmed.length} logo${data.trimmed.length === 1 ? "" : "s"}. Reloading...`
+          : "No logos needed trimming."
+      );
+      if (data.trimmed.length > 0) {
+        setTimeout(() => window.location.reload(), 800);
+      }
+    } catch {
+      setTrimStatus("Failed to trim logos. Please try again.");
+    } finally {
+      setTrimming(false);
+    }
+  }
   const [techStack, setTechStack] = useState(initTechStack);
   const [growSkill, setGrowSkill] = useState(initGrowSkill);
   const [randomPromo, setRandomPromo] = useState(initRandomPromo);
@@ -251,13 +275,24 @@ export default function HomepageEditor({
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => setLogoPickerOpen(true)}
-          className="flex w-fit items-center gap-1.5 rounded-full bg-brand-pink px-4 py-2 text-xs font-semibold text-white hover:bg-brand-pink-dark"
-        >
-          <Plus size={13} /> Add Images From Media Library
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setLogoPickerOpen(true)}
+            className="flex w-fit items-center gap-1.5 rounded-full bg-brand-pink px-4 py-2 text-xs font-semibold text-white hover:bg-brand-pink-dark"
+          >
+            <Plus size={13} /> Add Images From Media Library
+          </button>
+          <button
+            type="button"
+            onClick={handleTrimLogos}
+            disabled={trimming}
+            className="flex w-fit items-center gap-1.5 rounded-full border border-brand-border px-4 py-2 text-xs font-semibold text-brand-ink hover:bg-brand-surface disabled:opacity-60"
+          >
+            {trimming ? "Fixing sizes..." : "Fix Inconsistent Logo Sizes"}
+          </button>
+          {trimStatus && <p className="text-xs text-brand-muted">{trimStatus}</p>}
+        </div>
         {logoPickerOpen && (
           <MediaMultiPickerModal
             onConfirm={(assets) => {
