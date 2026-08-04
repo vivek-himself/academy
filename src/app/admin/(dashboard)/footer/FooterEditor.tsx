@@ -2,23 +2,30 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
 import RepeaterField from "../../components/RepeaterField";
+import ImageUploadField from "../../components/ImageUploadField";
 
 type Link = { label: string; href: string };
+type PaymentMethod = { label: string; imageUrl: string };
+const EMPTY_PAYMENT_METHOD: PaymentMethod = { label: "", imageUrl: "" };
 
 export default function FooterEditor({
   discover: initDiscover,
   growth: initGrowth,
   more: initMore,
+  paymentMethods: initPaymentMethods,
 }: {
   discover: Link[];
   growth: Link[];
   more: Link[];
+  paymentMethods: PaymentMethod[];
 }) {
   const router = useRouter();
   const [discover, setDiscover] = useState(initDiscover);
   const [growth, setGrowth] = useState(initGrowth);
   const [more, setMore] = useState(initMore);
+  const [paymentMethods, setPaymentMethods] = useState(initPaymentMethods);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
 
@@ -33,7 +40,7 @@ export default function FooterEditor({
     const res = await fetch("/api/admin/footer-links", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ links }),
+      body: JSON.stringify({ links, paymentMethods }),
     });
     setSaving(false);
     if (!res.ok) {
@@ -83,6 +90,54 @@ export default function FooterEditor({
           />
         </div>
       </div>
+
+      <div className="rounded-2xl border border-brand-border bg-white p-5">
+        <p className="mb-1.5 text-sm font-semibold text-brand-ink">Payment Methods</p>
+        <p className="mb-4 text-xs text-brand-muted">
+          The payment icon row shown under the logo in the footer. Upload a small logo image for each one (e.g. Visa,
+          Mastercard, Amex, GPay, Paytm).
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {paymentMethods.map((pm, i) => (
+            <div key={i} className="rounded-xl border border-brand-border p-3">
+              <div className="mb-2 flex items-center justify-between">
+                <input
+                  value={pm.label}
+                  onChange={(e) =>
+                    setPaymentMethods(paymentMethods.map((p, idx) => (idx === i ? { ...p, label: e.target.value } : p)))
+                  }
+                  placeholder="Label (e.g. Visa)"
+                  className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethods(paymentMethods.filter((_, idx) => idx !== i))}
+                  aria-label="Remove"
+                  className="ml-2 shrink-0 text-red-500 hover:text-red-600"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+              <ImageUploadField
+                label=""
+                desktopValue={pm.imageUrl}
+                onDesktopChange={(v) =>
+                  setPaymentMethods(paymentMethods.map((p, idx) => (idx === i ? { ...p, imageUrl: v } : p)))
+                }
+                desktopSize="120 × 76px"
+              />
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setPaymentMethods([...paymentMethods, EMPTY_PAYMENT_METHOD])}
+          className="mt-3 flex items-center gap-1.5 text-xs font-semibold text-brand-pink hover:underline"
+        >
+          <Plus size={13} /> Add payment method
+        </button>
+      </div>
+
       {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
       <div>
         <button

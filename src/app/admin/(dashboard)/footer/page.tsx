@@ -1,14 +1,20 @@
 import { prisma } from "@/lib/prisma";
+import { safeJsonParse } from "@/lib/json";
 import PageHeader from "../../components/PageHeader";
 import FooterEditor from "./FooterEditor";
 
 export const dynamic = "force-dynamic";
 
 export default async function FooterAdminPage() {
-  const links = await prisma.footerLink.findMany({ orderBy: [{ column: "asc" }, { order: "asc" }] });
+  const [links, paymentBlock] = await Promise.all([
+    prisma.footerLink.findMany({ orderBy: [{ column: "asc" }, { order: "asc" }] }),
+    prisma.contentBlock.findUnique({ where: { key: "footer_payment_methods" } }),
+  ]);
 
   const byColumn = (col: string) =>
     links.filter((l) => l.column === col).map((l) => ({ label: l.label, href: l.href }));
+
+  const paymentMethods = safeJsonParse<{ label: string; imageUrl: string }[]>(paymentBlock?.dataJson, []);
 
   return (
     <div>
@@ -17,6 +23,7 @@ export default async function FooterAdminPage() {
         discover={byColumn("discover")}
         growth={byColumn("growth")}
         more={byColumn("more")}
+        paymentMethods={paymentMethods}
       />
     </div>
   );

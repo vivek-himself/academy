@@ -3,8 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth";
 
 export async function GET() {
-  const links = await prisma.footerLink.findMany({ orderBy: [{ column: "asc" }, { order: "asc" }] });
-  return NextResponse.json(links);
+  const [links, paymentBlock] = await Promise.all([
+    prisma.footerLink.findMany({ orderBy: [{ column: "asc" }, { order: "asc" }] }),
+    prisma.contentBlock.findUnique({ where: { key: "footer_payment_methods" } }),
+  ]);
+  return NextResponse.json({ links, paymentMethods: paymentBlock?.dataJson ?? "[]" });
 }
 
 export async function PUT(req: NextRequest) {
@@ -26,6 +29,14 @@ export async function PUT(req: NextRequest) {
       const order = byColumn[l.column] ?? 0;
       byColumn[l.column] = order + 1;
       await tx.footerLink.create({ data: { column: l.column, label: l.label, href: l.href, order } });
+    }
+
+    if (Array.isArray(body.paymentMethods)) {
+      await tx.contentBlock.upsert({
+        where: { key: "footer_payment_methods" },
+        update: { dataJson: JSON.stringify(body.paymentMethods) },
+        create: { key: "footer_payment_methods", dataJson: JSON.stringify(body.paymentMethods) },
+      });
     }
   });
 

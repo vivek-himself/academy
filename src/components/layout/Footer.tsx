@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Logo from "./Logo";
 import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { prisma } from "@/lib/prisma";
@@ -22,13 +23,17 @@ function FooterColumn({ title, links }: { title: string; links: { label: string;
 }
 
 export default async function Footer() {
-  const [links, settings] = await Promise.all([
+  const [links, settings, paymentBlock] = await Promise.all([
     prisma.footerLink.findMany({ orderBy: [{ column: "asc" }, { order: "asc" }] }),
     prisma.siteSettings.findUnique({ where: { id: "default" } }),
+    prisma.contentBlock.findUnique({ where: { key: "footer_payment_methods" } }),
   ]);
 
   const byColumn = (col: string) => links.filter((l) => l.column === col);
   const social = safeJsonParse<{ linkedin?: string; instagram?: string }>(settings?.socialLinksJson, {});
+  const paymentMethods = safeJsonParse<{ label: string; imageUrl: string }[]>(paymentBlock?.dataJson, []).filter(
+    (pm) => pm.imageUrl
+  );
 
   return (
     <footer className="border-t border-brand-border bg-[#f7f6f9] pt-14">
@@ -54,14 +59,23 @@ export default async function Footer() {
           </div>
           <p className="mt-6 text-xs font-medium text-brand-muted">Payment Methods</p>
           <div className="mt-2 flex flex-wrap gap-2">
-            {["VISA", "MC", "AMEX", "UPI", "GPay", "PhonePe"].map((m) => (
-              <span
-                key={m}
-                className="rounded border border-brand-ink/10 bg-white px-2 py-1 text-[10px] font-semibold text-brand-muted"
-              >
-                {m}
-              </span>
-            ))}
+            {paymentMethods.length > 0
+              ? paymentMethods.map((pm) => (
+                  <span
+                    key={pm.label}
+                    className="flex h-7 w-11 items-center justify-center rounded border border-brand-ink/10 bg-white p-1"
+                  >
+                    <Image src={pm.imageUrl} alt={pm.label} width={40} height={24} className="h-full w-full object-contain" unoptimized />
+                  </span>
+                ))
+              : ["VISA", "MC", "AMEX", "UPI", "GPay", "PhonePe"].map((m) => (
+                  <span
+                    key={m}
+                    className="rounded border border-brand-ink/10 bg-white px-2 py-1 text-[10px] font-semibold text-brand-muted"
+                  >
+                    {m}
+                  </span>
+                ))}
           </div>
         </div>
 
