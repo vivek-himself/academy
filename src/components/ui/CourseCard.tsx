@@ -73,7 +73,7 @@ export default function CourseCard({ course }: { course: Course }) {
               alt={course.mentor}
               width={28}
               height={28}
-              className="rounded-full"
+              className="h-7 w-7 rounded-full object-cover"
             />
             <span className="text-sm font-medium text-brand-pink">{course.mentor}</span>
           </div>

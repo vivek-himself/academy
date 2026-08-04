@@ -73,7 +73,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
               <h2 className="text-xl font-bold text-brand-ink">{course.title}</h2>
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2">
                 <div className="flex items-center gap-2">
-                  <Image src={course.mentorAvatar} alt={course.mentor} width={28} height={28} className="rounded-full" />
+                  <Image src={course.mentorAvatar} alt={course.mentor} width={28} height={28} className="h-7 w-7 rounded-full object-cover" />
                   <span className="text-sm text-brand-ink">{course.mentor}</span>
                 </div>
                 <span className="ml-auto flex items-center gap-1 text-sm font-semibold text-brand-ink">

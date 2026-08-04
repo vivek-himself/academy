@@ -7,7 +7,7 @@ export default function CourseSidebar({ course, modules }: { course: Course; mod
     <div className="rounded-2xl border border-brand-border bg-white p-5">
       <h3 className="text-base font-bold text-brand-ink">{course.title}</h3>
       <div className="mt-3 flex items-center gap-2">
-        <Image src={course.mentorAvatar} alt={course.mentor} width={28} height={28} className="rounded-full" />
+        <Image src={course.mentorAvatar} alt={course.mentor} width={28} height={28} className="h-7 w-7 rounded-full object-cover" />
         <span className="text-sm text-brand-muted">{course.mentor}</span>
         <span className="ml-auto flex items-center gap-1 text-sm font-semibold text-brand-ink">
           ★ {course.rating}
