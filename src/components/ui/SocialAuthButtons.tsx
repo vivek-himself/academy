@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-function GoogleIcon() {
+export function GoogleIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
       <path
@@ -22,35 +22,18 @@ function GoogleIcon() {
   );
 }
 
-function FacebookIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="#1877F2" aria-hidden="true">
-      <path d="M24 12a12 12 0 1 0-13.88 11.86v-8.39H7.08V12h3.04V9.36c0-3 1.79-4.66 4.53-4.66 1.31 0 2.68.24 2.68.24v2.95H15.8c-1.49 0-1.95.92-1.95 1.87V12h3.32l-.53 3.47h-2.79v8.39A12 12 0 0 0 24 12Z" />
-    </svg>
-  );
-}
-
 export default function SocialAuthButtons() {
   const [notice, setNotice] = useState(false);
 
   return (
     <div>
-      <div className="flex flex-col gap-2.5 sm:flex-row">
-        <button
-          type="button"
-          onClick={() => setNotice(true)}
-          className="flex flex-1 items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
-        >
-          <GoogleIcon /> Continue with Google
-        </button>
-        <button
-          type="button"
-          onClick={() => setNotice(true)}
-          className="flex flex-1 items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
-        >
-          <FacebookIcon /> Continue with Facebook
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={() => setNotice(true)}
+        className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
+      >
+        <GoogleIcon /> Continue with Google
+      </button>
       {notice && (
         <p className="mt-2 text-center text-xs text-brand-muted">
           Social sign-in is coming soon — continue with email below for now.
