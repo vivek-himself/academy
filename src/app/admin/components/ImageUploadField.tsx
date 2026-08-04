@@ -43,7 +43,7 @@ function UploadSlot({ label, value, onChange, recommendedSize }: Slot) {
       <p className="mb-1.5 text-sm font-semibold text-brand-ink">{label}</p>
       <div className="rounded-xl border border-dashed border-brand-border bg-brand-surface p-3">
         {value ? (
-          <div className="relative">
+          <div className="relative w-full max-w-[240px]">
             <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-white">
               <Image src={value} alt={label} fill className="object-cover" unoptimized />
             </div>
@@ -57,7 +57,7 @@ function UploadSlot({ label, value, onChange, recommendedSize }: Slot) {
             </button>
           </div>
         ) : (
-          <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-lg border border-brand-border bg-white text-brand-muted">
+          <div className="flex aspect-video w-full max-w-[240px] flex-col items-center justify-center gap-2 rounded-lg border border-brand-border bg-white text-brand-muted">
             {loading ? (
               <Loader2 size={20} className="animate-spin" />
             ) : (
