@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { X, FolderClosed } from "lucide-react";
+import { X, FolderClosed, FolderPlus } from "lucide-react";
 
 type Folder = { id: string; name: string; _count: { assets: number } };
 type Asset = { id: string; url: string; name: string | null; altText: string | null };
@@ -13,11 +13,24 @@ export default function MediaPickerModal({ onSelect, onClose }: { onSelect: (url
   const [assets, setAssets] = useState<Asset[] | null>(null);
   const loading = assets === null;
 
-  useEffect(() => {
+  function refreshFolders() {
     fetch("/api/admin/media/folders")
       .then((r) => r.json())
       .then(setFolders);
-  }, []);
+  }
+
+  useEffect(refreshFolders, []);
+
+  async function handleCreateFolder() {
+    const name = prompt("Folder name:");
+    if (!name || !name.trim()) return;
+    const res = await fetch("/api/admin/media/folders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+    if (res.ok) refreshFolders();
+  }
 
   useEffect(() => {
     const qs = activeFolder === "all" ? "" : `?folderId=${activeFolder}`;
@@ -73,6 +86,13 @@ export default function MediaPickerModal({ onSelect, onClose }: { onSelect: (url
                 <span className="ml-auto shrink-0 text-[10px] text-brand-muted">{f._count.assets}</span>
               </button>
             ))}
+            <button
+              type="button"
+              onClick={handleCreateFolder}
+              className="mt-1 flex w-full items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-left text-xs font-medium text-brand-pink hover:bg-brand-surface"
+            >
+              <FolderPlus size={12} /> New folder
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4">
