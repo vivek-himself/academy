@@ -4,11 +4,12 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
 import { getCompletedModules, getProgress } from "@/lib/enrollment";
-import { isProfileComplete } from "@/lib/profile";
+import { isProfileComplete, getProfileCompletionPercent } from "@/lib/profile";
 import { safeJsonParse } from "@/lib/json";
 import DashboardCourseCard from "@/components/dashboard/DashboardCourseCard";
 import NotificationsBell, { type NotificationItem } from "@/components/dashboard/NotificationsBell";
 import ProfileIncompleteBanner from "@/components/dashboard/ProfileIncompleteBanner";
+import AvatarProgressRing from "@/components/dashboard/AvatarProgressRing";
 
 export const dynamic = "force-dynamic";
 
@@ -80,6 +81,8 @@ export default async function DashboardOverviewPage() {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
       <div className="flex flex-col gap-6">
+        {!isProfileComplete(user) && <ProfileIncompleteBanner />}
+
         {!hasEnrollments ? (
           <div className="rounded-2xl border border-brand-border bg-white px-6 py-14 text-center">
             <h2 className="text-lg font-bold text-brand-ink">You&apos;re not enrolled in any courses yet</h2>
@@ -95,8 +98,6 @@ export default async function DashboardOverviewPage() {
           </div>
         ) : (
           <>
-            {!isProfileComplete(user) && <ProfileIncompleteBanner />}
-
             {categoryStats.size > 0 && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {[...categoryStats.entries()].slice(0, 3).map(([name, stat]) => (
@@ -192,22 +193,29 @@ export default async function DashboardOverviewPage() {
 
       <div className="flex flex-col gap-5">
         <div className="rounded-2xl border border-brand-border bg-white p-5 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border-2 border-brand-pink">
-            {user.avatarUrl ? (
-              <Image
-                src={user.avatarUrl}
-                alt={user.name}
-                width={60}
-                height={60}
-                className="h-[60px] w-[60px] rounded-full object-cover"
-                unoptimized
-              />
-            ) : (
-              <span className="flex h-[60px] w-[60px] items-center justify-center rounded-full bg-brand-purple text-lg font-semibold text-white">
-                {user.name.charAt(0)}
-              </span>
-            )}
+          <div className="mx-auto">
+            <AvatarProgressRing percent={getProfileCompletionPercent(user)}>
+              {user.avatarUrl ? (
+                <Image
+                  src={user.avatarUrl}
+                  alt={user.name}
+                  width={56}
+                  height={56}
+                  className="h-full w-full rounded-full object-cover"
+                  unoptimized
+                />
+              ) : (
+                <span className="flex h-full w-full items-center justify-center rounded-full bg-brand-purple text-lg font-semibold text-white">
+                  {user.name.charAt(0)}
+                </span>
+              )}
+            </AvatarProgressRing>
           </div>
+          {!isProfileComplete(user) && (
+            <p className="mt-1.5 text-[11px] font-semibold text-brand-pink">
+              Profile {getProfileCompletionPercent(user)}% complete
+            </p>
+          )}
           <p className="mt-3 text-sm font-bold text-brand-ink">
             {greeting} {user.name.split(" ")[0]}
           </p>

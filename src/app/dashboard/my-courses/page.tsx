@@ -35,6 +35,7 @@ export default async function MyCoursesPage() {
     return (
       <div>
         <h1 className="mb-6 text-xl font-bold text-brand-ink">My Courses</h1>
+        {!isProfileComplete(user) && <div className="mb-6"><ProfileIncompleteBanner /></div>}
         <div className="rounded-2xl border border-brand-border bg-white px-6 py-14 text-center">
           <h2 className="text-lg font-bold text-brand-ink">You&apos;re not enrolled in any courses yet</h2>
           <p className="mx-auto mt-2 max-w-sm text-sm text-brand-muted">
