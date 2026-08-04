@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
+  const folderId = (formData.get("folderId") as string | null) || null;
 
   if (!file) {
     return NextResponse.json({ error: "No file provided." }, { status: 400 });
@@ -72,6 +73,7 @@ export async function POST(req: NextRequest) {
       height,
       format: file.type,
       sizeBytes: file.size,
+      folderId,
     },
   });
 

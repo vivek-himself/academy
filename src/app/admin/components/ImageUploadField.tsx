@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, ImageIcon } from "lucide-react";
+import MediaPickerModal from "./MediaPickerModal";
 
 type Slot = {
   label: string;
@@ -15,6 +16,7 @@ function UploadSlot({ label, value, onChange, recommendedSize }: Slot) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   async function handleFile(file: File) {
     setError("");
@@ -55,15 +57,32 @@ function UploadSlot({ label, value, onChange, recommendedSize }: Slot) {
             </button>
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={loading}
-            className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-lg border border-brand-border bg-white text-brand-muted hover:border-brand-pink/40 hover:text-brand-pink"
-          >
-            {loading ? <Loader2 size={20} className="animate-spin" /> : <Upload size={20} />}
-            <span className="text-xs font-medium">{loading ? "Uploading..." : "Click to upload"}</span>
-          </button>
+          <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-lg border border-brand-border bg-white text-brand-muted">
+            {loading ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  className="flex flex-col items-center gap-1.5 px-4 hover:text-brand-pink"
+                >
+                  <Upload size={20} />
+                  <span className="text-xs font-medium">Upload new</span>
+                </button>
+                <span className="h-8 w-px bg-brand-border" />
+                <button
+                  type="button"
+                  onClick={() => setPickerOpen(true)}
+                  className="flex flex-col items-center gap-1.5 px-4 hover:text-brand-pink"
+                >
+                  <ImageIcon size={20} />
+                  <span className="text-xs font-medium">Browse library</span>
+                </button>
+              </div>
+            )}
+            {loading && <span className="text-xs font-medium">Uploading...</span>}
+          </div>
         )}
         <input
           ref={inputRef}
@@ -77,19 +96,37 @@ function UploadSlot({ label, value, onChange, recommendedSize }: Slot) {
           }}
         />
         {value && (
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            className="mt-2 text-xs font-semibold text-brand-pink hover:underline"
-          >
-            Replace image
-          </button>
+          <div className="mt-2 flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => inputRef.current?.click()}
+              className="text-xs font-semibold text-brand-pink hover:underline"
+            >
+              Replace image
+            </button>
+            <button
+              type="button"
+              onClick={() => setPickerOpen(true)}
+              className="text-xs font-semibold text-brand-pink hover:underline"
+            >
+              Browse library
+            </button>
+          </div>
         )}
       </div>
       <p className="mt-1.5 text-[11px] leading-snug text-brand-muted">
         Recommended: {recommendedSize} · JPG, PNG, WebP, GIF or SVG · Max 8MB
       </p>
       {error && <p className="mt-1 text-xs font-medium text-red-500">{error}</p>}
+      {pickerOpen && (
+        <MediaPickerModal
+          onSelect={(url) => {
+            onChange(url);
+            setPickerOpen(false);
+          }}
+          onClose={() => setPickerOpen(false)}
+        />
+      )}
     </div>
   );
 }

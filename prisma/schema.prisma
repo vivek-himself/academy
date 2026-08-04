@@ -32,15 +32,25 @@ model SiteSettings {
   updatedAt             DateTime @updatedAt
 }
 
+model MediaFolder {
+  id        String       @id @default(cuid())
+  name      String
+  createdAt DateTime     @default(now())
+  assets    MediaAsset[]
+}
+
 model MediaAsset {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   url       String
+  name      String?
   width     Int?
   height    Int?
   format    String?
   sizeBytes Int?
   altText   String?
-  createdAt DateTime @default(now())
+  folderId  String?
+  folder    MediaFolder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  createdAt DateTime     @default(now())
 }
 
 model Category {
