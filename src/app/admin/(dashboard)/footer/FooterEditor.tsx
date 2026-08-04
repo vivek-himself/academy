@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
 import RepeaterField from "../../components/RepeaterField";
 import ImageUploadField from "../../components/ImageUploadField";
+import SaveBar from "../../components/SaveBar";
 
 type Link = { label: string; href: string };
 type PaymentMethod = { label: string; imageUrl: string };
@@ -138,16 +139,7 @@ export default function FooterEditor({
         </button>
       </div>
 
-      {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
-      <div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save Footer"}
-        </button>
-      </div>
+      <SaveBar onSave={handleSave} saving={saving} status={status} label="Save Footer" />
     </div>
   );
 }

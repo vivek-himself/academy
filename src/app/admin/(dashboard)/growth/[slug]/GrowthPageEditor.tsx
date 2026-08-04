@@ -6,6 +6,7 @@ import { TextField, TextAreaField } from "../../../components/FormField";
 import ImageUploadField from "../../../components/ImageUploadField";
 import StringListField from "../../../components/StringListField";
 import RepeaterField from "../../../components/RepeaterField";
+import SaveBar from "../../../components/SaveBar";
 import { safeJsonParse } from "@/lib/json";
 
 type GrowthPageValue = {
@@ -149,15 +150,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
       </div>
 
       {error && <p className="text-sm font-medium text-red-500">{error}</p>}
-      <div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save Page"}
-        </button>
-      </div>
+      <SaveBar saving={saving} label="Save Page" type="submit" />
     </form>
   );
 }

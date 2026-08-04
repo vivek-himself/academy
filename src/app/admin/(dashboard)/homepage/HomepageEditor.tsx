@@ -7,6 +7,7 @@ import { TextField, TextAreaField } from "../../components/FormField";
 import ImageUploadField from "../../components/ImageUploadField";
 import StringListField from "../../components/StringListField";
 import RepeaterField from "../../components/RepeaterField";
+import SaveBar from "../../components/SaveBar";
 
 type HeroSlide = { title: string; subtitle: string; ctaLabel: string; ctaHref: string; imageDesktopUrl: string; imageMobileUrl: string };
 const EMPTY_HERO_SLIDE: HeroSlide = { title: "", subtitle: "", ctaLabel: "", ctaHref: "/courses", imageDesktopUrl: "", imageMobileUrl: "" };
@@ -307,16 +308,7 @@ export default function HomepageEditor({
         />
       </SectionCard>
 
-      {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
-      <div>
-        <button
-          onClick={handleSaveAll}
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save All Changes"}
-        </button>
-      </div>
+      <SaveBar onSave={handleSaveAll} saving={saving} status={status} label="Save All Changes" />
     </div>
   );
 }

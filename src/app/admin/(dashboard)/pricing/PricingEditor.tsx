@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TextField, CheckboxField } from "../../components/FormField";
 import RepeaterField from "../../components/RepeaterField";
+import SaveBar from "../../components/SaveBar";
 import { safeJsonParse } from "@/lib/json";
 
 type Plan = { name: string; tagline: string; price: string; recommended: boolean; featuresJson: string };
@@ -69,16 +70,7 @@ export default function PricingEditor({ initialPlans }: { initialPlans: Plan[] }
         })}
       </div>
 
-      {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
-      <div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save Pricing Plans"}
-        </button>
-      </div>
+      <SaveBar onSave={handleSave} saving={saving} status={status} label="Save Pricing Plans" />
     </div>
   );
 }

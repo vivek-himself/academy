@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import RepeaterField from "../../components/RepeaterField";
+import SaveBar from "../../components/SaveBar";
 
 type Faq = { question: string; answer: string };
 
@@ -45,16 +46,7 @@ export default function FaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
           addLabel="Add FAQ"
         />
       </div>
-      {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
-      <div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save FAQs"}
-        </button>
-      </div>
+      <SaveBar onSave={handleSave} saving={saving} status={status} label="Save FAQs" />
     </div>
   );
 }

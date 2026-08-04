@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TextField, TextAreaField } from "../../components/FormField";
 import ImageUploadField from "../../components/ImageUploadField";
+import SaveBar from "../../components/SaveBar";
 
 export type MentorFormValue = {
   id?: string;
@@ -79,15 +80,7 @@ export default function MentorForm({ initial }: { initial: MentorFormValue }) {
 
       {error && <p className="text-sm font-medium text-red-500">{error}</p>}
 
-      <div>
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save Mentor"}
-        </button>
-      </div>
+      <SaveBar saving={saving} label="Save Mentor" type="submit" />
     </form>
   );
 }

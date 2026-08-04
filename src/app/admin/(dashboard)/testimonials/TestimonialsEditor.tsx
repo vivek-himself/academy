@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import RepeaterField from "../../components/RepeaterField";
+import SaveBar from "../../components/SaveBar";
 
 type Testimonial = { quote: string; name: string; role: string; avatarUrl: string };
 
@@ -46,16 +47,7 @@ export default function TestimonialsEditor({ initialTestimonials }: { initialTes
           addLabel="Add testimonial"
         />
       </div>
-      {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
-      <div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {saving ? "Saving..." : "Save Testimonials"}
-        </button>
-      </div>
+      <SaveBar onSave={handleSave} saving={saving} status={status} label="Save Testimonials" />
     </div>
   );
 }
