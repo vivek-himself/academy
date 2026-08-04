@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Users, Layers, Clock, Heart } from "lucide-react";
+import { Users, Layers, Clock, Heart, BarChart3 } from "lucide-react";
 import type { Course } from "@/lib/data";
 
 export default function CourseCard({ course }: { course: Course }) {
@@ -17,11 +17,11 @@ export default function CourseCard({ course }: { course: Course }) {
           sizes="(max-width: 768px) 100vw, 300px"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <span className="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-brand-ink shadow">
-          {course.level}
-        </span>
         <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-brand-ink">
           <Heart size={13} />
+        </span>
+        <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-brand-ink shadow">
+          {course.level} <BarChart3 size={12} className="text-brand-pink" />
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
