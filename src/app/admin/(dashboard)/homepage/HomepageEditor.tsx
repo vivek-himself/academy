@@ -15,6 +15,8 @@ type TrustLogo = { name: string; imageUrl: string };
 type EyebrowBlock = { eyebrow: string; title: string; description: string; ctaLabel: string; imageUrl: string };
 type GrowSkill = { title: string; description: string; checklist: string[]; ctaLabel: string; imageUrl: string };
 type CtaBanner = { title: string; description: string; ctaLabel: string; href: string; imageUrl: string };
+type ReviewBadge = { label: string; rating: string; imageUrl: string };
+const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: "", imageUrl: "" };
 
 function SectionCard({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
@@ -34,6 +36,7 @@ export default function HomepageEditor({
   growSkill: initGrowSkill,
   randomPromo: initRandomPromo,
   ctaBanner: initCtaBanner,
+  reviewBadges: initReviewBadges,
 }: {
   heroSlides: HeroSlide[];
   stats: Stat[];
@@ -42,6 +45,7 @@ export default function HomepageEditor({
   growSkill: GrowSkill;
   randomPromo: EyebrowBlock;
   ctaBanner: CtaBanner;
+  reviewBadges: ReviewBadge[];
 }) {
   const router = useRouter();
   const [heroSlides, setHeroSlides] = useState(initHeroSlides.length ? initHeroSlides : [EMPTY_HERO_SLIDE]);
@@ -51,6 +55,7 @@ export default function HomepageEditor({
   const [growSkill, setGrowSkill] = useState(initGrowSkill);
   const [randomPromo, setRandomPromo] = useState(initRandomPromo);
   const [ctaBanner, setCtaBanner] = useState(initCtaBanner);
+  const [reviewBadges, setReviewBadges] = useState(initReviewBadges);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
 
@@ -69,6 +74,7 @@ export default function HomepageEditor({
           home_grow_skill: JSON.stringify(growSkill),
           home_random_promo: JSON.stringify(randomPromo),
           cta_banner_default: JSON.stringify(ctaBanner),
+          home_review_badges: JSON.stringify(reviewBadges),
         },
       }),
     });
@@ -161,6 +167,51 @@ export default function HomepageEditor({
           emptyItem={{ icon: "users", value: "", label: "" }}
           addLabel="Add stat"
         />
+      </SectionCard>
+
+      <SectionCard
+        title="Review Platform Badges"
+        description="The Google / Capterra / G2 rating row below the stats. Upload each platform's official logo (from their press/brand page) — until you do, it falls back to plain text."
+      >
+        {reviewBadges.map((b, i) => (
+          <div key={i} className="rounded-xl border border-brand-border p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <input
+                value={b.label}
+                onChange={(e) => setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, label: e.target.value } : r)))}
+                placeholder="Platform (e.g. Google)"
+                className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
+              />
+              <input
+                value={b.rating}
+                onChange={(e) => setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, rating: e.target.value } : r)))}
+                placeholder="Rating (e.g. ★★★★★ 4.6/5)"
+                className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
+              />
+              <button
+                type="button"
+                onClick={() => setReviewBadges(reviewBadges.filter((_, idx) => idx !== i))}
+                aria-label="Remove"
+                className="shrink-0 text-red-500 hover:text-red-600"
+              >
+                <Trash2 size={14} />
+              </button>
+            </div>
+            <ImageUploadField
+              label=""
+              desktopValue={b.imageUrl}
+              onDesktopChange={(v) => setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, imageUrl: v } : r)))}
+              desktopSize="80 × 20px logo"
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => setReviewBadges([...reviewBadges, EMPTY_REVIEW_BADGE])}
+          className="flex items-center gap-1.5 self-start text-xs font-semibold text-brand-pink hover:underline"
+        >
+          <Plus size={13} /> Add badge
+        </button>
       </SectionCard>
 
       <SectionCard title="Trust Logos" description='The "As seen on" press logo row.'>

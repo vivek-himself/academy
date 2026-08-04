@@ -2,7 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth";
 
-const BLOCK_KEYS = ["home_tech_stack", "home_grow_skill", "home_random_promo", "cta_banner_default"] as const;
+const BLOCK_KEYS = [
+  "home_tech_stack",
+  "home_grow_skill",
+  "home_random_promo",
+  "cta_banner_default",
+  "home_review_badges",
+] as const;
 
 export async function GET() {
   const [heroSlides, stats, trustLogos, blocks] = await Promise.all([

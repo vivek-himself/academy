@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Users, BookOpen, Award, TrendingUp, Star } from "lucide-react";
 
 const iconMap: Record<string, typeof Users> = {
@@ -8,8 +9,15 @@ const iconMap: Record<string, typeof Users> = {
 };
 
 type Stat = { icon: string; value: string; label: string };
+type ReviewBadge = { label: string; rating: string; imageUrl: string };
 
-export default function StatsBar({ stats }: { stats: Stat[] }) {
+const DEFAULT_REVIEW_BADGES: ReviewBadge[] = [
+  { label: "Google", rating: "★★★★★ 4.6/5", imageUrl: "" },
+  { label: "Capterra", rating: "★★★★★ 4.7/5", imageUrl: "" },
+  { label: "G2", rating: "★★★★★ 4.3/5", imageUrl: "" },
+];
+
+export default function StatsBar({ stats, reviewBadges = DEFAULT_REVIEW_BADGES }: { stats: Stat[]; reviewBadges?: ReviewBadge[] }) {
   return (
     <section className="container-page -mt-6 relative z-10">
       <div className="grid grid-cols-2 gap-4 rounded-2xl border border-brand-border bg-white p-6 shadow-sm sm:grid-cols-4 sm:p-8">
@@ -29,9 +37,18 @@ export default function StatsBar({ stats }: { stats: Stat[] }) {
         })}
       </div>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-8 opacity-70">
-        <span className="text-sm font-semibold text-brand-ink">Google ★★★★★ 4.6/5</span>
-        <span className="text-sm font-semibold text-brand-ink">Capterra ★★★★★ 4.7/5</span>
-        <span className="text-sm font-semibold text-brand-ink">G2 ★★★★★ 4.3/5</span>
+        {reviewBadges.map((b) =>
+          b.imageUrl ? (
+            <span key={b.label} className="flex items-center gap-2">
+              <Image src={b.imageUrl} alt={b.label} width={80} height={20} className="h-5 w-auto object-contain" unoptimized />
+              <span className="text-sm font-semibold text-brand-ink">{b.rating}</span>
+            </span>
+          ) : (
+            <span key={b.label} className="text-sm font-semibold text-brand-ink">
+              {b.label} {b.rating}
+            </span>
+          )
+        )}
       </div>
     </section>
   );

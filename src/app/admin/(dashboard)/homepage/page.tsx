@@ -11,7 +11,9 @@ export default async function HomepageContentPage() {
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
     prisma.contentBlock.findMany({
-      where: { key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo", "cta_banner_default"] } },
+      where: {
+        key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo", "cta_banner_default", "home_review_badges"] },
+      },
     }),
   ]);
 
@@ -41,6 +43,11 @@ export default async function HomepageContentPage() {
         })}
         randomPromo={safeJsonParse(blockMap["home_random_promo"], { eyebrow: "", title: "", description: "", ctaLabel: "", imageUrl: "" })}
         ctaBanner={safeJsonParse(blockMap["cta_banner_default"], { title: "", description: "", ctaLabel: "", href: "", imageUrl: "" })}
+        reviewBadges={safeJsonParse(blockMap["home_review_badges"], [
+          { label: "Google", rating: "★★★★★ 4.6/5", imageUrl: "" },
+          { label: "Capterra", rating: "★★★★★ 4.7/5", imageUrl: "" },
+          { label: "G2", rating: "★★★★★ 4.3/5", imageUrl: "" },
+        ])}
       />
     </div>
   );

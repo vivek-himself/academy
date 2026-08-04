@@ -21,7 +21,7 @@ export default async function Home() {
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
     prisma.contentBlock.findMany({
-      where: { key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo"] } },
+      where: { key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo", "home_review_badges"] } },
     }),
     prisma.course.findMany({
       where: { published: true },
@@ -56,6 +56,10 @@ export default async function Home() {
     ctaLabel: "Explore Course",
     imageUrl: "",
   });
+  const reviewBadges = safeJsonParse<{ label: string; rating: string; imageUrl: string }[] | undefined>(
+    blockMap["home_review_badges"],
+    undefined
+  );
 
   return (
     <>
@@ -72,7 +76,7 @@ export default async function Home() {
             : [{ title: "Learn something new everyday.", subtitle: "", ctaLabel: "Explore Courses", ctaHref: "/courses" }]
         }
       />
-      <StatsBar stats={stats} />
+      <StatsBar stats={stats} reviewBadges={reviewBadges} />
       <TechStackBanner block={techStack} />
       {mappedCourses.length >= 5 && <TrendingCourses featured={mappedCourses[4]} items={mappedCourses.slice(0, 4)} />}
       <AsSeenOn logos={trustLogos} />
