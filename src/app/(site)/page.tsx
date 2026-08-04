@@ -6,6 +6,7 @@ import AsSeenOn from "@/components/home/AsSeenOn";
 import GrowSkill from "@/components/home/GrowSkill";
 import RandomPromo from "@/components/home/RandomPromo";
 import BrowseTopCourses from "@/components/home/BrowseTopCourses";
+import Link from "next/link";
 import FaqAccordion from "@/components/ui/FaqAccordion";
 import CTABanner from "@/components/ui/CTABanner";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -86,7 +87,12 @@ export default async function Home() {
       <section className="container-page py-10 sm:py-14">
         <SectionHeading title="FAQs" />
         <div className="mt-8">
-          <FaqAccordion items={faqs} />
+          <FaqAccordion items={faqs.slice(0, 8)} />
+        </div>
+        <div className="mt-8 text-center">
+          <Link href="/faq" className="text-sm font-semibold text-brand-pink hover:underline">
+            View all FAQs →
+          </Link>
         </div>
       </section>
       <CTABanner />

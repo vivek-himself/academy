@@ -4,7 +4,7 @@ import TestimonialCard from "@/components/ui/TestimonialCard";
 import CTABanner from "@/components/ui/CTABanner";
 
 export const metadata: Metadata = {
-  title: "Partners — Academy",
+  title: "Partners",
 };
 
 const sections = [

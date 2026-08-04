@@ -4,7 +4,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import { jobPostings } from "@/data/careers";
 
 export const metadata: Metadata = {
-  title: "Careers — Academy",
+  title: "Careers",
 };
 
 const perks = [

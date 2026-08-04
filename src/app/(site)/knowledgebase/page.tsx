@@ -8,7 +8,7 @@ import { mapBlogPost } from "@/lib/mappers";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Knowledgebase — Academy",
+  title: "Knowledgebase",
 };
 
 export default async function KnowledgebasePage() {

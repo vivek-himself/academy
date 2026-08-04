@@ -25,6 +25,8 @@ export default function FaqAccordion({
       >
         <button
           onClick={() => setOpenIndex(isOpen ? null : i)}
+          aria-expanded={isOpen}
+          aria-controls={`faq-answer-${i}`}
           className="flex w-full items-center justify-between gap-4 text-left"
         >
           <span className={`text-sm font-semibold sm:text-base ${isOpen ? "text-brand-pink" : "text-brand-ink"}`}>
@@ -36,7 +38,9 @@ export default function FaqAccordion({
           />
         </button>
         {isOpen && item.answer && (
-          <p className="mt-3 text-sm text-brand-muted">{item.answer}</p>
+          <p id={`faq-answer-${i}`} className="mt-3 text-sm text-brand-muted">
+            {item.answer}
+          </p>
         )}
       </div>
     );

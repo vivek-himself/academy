@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import SectionHeading from "@/components/ui/SectionHeading";
+import ContactForm from "@/components/ui/ContactForm";
 
 export const metadata: Metadata = {
-  title: "Get in Touch — Academy",
+  title: "Get in Touch",
 };
 
 const details = [
   { icon: Mail, label: "Email", value: "academy@nigelquadros.com", href: "mailto:academy@nigelquadros.com" },
   { icon: Phone, label: "Phone", value: "+91 96650 64435", href: "tel:+919665064435" },
-  { icon: MapPin, label: "Address", value: "Worldwide" },
+  { icon: MapPin, label: "Address", value: "Remote-first — no physical office" },
 ];
 
 export default function ContactPage() {
@@ -38,6 +39,8 @@ export default function ContactPage() {
           </div>
         ))}
       </div>
+
+      <ContactForm />
 
       <div className="mx-auto mt-10 max-w-3xl rounded-xl border border-brand-border p-5">
         <div className="flex items-center gap-2">

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalContent from "@/components/ui/LegalContent";
 
 export const metadata: Metadata = {
-  title: "Cookie Policy — Academy",
+  title: "Cookie Policy",
 };
 
 export default function CookiePolicyPage() {

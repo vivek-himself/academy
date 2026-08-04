@@ -4,7 +4,7 @@ import SectionHeading from "@/components/ui/SectionHeading";
 import CTABanner from "@/components/ui/CTABanner";
 
 export const metadata: Metadata = {
-  title: "About — Academy",
+  title: "About",
 };
 
 const values = [

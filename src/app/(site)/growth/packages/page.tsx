@@ -12,7 +12,7 @@ import { safeJsonParse } from "@/lib/json";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Packages — Academy",
+  title: "Packages",
 };
 
 export default async function PackagesPage() {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalContent from "@/components/ui/LegalContent";
 
 export const metadata: Metadata = {
-  title: "Modern Slavery Act — Academy",
+  title: "Modern Slavery Act",
 };
 
 export default function ModernSlaveryActPage() {

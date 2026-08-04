@@ -40,7 +40,7 @@ export default function StatsBar({ stats, reviewBadges = DEFAULT_REVIEW_BADGES }
         {reviewBadges.map((b) =>
           b.imageUrl ? (
             <span key={b.label} className="flex items-center gap-2">
-              <Image src={b.imageUrl} alt={b.label} width={80} height={20} className="h-5 w-auto object-contain" unoptimized />
+              <Image src={b.imageUrl} alt={b.label} width={80} height={20} className="h-5 w-auto object-contain" />
               <span className="text-sm font-semibold text-brand-ink">{b.rating}</span>
             </span>
           ) : (

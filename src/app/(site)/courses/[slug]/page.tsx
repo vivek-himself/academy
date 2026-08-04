@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,6 +14,22 @@ import { mapCourse } from "@/lib/mappers";
 import { safeJsonParse } from "@/lib/json";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const dbCourse = await prisma.course.findUnique({ where: { slug } });
+  if (!dbCourse) return {};
+
+  const title = dbCourse.seoTitle || `${dbCourse.title} — Academy`;
+  const description = dbCourse.seoDescription || dbCourse.description || `Learn ${dbCourse.title} with Academy.`;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: dbCourse.imageDesktopUrl ? [dbCourse.imageDesktopUrl] : undefined },
+    twitter: { title, description, images: dbCourse.imageDesktopUrl ? [dbCourse.imageDesktopUrl] : undefined },
+  };
+}
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -32,7 +49,10 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
     <>
       <section className="container-page py-8">
         <p className="text-sm text-brand-muted">
-          {course.category} / {course.category}
+          <Link href="/courses" className="hover:text-brand-ink">
+            Courses
+          </Link>{" "}
+          / {course.category}
         </p>
         <h1 className="mt-1 text-2xl font-bold text-brand-ink sm:text-3xl">{course.title}</h1>
         <div className="mt-2 flex items-center gap-3">
@@ -47,7 +67,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
 
         <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[1.7fr_1fr]">
           <div>
-            <VideoPlayerMock />
+            <VideoPlayerMock title={course.title} image={course.image} />
 
             <div className="mt-6">
               <h2 className="text-xl font-bold text-brand-ink">{course.title}</h2>

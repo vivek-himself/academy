@@ -6,8 +6,8 @@
 
   --color-brand-purple: #390d52;
   --color-brand-purple-dark: #2a0940;
-  --color-brand-pink: #ec1361;
-  --color-brand-pink-dark: #cf0e53;
+  --color-brand-pink: #cf0e53;
+  --color-brand-pink-dark: #b8004a;
   --color-brand-ink: #1a1523;
   --color-brand-muted: #6b6577;
   --color-brand-surface: #f5f4f8;
@@ -33,6 +33,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--color-brand-pink);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .container-page {

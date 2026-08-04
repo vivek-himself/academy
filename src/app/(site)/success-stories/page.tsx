@@ -9,7 +9,7 @@ import { prisma } from "@/lib/prisma";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Success Stories — Academy",
+  title: "Success Stories",
 };
 
 const thumbnails = Array.from({ length: 6 }).map(

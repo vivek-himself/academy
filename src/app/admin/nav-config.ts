@@ -54,6 +54,7 @@ export const navSections: NavSection[] = [
       { label: "Knowledge Base", href: "/admin/knowledge-base", icon: Database },
       { label: "FAQ Management", href: "/admin/faqs", icon: Star },
       { label: "Student Success Stories", href: "/admin/testimonials", icon: Trophy },
+      { label: "Contact Submissions", href: "/admin/contact-submissions", icon: Mail },
       { label: "Career Opportunities", href: "/admin/careers", icon: Briefcase, stub: true },
       { label: "Email Automation", href: "/admin/email-automation", icon: Mail, stub: true },
       { label: "Email Activity", href: "/admin/email-activity", icon: Activity, stub: true },

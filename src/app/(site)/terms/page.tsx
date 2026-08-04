@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalContent from "@/components/ui/LegalContent";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions — Academy",
+  title: "Terms & Conditions",
 };
 
 export default function TermsPage() {

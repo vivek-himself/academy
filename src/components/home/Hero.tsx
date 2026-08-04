@@ -45,7 +45,13 @@ export default function Hero({ slides }: { slides: Slide[] }) {
               )}
               <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-14 lg:py-24">
                 <div>
-                  <h1 className="max-w-sm text-3xl font-bold leading-tight text-white sm:text-4xl">{slide.title}</h1>
+                  {i === index ? (
+                    <h1 className="max-w-sm text-3xl font-bold leading-tight text-white sm:text-4xl">{slide.title}</h1>
+                  ) : (
+                    <p aria-hidden="true" className="max-w-sm text-3xl font-bold leading-tight text-white sm:text-4xl">
+                      {slide.title}
+                    </p>
+                  )}
                   <p className="mt-4 max-w-sm text-sm text-white/70">{slide.subtitle}</p>
                   <Link
                     href={slide.ctaHref}

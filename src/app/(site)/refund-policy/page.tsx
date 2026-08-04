@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalContent from "@/components/ui/LegalContent";
 
 export const metadata: Metadata = {
-  title: "Refund & Cancellation Policy — Academy",
+  title: "Refund & Cancellation Policy",
 };
 
 export default function RefundPolicyPage() {

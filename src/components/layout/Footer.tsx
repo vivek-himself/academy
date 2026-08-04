@@ -30,7 +30,11 @@ export default async function Footer() {
   ]);
 
   const byColumn = (col: string) => links.filter((l) => l.column === col);
-  const social = safeJsonParse<{ linkedin?: string; instagram?: string }>(settings?.socialLinksJson, {});
+  const rawSocial = safeJsonParse<{ linkedin?: string; instagram?: string }>(settings?.socialLinksJson, {});
+  const social = {
+    linkedin: rawSocial.linkedin && rawSocial.linkedin !== "#" ? rawSocial.linkedin : undefined,
+    instagram: rawSocial.instagram && rawSocial.instagram !== "#" ? rawSocial.instagram : undefined,
+  };
   const paymentMethods = safeJsonParse<{ label: string; imageUrl: string }[]>(paymentBlock?.dataJson, []).filter(
     (pm) => pm.imageUrl
   );
@@ -41,22 +45,32 @@ export default async function Footer() {
         <div>
           <Logo />
           <p className="mt-4 max-w-[220px] text-sm text-brand-muted">{settings?.tagline || "Marketing Mastery, One Class at a Time."}</p>
-          <div className="mt-5 flex gap-3">
-            <a
-              href={social.linkedin || "#"}
-              aria-label="LinkedIn"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-ink/15 text-brand-ink hover:bg-white"
-            >
-              <LinkedInIcon size={15} />
-            </a>
-            <a
-              href={social.instagram || "#"}
-              aria-label="Instagram"
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-ink/15 text-brand-ink hover:bg-white"
-            >
-              <InstagramIcon size={15} />
-            </a>
-          </div>
+          {(social.linkedin || social.instagram) && (
+            <div className="mt-5 flex gap-3">
+              {social.linkedin && (
+                <a
+                  href={social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-ink/15 text-brand-ink hover:bg-white"
+                >
+                  <LinkedInIcon size={15} />
+                </a>
+              )}
+              {social.instagram && (
+                <a
+                  href={social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Instagram"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-ink/15 text-brand-ink hover:bg-white"
+                >
+                  <InstagramIcon size={15} />
+                </a>
+              )}
+            </div>
+          )}
           <p className="mt-6 text-xs font-medium text-brand-muted">Payment Methods</p>
           <div className="mt-2 flex flex-wrap gap-2">
             {paymentMethods.length > 0

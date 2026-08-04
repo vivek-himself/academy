@@ -10,9 +10,25 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
+const siteTitle = "Academy — Marketing Mastery, One Class at a Time";
+const siteDescription = "Learn from industry experts and fast-track your career with Academy.";
+
 export const metadata: Metadata = {
-  title: "Academy — Marketing Mastery, One Class at a Time",
-  description: "Learn from industry experts and fast-track your career with Academy.",
+  metadataBase: new URL("https://academy-mocha-two.vercel.app"),
+  title: { default: siteTitle, template: "%s — Academy" },
+  description: siteDescription,
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+    siteName: "Academy",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({
@@ -23,9 +39,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand-pink focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white"
+        >
+          Skip to content
+        </a>
         <PromoBar />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>

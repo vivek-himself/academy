@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LegalContent from "@/components/ui/LegalContent";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Academy",
+  title: "Privacy Policy",
 };
 
 export default function PrivacyPolicyPage() {

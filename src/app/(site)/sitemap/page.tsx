@@ -3,7 +3,7 @@ import Link from "next/link";
 import SectionHeading from "@/components/ui/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Sitemap — Academy",
+  title: "Sitemap",
 };
 
 const columns: { title: string; links: { label: string; href: string }[] }[] = [
