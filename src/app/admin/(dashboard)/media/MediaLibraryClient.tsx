@@ -2,9 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { FolderClosed, FolderPlus, Upload, Loader2, Pencil, Trash2 } from "lucide-react";
+import { Folder, FolderPlus, Upload, Loader2, Pencil, Trash2, ChevronRight, MoreHorizontal } from "lucide-react";
 
-type Folder = { id: string; name: string; _count: { assets: number } };
+type FolderType = { id: string; name: string; _count: { assets: number } };
 type Asset = {
   id: string;
   url: string;
@@ -20,22 +20,29 @@ function formatSize(bytes: number | null) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-export default function MediaLibraryClient({ initialFolders }: { initialFolders: Folder[] }) {
+export default function MediaLibraryClient({ initialFolders }: { initialFolders: FolderType[] }) {
   const [folders, setFolders] = useState(initialFolders);
-  const [activeFolder, setActiveFolder] = useState<string>("all");
+  const [openFolder, setOpenFolder] = useState<FolderType | null>(null);
   const [assets, setAssets] = useState<Asset[] | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [assetMenuOpen, setAssetMenuOpen] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const loading = assets === null;
 
   function refreshFolders() {
     fetch("/api/admin/media/folders")
       .then((r) => r.json())
-      .then(setFolders);
+      .then((fresh: FolderType[]) => {
+        setFolders(fresh);
+        if (openFolder) {
+          const updated = fresh.find((f) => f.id === openFolder.id);
+          setOpenFolder(updated ?? null);
+        }
+      });
   }
 
   function refreshAssets() {
-    const qs = activeFolder === "all" ? "" : `?folderId=${activeFolder}`;
+    const qs = openFolder ? `?folderId=${openFolder.id}` : "?folderId=uncategorized";
     fetch(`/api/admin/media${qs}`)
       .then((r) => r.json())
       .then(setAssets);
@@ -44,7 +51,7 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
   useEffect(() => {
     refreshAssets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeFolder]);
+  }, [openFolder]);
 
   async function handleCreateFolder() {
     const name = prompt("Folder name:");
@@ -57,7 +64,7 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     if (res.ok) refreshFolders();
   }
 
-  async function handleRenameFolder(folder: Folder) {
+  async function handleRenameFolder(folder: FolderType) {
     const name = prompt("Rename folder:", folder.name);
     if (!name || !name.trim() || name === folder.name) return;
     const res = await fetch(`/api/admin/media/folders/${folder.id}`, {
@@ -68,13 +75,12 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     if (res.ok) refreshFolders();
   }
 
-  async function handleDeleteFolder(folder: Folder) {
+  async function handleDeleteFolder(folder: FolderType) {
     if (!confirm(`Delete folder "${folder.name}"? Images inside will move to Uncategorized, not be deleted.`)) return;
     const res = await fetch(`/api/admin/media/folders/${folder.id}`, { method: "DELETE" });
     if (res.ok) {
+      if (openFolder?.id === folder.id) setOpenFolder(null);
       refreshFolders();
-      if (activeFolder === folder.id) setActiveFolder("all");
-      else refreshAssets();
     }
   }
 
@@ -84,9 +90,7 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
       for (const file of Array.from(files)) {
         const formData = new FormData();
         formData.append("file", file);
-        if (activeFolder !== "all" && activeFolder !== "uncategorized") {
-          formData.append("folderId", activeFolder);
-        }
+        if (openFolder) formData.append("folderId", openFolder.id);
         await fetch("/api/admin/upload", { method: "POST", body: formData });
       }
       refreshAssets();
@@ -128,76 +132,34 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     }
   }
 
+  const showEmptyState = !loading && assets.length === 0 && (openFolder || folders.length === 0);
+
   return (
-    <div className="flex flex-col gap-4 sm:flex-row">
-      <div className="w-full shrink-0 sm:w-52">
-        <div className="rounded-2xl border border-brand-border bg-white p-3">
+    <div>
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5 text-sm">
           <button
             type="button"
-            onClick={() => setActiveFolder("all")}
-            className={`mb-1 w-full rounded-lg px-3 py-2 text-left text-sm font-medium ${
-              activeFolder === "all" ? "bg-brand-pink/10 text-brand-pink" : "text-brand-ink hover:bg-brand-surface"
-            }`}
+            onClick={() => setOpenFolder(null)}
+            className={`font-semibold ${openFolder ? "text-brand-muted hover:text-brand-ink" : "text-brand-ink"}`}
           >
-            All Images
+            Media Library
           </button>
-          <button
-            type="button"
-            onClick={() => setActiveFolder("uncategorized")}
-            className={`mb-1 w-full rounded-lg px-3 py-2 text-left text-sm font-medium ${
-              activeFolder === "uncategorized" ? "bg-brand-pink/10 text-brand-pink" : "text-brand-ink hover:bg-brand-surface"
-            }`}
-          >
-            Uncategorized
-          </button>
-          {folders.map((f) => (
-            <div
-              key={f.id}
-              className={`group mb-1 flex items-center gap-1 rounded-lg px-1 ${
-                activeFolder === f.id ? "bg-brand-pink/10" : "hover:bg-brand-surface"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => setActiveFolder(f.id)}
-                className={`flex flex-1 items-center gap-1.5 py-2 pl-2 text-left text-sm font-medium ${
-                  activeFolder === f.id ? "text-brand-pink" : "text-brand-ink"
-                }`}
-              >
-                <FolderClosed size={14} className="shrink-0" />
-                <span className="truncate">{f.name}</span>
-                <span className="shrink-0 text-xs text-brand-muted">({f._count.assets})</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleRenameFolder(f)}
-                aria-label="Rename folder"
-                className="shrink-0 p-1 text-brand-muted opacity-0 hover:text-brand-ink group-hover:opacity-100"
-              >
-                <Pencil size={12} />
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDeleteFolder(f)}
-                aria-label="Delete folder"
-                className="shrink-0 p-1 text-brand-muted opacity-0 hover:text-red-500 group-hover:opacity-100"
-              >
-                <Trash2 size={12} />
-              </button>
-            </div>
-          ))}
+          {openFolder && (
+            <>
+              <ChevronRight size={14} className="text-brand-muted" />
+              <span className="font-semibold text-brand-ink">{openFolder.name}</span>
+            </>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={handleCreateFolder}
-            className="mt-1 flex w-full items-center gap-1.5 rounded-lg px-3 py-2 text-left text-sm font-medium text-brand-pink hover:bg-brand-surface"
+            className="flex items-center gap-1.5 rounded-full border border-brand-border px-4 py-2 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
           >
-            <FolderPlus size={14} /> New folder
+            <FolderPlus size={15} /> New folder
           </button>
-        </div>
-      </div>
-
-      <div className="flex-1">
-        <div className="mb-4 flex justify-end">
           <input
             ref={inputRef}
             type="file"
@@ -220,65 +182,123 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
             {uploading ? "Uploading..." : "Upload images"}
           </button>
         </div>
+      </div>
 
-        {loading ? (
-          <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">Loading...</p>
-        ) : assets.length === 0 ? (
-          <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
-            No images in this folder yet. Upload one, or move existing images here.
-          </p>
-        ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {assets.map((a) => (
-              <div key={a.id} className="overflow-hidden rounded-xl border border-brand-border bg-white">
-                <div className="relative aspect-square w-full bg-brand-surface">
-                  <Image src={a.url} alt={a.name ?? ""} fill className="object-cover" unoptimized />
-                </div>
-                <div className="p-2.5">
-                  <p className="truncate text-xs font-medium text-brand-ink" title={a.name ?? a.url}>
-                    {a.name ?? a.url.split("/").pop()}
-                  </p>
-                  <p className="text-[10px] text-brand-muted">
-                    {a.width && a.height ? `${a.width}×${a.height} · ` : ""}
-                    {formatSize(a.sizeBytes)}
-                  </p>
-                  <div className="mt-2 flex items-center justify-between gap-1">
-                    <select
-                      value={activeFolder === "uncategorized" ? "uncategorized" : activeFolder === "all" ? "" : activeFolder}
-                      onChange={(e) => e.target.value && handleMoveAsset(a, e.target.value)}
-                      className="w-full max-w-[90px] truncate rounded border border-brand-border px-1 py-0.5 text-[10px] text-brand-muted outline-none"
-                    >
-                      <option value="">Move to...</option>
-                      <option value="uncategorized">Uncategorized</option>
-                      {folders.map((f) => (
-                        <option key={f.id} value={f.id}>
-                          {f.name}
-                        </option>
-                      ))}
-                    </select>
+      {loading ? (
+        <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">Loading...</p>
+      ) : showEmptyState && !openFolder ? (
+        <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
+          No folders or images yet. Create a folder or upload your first image.
+        </p>
+      ) : showEmptyState ? (
+        <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
+          No images in this folder yet. Upload one, or move existing images here.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {!openFolder &&
+            folders.map((f) => (
+              <div key={f.id} className="group relative overflow-hidden rounded-xl border border-brand-border bg-white">
+                <button
+                  type="button"
+                  onClick={() => setOpenFolder(f)}
+                  className="flex w-full flex-col items-center gap-2 px-3 pb-3 pt-6 text-center hover:bg-brand-surface"
+                >
+                  <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-500">
+                    <Folder size={30} fill="currentColor" className="opacity-90" />
+                  </span>
+                  <span className="w-full truncate text-xs font-semibold text-brand-ink">{f.name}</span>
+                  <span className="text-[10px] text-brand-muted">
+                    {f._count.assets} {f._count.assets === 1 ? "image" : "images"}
+                  </span>
+                </button>
+                <div className="absolute right-1.5 top-1.5 opacity-0 group-hover:opacity-100">
+                  <div className="relative">
                     <button
                       type="button"
-                      onClick={() => handleRenameAsset(a)}
-                      aria-label="Rename"
-                      className="shrink-0 text-brand-muted hover:text-brand-ink"
+                      onClick={() => setAssetMenuOpen(assetMenuOpen === f.id ? null : f.id)}
+                      aria-label="Folder options"
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-brand-muted shadow hover:text-brand-ink"
                     >
-                      <Pencil size={12} />
+                      <MoreHorizontal size={14} />
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteAsset(a)}
-                      aria-label="Delete"
-                      className="shrink-0 text-brand-muted hover:text-red-500"
-                    >
-                      <Trash2 size={12} />
-                    </button>
+                    {assetMenuOpen === f.id && (
+                      <div className="absolute right-0 top-7 z-10 w-32 overflow-hidden rounded-lg border border-brand-border bg-white py-1 shadow-lg">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAssetMenuOpen(null);
+                            handleRenameFolder(f);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-brand-ink hover:bg-brand-surface"
+                        >
+                          <Pencil size={12} /> Rename
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAssetMenuOpen(null);
+                            handleDeleteFolder(f);
+                          }}
+                          className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 hover:bg-red-50"
+                        >
+                          <Trash2 size={12} /> Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             ))}
-          </div>
-        )}
-      </div>
+
+          {assets.map((a) => (
+            <div key={a.id} className="overflow-hidden rounded-xl border border-brand-border bg-white">
+              <div className="relative aspect-square w-full bg-brand-surface">
+                <Image src={a.url} alt={a.name ?? ""} fill className="object-cover" unoptimized />
+              </div>
+              <div className="p-2.5">
+                <p className="truncate text-xs font-medium text-brand-ink" title={a.name ?? a.url}>
+                  {a.name ?? a.url.split("/").pop()}
+                </p>
+                <p className="text-[10px] text-brand-muted">
+                  {a.width && a.height ? `${a.width}×${a.height} · ` : ""}
+                  {formatSize(a.sizeBytes)}
+                </p>
+                <div className="mt-2 flex items-center justify-between gap-1">
+                  <select
+                    value={openFolder ? openFolder.id : "uncategorized"}
+                    onChange={(e) => e.target.value && handleMoveAsset(a, e.target.value)}
+                    className="w-full max-w-[90px] truncate rounded border border-brand-border px-1 py-0.5 text-[10px] text-brand-muted outline-none"
+                  >
+                    <option value="uncategorized">Uncategorized</option>
+                    {folders.map((f) => (
+                      <option key={f.id} value={f.id}>
+                        {f.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => handleRenameAsset(a)}
+                    aria-label="Rename"
+                    className="shrink-0 text-brand-muted hover:text-brand-ink"
+                  >
+                    <Pencil size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteAsset(a)}
+                    aria-label="Delete"
+                    className="shrink-0 text-brand-muted hover:text-red-500"
+                  >
+                    <Trash2 size={12} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
