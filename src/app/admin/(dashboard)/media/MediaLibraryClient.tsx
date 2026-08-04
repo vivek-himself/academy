@@ -78,19 +78,19 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     }
   }
 
-  async function handleUpload(file: File) {
+  async function handleUpload(files: FileList | File[]) {
     setUploading(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-      if (activeFolder !== "all" && activeFolder !== "uncategorized") {
-        formData.append("folderId", activeFolder);
+      for (const file of Array.from(files)) {
+        const formData = new FormData();
+        formData.append("file", file);
+        if (activeFolder !== "all" && activeFolder !== "uncategorized") {
+          formData.append("folderId", activeFolder);
+        }
+        await fetch("/api/admin/upload", { method: "POST", body: formData });
       }
-      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      if (res.ok) {
-        refreshAssets();
-        refreshFolders();
-      }
+      refreshAssets();
+      refreshFolders();
     } finally {
       setUploading(false);
     }
@@ -201,11 +201,12 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
           <input
             ref={inputRef}
             type="file"
+            multiple
             accept="image/jpeg,image/png,image/webp,image/svg+xml,image/gif"
             className="hidden"
             onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleUpload(file);
+              const files = e.target.files;
+              if (files && files.length) handleUpload(files);
               e.target.value = "";
             }}
           />
@@ -216,7 +217,7 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
             className="flex items-center gap-1.5 rounded-full bg-brand-pink px-4 py-2 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
           >
             {uploading ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
-            {uploading ? "Uploading..." : "Upload image"}
+            {uploading ? "Uploading..." : "Upload images"}
           </button>
         </div>
 
