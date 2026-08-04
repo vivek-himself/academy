@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "./Logo";
-import { LinkedInIcon, InstagramIcon } from "@/components/ui/SocialIcons";
 import { prisma } from "@/lib/prisma";
 import { safeJsonParse } from "@/lib/json";
+import { SOCIAL_PLATFORMS, normalizeSocialLinks } from "@/lib/socialLinks";
 
 function FooterColumn({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
@@ -30,11 +30,11 @@ export default async function Footer() {
   ]);
 
   const byColumn = (col: string) => links.filter((l) => l.column === col);
-  const rawSocial = safeJsonParse<{ linkedin?: string; instagram?: string }>(settings?.socialLinksJson, {});
-  const social = {
-    linkedin: rawSocial.linkedin && rawSocial.linkedin !== "#" ? rawSocial.linkedin : undefined,
-    instagram: rawSocial.instagram && rawSocial.instagram !== "#" ? rawSocial.instagram : undefined,
-  };
+  const socialLinks = normalizeSocialLinks(safeJsonParse<object>(settings?.socialLinksJson, {}));
+  const visibleSocialLinks = SOCIAL_PLATFORMS.filter((p) => {
+    const link = socialLinks[p.key];
+    return link.url && !link.hidden;
+  });
   const paymentMethods = safeJsonParse<{ label: string; imageUrl: string }[]>(paymentBlock?.dataJson, []).filter(
     (pm) => pm.imageUrl
   );
@@ -45,30 +45,20 @@ export default async function Footer() {
         <div>
           <Logo />
           <p className="mt-4 max-w-[220px] text-sm text-brand-muted">{settings?.tagline || "Marketing Mastery, One Class at a Time."}</p>
-          {(social.linkedin || social.instagram) && (
-            <div className="mt-5 flex gap-3">
-              {social.linkedin && (
+          {visibleSocialLinks.length > 0 && (
+            <div className="mt-5 flex flex-wrap gap-3">
+              {visibleSocialLinks.map(({ key, label, icon: Icon }) => (
                 <a
-                  href={social.linkedin}
-                  target="_blank"
+                  key={key}
+                  href={socialLinks[key].url}
+                  target={socialLinks[key].url.startsWith("mailto:") ? undefined : "_blank"}
                   rel="noopener noreferrer"
-                  aria-label="LinkedIn"
+                  aria-label={label}
                   className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-ink/15 text-brand-ink hover:bg-white"
                 >
-                  <LinkedInIcon size={15} />
+                  <Icon size={15} />
                 </a>
-              )}
-              {social.instagram && (
-                <a
-                  href={social.instagram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-brand-ink/15 text-brand-ink hover:bg-white"
-                >
-                  <InstagramIcon size={15} />
-                </a>
-              )}
+              ))}
             </div>
           )}
           <p className="mt-6 text-xs font-medium text-brand-muted">Payment Methods</p>

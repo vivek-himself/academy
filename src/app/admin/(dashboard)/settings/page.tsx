@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { safeJsonParse } from "@/lib/json";
+import { normalizeSocialLinks } from "@/lib/socialLinks";
 import PageHeader from "../../components/PageHeader";
 import SettingsEditor from "./SettingsEditor";
 
@@ -7,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
   const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
-  const social = safeJsonParse<{ linkedin?: string; instagram?: string }>(settings?.socialLinksJson, {});
+  const socialLinks = normalizeSocialLinks(safeJsonParse<object>(settings?.socialLinksJson, {}));
 
   return (
     <div>
@@ -19,8 +20,7 @@ export default async function SettingsPage() {
           promoBarText: settings?.promoBarText ?? "",
           defaultSeoTitle: settings?.defaultSeoTitle ?? "",
           defaultSeoDescription: settings?.defaultSeoDescription ?? "",
-          linkedin: social.linkedin ?? "",
-          instagram: social.instagram ?? "",
+          socialLinks,
         }}
       />
     </div>

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 import { TextField, TextAreaField } from "../../components/FormField";
+import { SOCIAL_PLATFORMS, type SocialLinksMap } from "@/lib/socialLinks";
 
 type Settings = {
   siteName: string;
@@ -10,8 +12,7 @@ type Settings = {
   promoBarText: string;
   defaultSeoTitle: string;
   defaultSeoDescription: string;
-  linkedin: string;
-  instagram: string;
+  socialLinks: SocialLinksMap;
 };
 
 export default function SettingsEditor({ initial }: { initial: Settings }) {
@@ -30,6 +31,17 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
     setSettings((prev) => ({ ...prev, [key]: v }));
   }
 
+  function setSocialUrl(key: keyof SocialLinksMap, url: string) {
+    setSettings((prev) => ({ ...prev, socialLinks: { ...prev.socialLinks, [key]: { ...prev.socialLinks[key], url } } }));
+  }
+
+  function toggleSocialHidden(key: keyof SocialLinksMap) {
+    setSettings((prev) => ({
+      ...prev,
+      socialLinks: { ...prev.socialLinks, [key]: { ...prev.socialLinks[key], hidden: !prev.socialLinks[key].hidden } },
+    }));
+  }
+
   async function handleSaveSettings() {
     setSaving(true);
     setStatus("");
@@ -42,7 +54,7 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
         promoBarText: settings.promoBarText,
         defaultSeoTitle: settings.defaultSeoTitle,
         defaultSeoDescription: settings.defaultSeoDescription,
-        socialLinksJson: JSON.stringify({ linkedin: settings.linkedin, instagram: settings.instagram }),
+        socialLinksJson: JSON.stringify(settings.socialLinks),
       }),
     });
     setSaving(false);
@@ -88,9 +100,46 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
           value={settings.promoBarText}
           onChange={(v) => set("promoBarText", v)}
         />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <TextField label="LinkedIn URL" value={settings.linkedin} onChange={(v) => set("linkedin", v)} />
-          <TextField label="Instagram URL" value={settings.instagram} onChange={(v) => set("instagram", v)} />
+      </div>
+
+      <div className="flex flex-col gap-4 rounded-2xl border border-brand-border bg-white p-6">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Social Media Links</h3>
+          <p className="mt-1 text-xs text-brand-muted">
+            Add the URL for each platform you use. Hide any platform you don&apos;t want shown in the site footer — it stays saved, just not displayed.
+          </p>
+        </div>
+        <div className="flex flex-col divide-y divide-brand-border">
+          {SOCIAL_PLATFORMS.map(({ key, label, placeholder, icon: Icon }) => {
+            const link = settings.socialLinks[key];
+            return (
+              <div key={key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-border text-brand-ink">
+                  <Icon size={16} />
+                </span>
+                <div className="w-28 shrink-0 text-sm font-semibold text-brand-ink">{label}</div>
+                <input
+                  value={link.url}
+                  onChange={(e) => setSocialUrl(key, e.target.value)}
+                  placeholder={placeholder}
+                  className="min-w-0 flex-1 rounded-lg border border-brand-border px-3 py-2 text-sm outline-none focus:border-brand-pink"
+                />
+                <button
+                  type="button"
+                  onClick={() => toggleSocialHidden(key)}
+                  aria-pressed={!link.hidden}
+                  className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition-colors ${
+                    link.hidden
+                      ? "border-brand-border text-brand-muted hover:bg-brand-surface"
+                      : "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  }`}
+                >
+                  {link.hidden ? <EyeOff size={13} /> : <Eye size={13} />}
+                  {link.hidden ? "Hidden" : "Visible"}
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
