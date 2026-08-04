@@ -8,7 +8,7 @@ export default function GrowSkill({ block }: { block: Block }) {
   return (
     <section className="bg-brand-surface py-14">
       <div className="container-page grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
-        <div className="relative mx-auto aspect-square w-full max-w-sm">
+        <div className="relative mx-auto aspect-square w-full max-w-[538px]">
           <Image
             src={block.imageUrl || "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=700&q=80"}
             alt={block.title}
