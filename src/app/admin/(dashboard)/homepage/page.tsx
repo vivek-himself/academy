@@ -6,8 +6,8 @@ import HomepageEditor from "./HomepageEditor";
 export const dynamic = "force-dynamic";
 
 export default async function HomepageContentPage() {
-  const [heroSlide, stats, trustLogos, blocks] = await Promise.all([
-    prisma.heroSlide.findFirst({ orderBy: { order: "asc" } }),
+  const [heroSlides, stats, trustLogos, blocks] = await Promise.all([
+    prisma.heroSlide.findMany({ orderBy: { order: "asc" } }),
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
     prisma.contentBlock.findMany({
@@ -21,18 +21,14 @@ export default async function HomepageContentPage() {
     <div>
       <PageHeader title="Homepage Content" subtitle="Edit every section of your homepage" />
       <HomepageEditor
-        heroSlide={
-          heroSlide
-            ? {
-                title: heroSlide.title,
-                subtitle: heroSlide.subtitle,
-                ctaLabel: heroSlide.ctaLabel,
-                ctaHref: heroSlide.ctaHref,
-                imageDesktopUrl: heroSlide.imageDesktopUrl ?? "",
-                imageMobileUrl: heroSlide.imageMobileUrl ?? "",
-              }
-            : { title: "", subtitle: "", ctaLabel: "", ctaHref: "/courses", imageDesktopUrl: "", imageMobileUrl: "" }
-        }
+        heroSlides={heroSlides.map((s) => ({
+          title: s.title,
+          subtitle: s.subtitle,
+          ctaLabel: s.ctaLabel,
+          ctaHref: s.ctaHref,
+          imageDesktopUrl: s.imageDesktopUrl ?? "",
+          imageMobileUrl: s.imageMobileUrl ?? "",
+        }))}
         stats={stats.map((s) => ({ icon: s.icon, value: s.value, label: s.label }))}
         trustLogos={trustLogos.map((l) => ({ name: l.name, imageUrl: l.imageUrl ?? "" }))}
         techStack={safeJsonParse(blockMap["home_tech_stack"], { eyebrow: "", title: "", description: "", ctaLabel: "", imageUrl: "" })}

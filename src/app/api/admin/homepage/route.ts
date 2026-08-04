@@ -27,12 +27,21 @@ export async function PATCH(req: NextRequest) {
   const body = await req.json();
 
   await prisma.$transaction(async (tx) => {
-    if (body.heroSlide) {
-      const existing = await tx.heroSlide.findFirst({ orderBy: { order: "asc" } });
-      if (existing) {
-        await tx.heroSlide.update({ where: { id: existing.id }, data: body.heroSlide });
-      } else {
-        await tx.heroSlide.create({ data: { ...body.heroSlide, order: 0 } });
+    if (Array.isArray(body.heroSlides)) {
+      await tx.heroSlide.deleteMany({});
+      for (let i = 0; i < body.heroSlides.length; i++) {
+        const s = body.heroSlides[i];
+        await tx.heroSlide.create({
+          data: {
+            title: s.title,
+            subtitle: s.subtitle,
+            ctaLabel: s.ctaLabel,
+            ctaHref: s.ctaHref,
+            imageDesktopUrl: s.imageDesktopUrl || null,
+            imageMobileUrl: s.imageMobileUrl || null,
+            order: i,
+          },
+        });
       }
     }
 

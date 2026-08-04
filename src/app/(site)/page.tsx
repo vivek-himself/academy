@@ -16,8 +16,8 @@ import { safeJsonParse } from "@/lib/json";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [heroSlide, stats, trustLogos, blocks, courses, faqs] = await Promise.all([
-    prisma.heroSlide.findFirst({ orderBy: { order: "asc" } }),
+  const [heroSlides, stats, trustLogos, blocks, courses, faqs] = await Promise.all([
+    prisma.heroSlide.findMany({ orderBy: { order: "asc" } }),
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
     prisma.contentBlock.findMany({
@@ -60,16 +60,16 @@ export default async function Home() {
   return (
     <>
       <Hero
-        slide={
-          heroSlide
-            ? {
-                title: heroSlide.title,
-                subtitle: heroSlide.subtitle,
-                ctaLabel: heroSlide.ctaLabel,
-                ctaHref: heroSlide.ctaHref,
-                imageDesktopUrl: heroSlide.imageDesktopUrl,
-              }
-            : { title: "Learn something new everyday.", subtitle: "", ctaLabel: "Explore Courses", ctaHref: "/courses" }
+        slides={
+          heroSlides.length
+            ? heroSlides.map((s) => ({
+                title: s.title,
+                subtitle: s.subtitle,
+                ctaLabel: s.ctaLabel,
+                ctaHref: s.ctaHref,
+                imageDesktopUrl: s.imageDesktopUrl,
+              }))
+            : [{ title: "Learn something new everyday.", subtitle: "", ctaLabel: "Explore Courses", ctaHref: "/courses" }]
         }
       />
       <StatsBar stats={stats} />

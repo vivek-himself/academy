@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Plus, Trash2 } from "lucide-react";
 import { TextField, TextAreaField } from "../../components/FormField";
 import ImageUploadField from "../../components/ImageUploadField";
 import StringListField from "../../components/StringListField";
 import RepeaterField from "../../components/RepeaterField";
 
 type HeroSlide = { title: string; subtitle: string; ctaLabel: string; ctaHref: string; imageDesktopUrl: string; imageMobileUrl: string };
+const EMPTY_HERO_SLIDE: HeroSlide = { title: "", subtitle: "", ctaLabel: "", ctaHref: "/courses", imageDesktopUrl: "", imageMobileUrl: "" };
 type Stat = { icon: string; value: string; label: string };
 type TrustLogo = { name: string; imageUrl: string };
 type EyebrowBlock = { eyebrow: string; title: string; description: string; ctaLabel: string; imageUrl: string };
@@ -25,7 +27,7 @@ function SectionCard({ title, description, children }: { title: string; descript
 }
 
 export default function HomepageEditor({
-  heroSlide: initHero,
+  heroSlides: initHeroSlides,
   stats: initStats,
   trustLogos: initTrustLogos,
   techStack: initTechStack,
@@ -33,7 +35,7 @@ export default function HomepageEditor({
   randomPromo: initRandomPromo,
   ctaBanner: initCtaBanner,
 }: {
-  heroSlide: HeroSlide;
+  heroSlides: HeroSlide[];
   stats: Stat[];
   trustLogos: TrustLogo[];
   techStack: EyebrowBlock;
@@ -42,7 +44,7 @@ export default function HomepageEditor({
   ctaBanner: CtaBanner;
 }) {
   const router = useRouter();
-  const [heroSlide, setHeroSlide] = useState(initHero);
+  const [heroSlides, setHeroSlides] = useState(initHeroSlides.length ? initHeroSlides : [EMPTY_HERO_SLIDE]);
   const [stats, setStats] = useState(initStats);
   const [trustLogos, setTrustLogos] = useState(initTrustLogos);
   const [techStack, setTechStack] = useState(initTechStack);
@@ -59,7 +61,7 @@ export default function HomepageEditor({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        heroSlide,
+        heroSlides,
         stats,
         trustLogos,
         blocks: {
@@ -81,28 +83,70 @@ export default function HomepageEditor({
 
   return (
     <div className="flex flex-col gap-6">
-      <SectionCard title="Hero Banner" description="The large purple banner at the top of the homepage.">
-        <TextField label="Title" maxLength={80} value={heroSlide.title} onChange={(v) => setHeroSlide({ ...heroSlide, title: v })} />
-        <TextAreaField
-          label="Subtitle"
-          rows={2}
-          maxLength={160}
-          value={heroSlide.subtitle}
-          onChange={(v) => setHeroSlide({ ...heroSlide, subtitle: v })}
-        />
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <TextField label="Button Label" maxLength={30} value={heroSlide.ctaLabel} onChange={(v) => setHeroSlide({ ...heroSlide, ctaLabel: v })} />
-          <TextField label="Button Link" value={heroSlide.ctaHref} onChange={(v) => setHeroSlide({ ...heroSlide, ctaHref: v })} />
-        </div>
-        <ImageUploadField
-          label="Hero Image"
-          desktopValue={heroSlide.imageDesktopUrl}
-          onDesktopChange={(v) => setHeroSlide({ ...heroSlide, imageDesktopUrl: v })}
-          mobileValue={heroSlide.imageMobileUrl}
-          onMobileChange={(v) => setHeroSlide({ ...heroSlide, imageMobileUrl: v })}
-          desktopSize="900 × 560px"
-          mobileSize="700 × 700px"
-        />
+      <SectionCard
+        title="Hero Slideshow"
+        description="The banner at the top of the homepage. Add multiple slides to have it auto-advance every few seconds."
+      >
+        {heroSlides.map((slide, i) => (
+          <div key={i} className="rounded-xl border border-brand-border p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wide text-brand-muted">Slide {i + 1}</span>
+              {heroSlides.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => setHeroSlides(heroSlides.filter((_, idx) => idx !== i))}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:underline"
+                >
+                  <Trash2 size={13} /> Remove
+                </button>
+              )}
+            </div>
+            <div className="flex flex-col gap-4">
+              <TextField
+                label="Title"
+                maxLength={80}
+                value={slide.title}
+                onChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, title: v } : s)))}
+              />
+              <TextAreaField
+                label="Subtitle"
+                rows={2}
+                maxLength={160}
+                value={slide.subtitle}
+                onChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, subtitle: v } : s)))}
+              />
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <TextField
+                  label="Button Label"
+                  maxLength={30}
+                  value={slide.ctaLabel}
+                  onChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, ctaLabel: v } : s)))}
+                />
+                <TextField
+                  label="Button Link"
+                  value={slide.ctaHref}
+                  onChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, ctaHref: v } : s)))}
+                />
+              </div>
+              <ImageUploadField
+                label="Slide Image"
+                desktopValue={slide.imageDesktopUrl}
+                onDesktopChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, imageDesktopUrl: v } : s)))}
+                mobileValue={slide.imageMobileUrl}
+                onMobileChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, imageMobileUrl: v } : s)))}
+                desktopSize="1600 × 700px — leave room on the left for the text overlay"
+                mobileSize="700 × 700px"
+              />
+            </div>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => setHeroSlides([...heroSlides, EMPTY_HERO_SLIDE])}
+          className="flex items-center gap-1.5 self-start text-xs font-semibold text-brand-pink hover:underline"
+        >
+          <Plus size={13} /> Add slide
+        </button>
       </SectionCard>
 
       <SectionCard title="Stats Bar" description="The 4 stat tiles shown just below the hero (exactly 4 recommended).">
