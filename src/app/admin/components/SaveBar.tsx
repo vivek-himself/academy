@@ -20,7 +20,8 @@ export default function SaveBar({
     <>
       {/* Spacer so the fixed bar below never covers the last field in the form. */}
       <div className="h-20" aria-hidden="true" />
-      <div className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center gap-4 border-t border-brand-border bg-white/95 px-8 backdrop-blur lg:left-64">
+      <div className="fixed inset-x-0 bottom-0 z-30 flex h-16 items-center justify-end gap-4 border-t border-brand-border bg-white/95 px-8 backdrop-blur lg:left-64">
+        {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
         <button
           type={type}
           onClick={type === "button" ? onSave : undefined}
@@ -29,7 +30,6 @@ export default function SaveBar({
         >
           {saving ? savingLabel : label}
         </button>
-        {status && <p className="text-sm font-medium text-brand-ink">{status}</p>}
       </div>
     </>
   );
