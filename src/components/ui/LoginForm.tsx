@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Eye, EyeOff, Mail, X, ChevronDown } from "lucide-react";
+import { Eye, EyeOff, UserPlus, X, ChevronDown } from "lucide-react";
 import SocialAuthButtons from "./SocialAuthButtons";
 import { getLastUser, setLastUser, clearLastUser } from "@/lib/lastUserCookie";
 
@@ -94,14 +94,13 @@ export default function LoginForm() {
     <ModalShell>
       <div className="grid grid-cols-1 gap-8 px-8 pb-8 pt-6 sm:grid-cols-2 sm:divide-x sm:divide-brand-border">
         <div className="sm:pr-8">
-          <h3 className="mb-4 text-lg font-bold text-brand-ink">Sign up</h3>
           <div className="flex flex-col gap-3">
             <SocialAuthButtons />
             <Link
               href="/signup"
               className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
             >
-              <Mail size={16} /> Sign up with email
+              <UserPlus size={16} /> Create New Account
             </Link>
           </div>
           <p className="mt-4 text-xs text-brand-muted">
