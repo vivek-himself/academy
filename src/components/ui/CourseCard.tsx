@@ -3,12 +3,28 @@ import Link from "next/link";
 import { Users, Layers, Clock, Heart } from "lucide-react";
 import type { Course } from "@/lib/data";
 
-function SignalBarsIcon() {
+const LEVEL_BARS: Record<string, { count: number; color: string }> = {
+  Beginner: { count: 1, color: "#22C55E" },
+  Intermediate: { count: 2, color: "#F59E0B" },
+  Master: { count: 3, color: "#EF4444" },
+};
+
+function SignalBarsIcon({ level }: { level: string }) {
+  const { count, color } = LEVEL_BARS[level] ?? LEVEL_BARS.Beginner;
+  const heights = [5, 8, 12];
   return (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="shrink-0">
-      <rect x="0" y="7" width="2.5" height="5" rx="0.75" fill="#22C55E" />
-      <rect x="4.75" y="4" width="2.5" height="8" rx="0.75" fill="#F59E0B" />
-      <rect x="9.5" y="0" width="2.5" height="12" rx="0.75" fill="#EF4444" />
+      {heights.map((h, i) => (
+        <rect
+          key={i}
+          x={i * 4.75}
+          y={12 - h}
+          width="2.5"
+          height={h}
+          rx="0.75"
+          fill={i < count ? color : "#E5E7EB"}
+        />
+      ))}
     </svg>
   );
 }
@@ -31,7 +47,7 @@ export default function CourseCard({ course }: { course: Course }) {
           <Heart size={14} />
         </span>
         <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-brand-ink shadow">
-          {course.level} <SignalBarsIcon />
+          {course.level} <SignalBarsIcon level={course.level} />
         </span>
       </div>
       <div className="flex flex-1 flex-col gap-3 pt-4">
