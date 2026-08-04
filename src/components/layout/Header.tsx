@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ChevronDown, Menu, X, LayoutGrid } from "lucide-react";
 import Logo from "./Logo";
 import { navLinks } from "@/lib/data";
 
@@ -64,8 +65,16 @@ function MobileAccordion({
   );
 }
 
-export default function Header() {
+export default function Header({ user }: { user: { name: string } | null }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setMobileOpen(false);
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-brand-border bg-[#f7f6f9]/95 backdrop-blur">
@@ -81,18 +90,38 @@ export default function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/login"
-            className="rounded-full border border-brand-ink/15 px-5 py-2 text-sm font-semibold text-brand-ink hover:border-brand-ink/30"
-          >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="rounded-full bg-brand-pink px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-pink/30 hover:bg-brand-pink-dark"
-          >
-            Sign Up
-          </Link>
+          {user ? (
+            <>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2 rounded-full border border-brand-ink/15 px-5 py-2 text-sm font-semibold text-brand-ink hover:border-brand-ink/30"
+              >
+                <LayoutGrid size={15} />
+                {user.name.split(" ")[0]}
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="rounded-full bg-brand-pink px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-pink/30 hover:bg-brand-pink-dark"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-full border border-brand-ink/15 px-5 py-2 text-sm font-semibold text-brand-ink hover:border-brand-ink/30"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="rounded-full bg-brand-pink px-5 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-pink/30 hover:bg-brand-pink-dark"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -130,18 +159,40 @@ export default function Header() {
             <MobileAccordion label="Resources" items={navLinks.resources} />
 
             <div className="mt-6 flex flex-col gap-3">
-              <Link
-                href="/login"
-                className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
-              >
-                Sign Up
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
+                  >
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/signup"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

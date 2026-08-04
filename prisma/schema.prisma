@@ -19,6 +19,29 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+model User {
+  id           String       @id @default(cuid())
+  name         String
+  email        String       @unique
+  passwordHash String
+  avatarUrl    String?
+  enrollments  Enrollment[]
+  createdAt    DateTime     @default(now())
+}
+
+model Enrollment {
+  id                   String   @id @default(cuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId             String
+  course               Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  completedModulesJson String   @default("[]")
+  enrolledAt           DateTime @default(now())
+  lastAccessedAt       DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
 model ContactSubmission {
   id        String   @id @default(cuid())
   name      String
@@ -107,6 +130,7 @@ model Course {
   modulesJson     String         @default("[]")
   toolsJson       String         @default("[]")
   reviews         CourseReview[]
+  enrollments     Enrollment[]
   seoTitle        String?
   seoDescription  String?
   published       Boolean        @default(true)

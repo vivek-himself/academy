@@ -4,6 +4,8 @@ import "../globals.css";
 import PromoBar from "@/components/layout/PromoBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { prisma } from "@/lib/prisma";
+import { getStudentSession } from "@/lib/studentAuth";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -31,11 +33,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getStudentSession();
+  const user = session ? await prisma.user.findUnique({ where: { id: session.userId }, select: { name: true } }) : null;
+
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
@@ -46,7 +51,7 @@ export default function RootLayout({
           Skip to content
         </a>
         <PromoBar />
-        <Header />
+        <Header user={user} />
         <main id="main-content" className="flex-1">
           {children}
         </main>

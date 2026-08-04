@@ -43,7 +43,7 @@ export const navSections: NavSection[] = [
       { label: "Courses & Programs", href: "/admin/courses", icon: BookOpen },
       { label: "Course Categories", href: "/admin/categories", icon: Tag },
       { label: "Mentors & Instructors", href: "/admin/mentors", icon: UserCircle },
-      { label: "Users & Students", href: "/admin/students", icon: Users, stub: true },
+      { label: "Users & Students", href: "/admin/students", icon: Users },
       { label: "Payments & Orders", href: "/admin/payments", icon: ShoppingCart, stub: true },
       { label: "Certificates", href: "/admin/certificates", icon: Award, stub: true },
     ],
