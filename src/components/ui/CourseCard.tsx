@@ -17,14 +17,14 @@ export default function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/courses/${course.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-brand-border bg-white transition-shadow hover:shadow-lg"
+      className="group flex flex-col rounded-2xl border border-brand-border bg-white p-3 transition-shadow hover:shadow-lg"
     >
-      <div className="relative aspect-[16/11] w-full overflow-hidden">
+      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
         <Image
           src={course.image}
           alt={course.title}
           fill
-          sizes="(max-width: 768px) 100vw, 300px"
+          sizes="(max-width: 768px) 100vw, 320px"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
         <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-brand-ink">
@@ -34,7 +34,7 @@ export default function CourseCard({ course }: { course: Course }) {
           {course.level} <SignalBarsIcon />
         </span>
       </div>
-      <div className="flex flex-1 flex-col gap-3.5 p-5">
+      <div className="flex flex-1 flex-col gap-3 pt-4">
         <span className={`w-fit rounded px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${course.badgeColor}`}>
           {course.category}
         </span>

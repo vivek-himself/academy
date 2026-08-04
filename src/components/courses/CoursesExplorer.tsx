@@ -142,7 +142,7 @@ export default function CoursesExplorer({ items }: { items: Course[] }) {
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {filtered.map((course) => (
           <CourseCard key={course.slug} course={course} />
         ))}
