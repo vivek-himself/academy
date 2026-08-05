@@ -11,7 +11,7 @@ export default async function GrowthPagesPage() {
   return (
     <div>
       <PageHeader title="Growth Program Pages" subtitle="Edit the Complete CV Rebrand, LinkedIn Optimisation, and Job Search Consultation landing pages" />
-      <div className="rounded-2xl border border-brand-border bg-white">
+      <div className="rounded-2xl border border-brand-border bg-brand-card">
         {pages.map((p) => (
           <div key={p.id} className="flex items-center justify-between border-b border-brand-border px-5 py-4 last:border-0">
             <div>

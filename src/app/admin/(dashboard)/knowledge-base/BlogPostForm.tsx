@@ -59,7 +59,7 @@ export default function BlogPostForm({ initial }: { initial: BlogPostFormValue }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-white p-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-brand-card p-6 sm:grid-cols-2">
         <TextField label="Title" required maxLength={140} value={value.title} onChange={(v) => set("title", v)} />
         <TextField
           label="Slug"
@@ -73,7 +73,7 @@ export default function BlogPostForm({ initial }: { initial: BlogPostFormValue }
         <TextField label="Category" value={value.category} onChange={(v) => set("category", v)} />
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <ImageUploadField
           label="Cover Image"
           desktopValue={value.imageDesktopUrl}
@@ -85,7 +85,7 @@ export default function BlogPostForm({ initial }: { initial: BlogPostFormValue }
         />
       </div>
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-brand-card p-6">
         <TextAreaField
           label="Excerpt"
           rows={2}
@@ -104,7 +104,7 @@ export default function BlogPostForm({ initial }: { initial: BlogPostFormValue }
         <StringListField label="Tags" items={tags} onChange={(v) => set("tagsJson", JSON.stringify(v))} />
       </div>
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">SEO</h3>
         <TextField label="SEO Title" maxLength={60} value={value.seoTitle} onChange={(v) => set("seoTitle", v)} />
         <TextAreaField label="SEO Description" rows={2} maxLength={160} value={value.seoDescription} onChange={(v) => set("seoDescription", v)} />

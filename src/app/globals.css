@@ -12,6 +12,21 @@
   --color-brand-muted: #6b6577;
   --color-brand-surface: #f5f4f8;
   --color-brand-border: #e7e4ee;
+  --color-brand-card: #ffffff;
+}
+
+/* Scoped to the admin backend's own <html> tag — never affects the public site or student dashboard. */
+:root[data-theme="dark"] {
+  --background: #131118;
+  --foreground: #f0eef4;
+
+  --color-brand-pink: #ff2f74;
+  --color-brand-pink-dark: #ff5c93;
+  --color-brand-ink: #f0eef4;
+  --color-brand-muted: #a49dae;
+  --color-brand-surface: #18151f;
+  --color-brand-border: #322e3d;
+  --color-brand-card: #1e1b26;
 }
 
 @theme inline {
@@ -27,6 +42,7 @@
   --color-brand-muted: var(--color-brand-muted);
   --color-brand-surface: var(--color-brand-surface);
   --color-brand-border: var(--color-brand-border);
+  --color-brand-card: var(--color-brand-card);
 }
 
 body {

@@ -25,7 +25,7 @@ export default async function AdminDashboardPage() {
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
-          <div key={c.label} className="rounded-2xl border border-brand-border bg-white p-6">
+          <div key={c.label} className="rounded-2xl border border-brand-border bg-brand-card p-6">
             <span className={`flex h-11 w-11 items-center justify-center rounded-xl text-white ${c.color}`}>
               <c.icon size={20} />
             </span>
@@ -35,7 +35,7 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="mt-8 rounded-2xl border border-brand-border bg-brand-card p-6">
         <div className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500 text-white">
             <BookOpen size={18} />

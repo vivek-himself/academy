@@ -32,7 +32,7 @@ export default function CoursesTable({ courses }: { courses: CourseRow[] }) {
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border bg-white">
+    <div className="rounded-2xl border border-brand-border bg-brand-card">
       {error && <p className="p-4 text-sm font-medium text-red-500">{error}</p>}
       <table className="w-full text-left text-sm">
         <thead>

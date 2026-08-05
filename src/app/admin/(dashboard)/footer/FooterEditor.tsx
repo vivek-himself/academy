@@ -60,7 +60,7 @@ export default function FooterEditor({
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-        <div className="rounded-2xl border border-brand-border bg-white p-5">
+        <div className="rounded-2xl border border-brand-border bg-brand-card p-5">
           <RepeaterField
             label='"Discover" column'
             items={discover as unknown as Record<string, string | boolean>[]}
@@ -70,7 +70,7 @@ export default function FooterEditor({
             addLabel="Add link"
           />
         </div>
-        <div className="rounded-2xl border border-brand-border bg-white p-5">
+        <div className="rounded-2xl border border-brand-border bg-brand-card p-5">
           <RepeaterField
             label='"Growth" column'
             items={growth as unknown as Record<string, string | boolean>[]}
@@ -80,7 +80,7 @@ export default function FooterEditor({
             addLabel="Add link"
           />
         </div>
-        <div className="rounded-2xl border border-brand-border bg-white p-5">
+        <div className="rounded-2xl border border-brand-border bg-brand-card p-5">
           <RepeaterField
             label='"More" column'
             items={more as unknown as Record<string, string | boolean>[]}
@@ -92,7 +92,7 @@ export default function FooterEditor({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-5">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-5">
         <p className="mb-1.5 text-sm font-semibold text-brand-ink">Payment Methods</p>
         <p className="mb-4 text-xs text-brand-muted">
           The payment icon row shown under the logo in the footer. Upload a small logo image for each one (e.g. Visa,

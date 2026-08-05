@@ -38,7 +38,7 @@ function LoginForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-brand-surface px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm rounded-2xl border border-brand-border bg-brand-card p-8 shadow-sm">
         <div className="flex flex-col items-center gap-3">
           <Image src="/logo.svg" alt="Academy" width={281} height={98} className="h-12 w-auto" priority />
           <h1 className="text-lg font-bold text-brand-ink">Academy Admin</h1>

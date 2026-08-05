@@ -11,7 +11,7 @@ export default async function ContactSubmissionsPage() {
       <PageHeader title="Contact Submissions" subtitle="Messages sent through the Get in Touch form" />
       <div className="flex flex-col gap-3">
         {submissions.map((s) => (
-          <div key={s.id} className="rounded-2xl border border-brand-border bg-white p-5">
+          <div key={s.id} className="rounded-2xl border border-brand-border bg-brand-card p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-sm font-semibold text-brand-ink">{s.subject}</p>
               <p className="text-xs text-brand-muted">{s.createdAt.toLocaleString()}</p>
@@ -23,7 +23,7 @@ export default async function ContactSubmissionsPage() {
           </div>
         ))}
         {submissions.length === 0 && (
-          <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
+          <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
             No messages yet. Submissions from the Get in Touch form will appear here.
           </p>
         )}

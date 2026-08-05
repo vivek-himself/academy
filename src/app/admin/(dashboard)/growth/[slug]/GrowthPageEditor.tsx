@@ -67,7 +67,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-brand-muted">Hero</h3>
         <div className="flex flex-col gap-5">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -88,7 +88,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-brand-muted">What To Expect</h3>
         <div className="flex flex-col gap-5">
           <TextAreaField label="Paragraph" rows={4} maxLength={600} value={value.expectParagraph} onChange={(v) => set("expectParagraph", v)} />
@@ -104,7 +104,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-brand-muted">Quick Facts</h3>
         <RepeaterField
           label="Quick Facts (4 recommended)"
@@ -120,7 +120,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
         />
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-brand-muted">Benefits</h3>
         <div className="flex flex-col gap-5">
           <TextField label="Section Title" maxLength={80} value={value.benefitsTitle} onChange={(v) => set("benefitsTitle", v)} />
@@ -141,7 +141,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-brand-muted">SEO</h3>
         <div className="flex flex-col gap-5">
           <TextField label="SEO Title" maxLength={60} value={value.seoTitle} onChange={(v) => set("seoTitle", v)} />

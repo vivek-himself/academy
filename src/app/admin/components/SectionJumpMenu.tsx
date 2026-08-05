@@ -48,14 +48,14 @@ export default function SectionJumpMenu({ groups }: { groups: JumpGroup[] }) {
         <button
           type="button"
           onClick={() => setOpen((o) => !o)}
-          className="flex items-center gap-2 rounded-full border border-brand-border bg-white px-4 py-2.5 text-sm font-semibold text-brand-ink shadow-sm hover:border-brand-pink hover:text-brand-pink"
+          className="flex items-center gap-2 rounded-full border border-brand-border bg-brand-card px-4 py-2.5 text-sm font-semibold text-brand-ink shadow-sm hover:border-brand-pink hover:text-brand-pink"
         >
           <ListTree size={15} />
           {activeLabel ? `Section: ${activeLabel}` : "Jump to Section"}
           <ChevronDown size={14} className={`transition-transform ${open ? "rotate-180" : ""}`} />
         </button>
         {open && (
-          <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-xl border border-brand-border bg-white p-1.5 shadow-lg">
+          <div className="absolute right-0 top-full mt-2 w-72 overflow-hidden rounded-xl border border-brand-border bg-brand-card p-1.5 shadow-lg">
             {groups.map((group) => (
               <div key={group.heading} className="mb-1 last:mb-0">
                 <p className="px-2.5 pb-1 pt-2 text-[10px] font-bold uppercase tracking-wider text-brand-muted">

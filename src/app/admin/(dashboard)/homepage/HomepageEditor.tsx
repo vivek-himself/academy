@@ -34,7 +34,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div id={id} className="scroll-mt-24 rounded-2xl border border-brand-border bg-white p-6">
+    <div id={id} className="scroll-mt-24 rounded-2xl border border-brand-border bg-brand-card p-6">
       <h3 className="text-base font-bold text-brand-ink">{title}</h3>
       {description && <p className="mt-1 text-xs text-brand-muted">{description}</p>}
       <div className="mt-5 flex flex-col gap-5">{children}</div>
@@ -295,7 +295,7 @@ export default function HomepageEditor({
                 type="button"
                 onClick={() => setTrustLogos(trustLogos.filter((_, idx) => idx !== i))}
                 aria-label="Remove"
-                className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white text-red-500 shadow hover:bg-red-50"
+                className="absolute right-2 top-2 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-brand-card text-red-500 shadow hover:bg-red-50"
               >
                 <Trash2 size={12} />
               </button>

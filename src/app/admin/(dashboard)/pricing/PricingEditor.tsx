@@ -42,7 +42,7 @@ export default function PricingEditor({ initialPlans }: { initialPlans: Plan[] }
         {plans.map((plan, i) => {
           const features = safeJsonParse<{ label: string; included: boolean }[]>(plan.featuresJson, []);
           return (
-            <div key={i} className="rounded-2xl border border-brand-border bg-white p-5">
+            <div key={i} className="rounded-2xl border border-brand-border bg-brand-card p-5">
               <div className="flex flex-col gap-4">
                 <TextField label="Plan Name" maxLength={30} value={plan.name} onChange={(v) => updatePlan(i, { name: v })} />
                 <TextField label="Tagline (optional)" maxLength={40} value={plan.tagline} onChange={(v) => updatePlan(i, { tagline: v })} />

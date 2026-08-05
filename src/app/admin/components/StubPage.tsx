@@ -13,7 +13,7 @@ export default function StubPage({
   return (
     <div>
       <PageHeader title={title} subtitle={subtitle} />
-      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-brand-border bg-white px-6 py-16 text-center">
+      <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-brand-border bg-brand-card px-6 py-16 text-center">
         <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-surface text-brand-muted">
           <Plug size={22} />
         </span>

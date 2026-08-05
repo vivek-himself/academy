@@ -28,7 +28,7 @@ function PromptModal({ state, onClose }: { state: PromptState; onClose: () => vo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={onClose}>
       <div
-        className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-5 shadow-xl"
+        className="w-full max-w-sm rounded-2xl border border-brand-border bg-brand-card p-5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">
@@ -77,7 +77,7 @@ function ConfirmModal({ state, onClose }: { state: ConfirmState; onClose: () => 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={onClose}>
       <div
-        className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-5 shadow-xl"
+        className="w-full max-w-sm rounded-2xl border border-brand-border bg-brand-card p-5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-sm font-bold text-brand-ink">{state.title}</h3>
@@ -301,20 +301,20 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
       </div>
 
       {loading ? (
-        <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">Loading...</p>
+        <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">Loading...</p>
       ) : showEmptyState && !openFolder ? (
-        <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
+        <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
           No folders or images yet. Create a folder or upload your first image.
         </p>
       ) : showEmptyState ? (
-        <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
+        <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
           No images in this folder yet. Upload one, or move existing images here.
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {!openFolder &&
             folders.map((f) => (
-              <div key={f.id} className="group relative overflow-hidden rounded-xl border border-brand-border bg-white">
+              <div key={f.id} className="group relative overflow-hidden rounded-xl border border-brand-border bg-brand-card">
                 <button
                   type="button"
                   onClick={() => setOpenFolder(f)}
@@ -334,12 +334,12 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
                       type="button"
                       onClick={() => setAssetMenuOpen(assetMenuOpen === f.id ? null : f.id)}
                       aria-label="Folder options"
-                      className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-brand-muted shadow hover:text-brand-ink"
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-card text-brand-muted shadow hover:text-brand-ink"
                     >
                       <MoreHorizontal size={14} />
                     </button>
                     {assetMenuOpen === f.id && (
-                      <div className="absolute right-0 top-7 z-10 w-32 overflow-hidden rounded-lg border border-brand-border bg-white py-1 shadow-lg">
+                      <div className="absolute right-0 top-7 z-10 w-32 overflow-hidden rounded-lg border border-brand-border bg-brand-card py-1 shadow-lg">
                         <button
                           type="button"
                           onClick={() => {
@@ -368,7 +368,7 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
             ))}
 
           {assets.map((a) => (
-            <div key={a.id} className="overflow-hidden rounded-xl border border-brand-border bg-white">
+            <div key={a.id} className="overflow-hidden rounded-xl border border-brand-border bg-brand-card">
               <div className="relative aspect-square w-full bg-brand-surface">
                 <Image src={a.url} alt={a.name ?? ""} fill className="object-cover" unoptimized />
               </div>

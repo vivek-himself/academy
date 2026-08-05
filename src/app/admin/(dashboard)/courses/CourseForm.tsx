@@ -78,7 +78,7 @@ export default function CourseForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-8">
-      <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-white p-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-brand-card p-6 sm:grid-cols-2">
         <TextField label="Course Title" required maxLength={120} value={value.title} onChange={(v) => set("title", v)} />
         <TextField
           label="Slug"
@@ -119,7 +119,7 @@ export default function CourseForm({
         <NumberField label="Modules Count" value={value.modulesCount} onChange={(v) => set("modulesCount", v)} />
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <ImageUploadField
           label="Course Card / Cover Image"
           desktopValue={value.imageDesktopUrl}
@@ -131,7 +131,7 @@ export default function CourseForm({
         />
       </div>
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-brand-card p-6">
         <TextAreaField
           label="Description"
           rows={5}
@@ -173,7 +173,7 @@ export default function CourseForm({
         />
       </div>
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">SEO</h3>
         <TextField
           label="SEO Title"

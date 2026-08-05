@@ -32,7 +32,7 @@ export default function FaqsEditor({ initialFaqs }: { initialFaqs: Faq[] }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <RepeaterField
           label="FAQ Entries"
           description="The first entry with an answer opens by default on the site. Leave answer blank to use placeholder copy."

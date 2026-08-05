@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { TextField, TextAreaField } from "../../components/FormField";
 import { SOCIAL_PLATFORMS, type SocialLinksMap } from "@/lib/socialLinks";
+import ThemeToggle from "../../components/ThemeToggle";
 
 type Settings = {
   siteName: string;
@@ -89,7 +90,12 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-4 rounded-2xl border border-brand-border bg-brand-card p-6">
+        <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Appearance</h3>
+        <ThemeToggle />
+      </div>
+
+      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Site Identity</h3>
         <TextField label="Site Name" maxLength={40} value={settings.siteName} onChange={(v) => set("siteName", v)} />
         <TextField label="Tagline" maxLength={80} value={settings.tagline} onChange={(v) => set("tagline", v)} />
@@ -102,7 +108,7 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
         />
       </div>
 
-      <div className="flex flex-col gap-4 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-4 rounded-2xl border border-brand-border bg-brand-card p-6">
         <div>
           <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Social Media Links</h3>
           <p className="mt-1 text-xs text-brand-muted">
@@ -143,7 +149,7 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-white p-6">
+      <div className="flex flex-col gap-5 rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Default SEO</h3>
         <TextField
           label="Default SEO Title"
@@ -172,7 +178,7 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
         </button>
       </div>
 
-      <form onSubmit={handleChangePassword} className="flex max-w-sm flex-col gap-4 rounded-2xl border border-brand-border bg-white p-6">
+      <form onSubmit={handleChangePassword} className="flex max-w-sm flex-col gap-4 rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Change Password</h3>
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Current Password</label>

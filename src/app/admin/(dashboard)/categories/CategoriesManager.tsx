@@ -63,7 +63,7 @@ export default function CategoriesManager({ categories }: { categories: Category
       </form>
       {error && <p className="mb-4 text-sm font-medium text-red-500">{error}</p>}
 
-      <div className="rounded-2xl border border-brand-border bg-white">
+      <div className="rounded-2xl border border-brand-border bg-brand-card">
         {categories.map((c) => (
           <div key={c.id} className="flex items-center justify-between border-b border-brand-border px-5 py-3 last:border-0">
             <div>

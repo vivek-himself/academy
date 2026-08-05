@@ -22,7 +22,7 @@ export default function PostsTable({ posts }: { posts: PostRow[] }) {
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border bg-white">
+    <div className="rounded-2xl border border-brand-border bg-brand-card">
       {error && <p className="p-4 text-sm font-medium text-red-500">{error}</p>}
       <div className="divide-y divide-brand-border">
         {posts.map((p) => (

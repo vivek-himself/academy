@@ -49,7 +49,7 @@ export default function MentorForm({ initial }: { initial: MentorFormValue }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-      <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-white p-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-brand-card p-6 sm:grid-cols-2">
         <TextField label="Name" required maxLength={80} value={value.name} onChange={(v) => set("name", v)} />
         <TextField label="Role / Title" required maxLength={80} value={value.role} onChange={(v) => set("role", v)} />
         <TextField label="LinkedIn URL" value={value.linkedinUrl} onChange={(v) => set("linkedinUrl", v)} />
@@ -66,7 +66,7 @@ export default function MentorForm({ initial }: { initial: MentorFormValue }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <ImageUploadField
           label="Photo"
           desktopValue={value.imageDesktopUrl}

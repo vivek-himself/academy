@@ -32,7 +32,7 @@ export default function TestimonialsEditor({ initialTestimonials }: { initialTes
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-brand-card p-6">
         <RepeaterField
           label="Testimonials"
           description="Shown on the homepage, Success Stories page, and Growth landing pages."

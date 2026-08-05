@@ -17,7 +17,7 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-brand-border bg-white">
+    <aside className="sticky top-0 flex h-screen w-64 shrink-0 flex-col border-r border-brand-border bg-brand-card">
       <div className="flex items-center px-5 py-5">
         <Logo className="h-[37px] w-auto" />
       </div>

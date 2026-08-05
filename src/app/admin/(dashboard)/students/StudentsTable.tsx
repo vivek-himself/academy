@@ -41,7 +41,7 @@ function StudentRow({ student, courses }: { student: Student; courses: CourseOpt
   }
 
   return (
-    <div className="rounded-2xl border border-brand-border bg-white p-5">
+    <div className="rounded-2xl border border-brand-border bg-brand-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <p className="text-sm font-bold text-brand-ink">{student.name}</p>
@@ -110,7 +110,7 @@ function StudentRow({ student, courses }: { student: Student; courses: CourseOpt
 export default function StudentsTable({ students, courses }: { students: Student[]; courses: CourseOption[] }) {
   if (students.length === 0) {
     return (
-      <p className="rounded-2xl border border-brand-border bg-white px-5 py-10 text-center text-sm text-brand-muted">
+      <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
         No students have signed up yet.
       </p>
     );

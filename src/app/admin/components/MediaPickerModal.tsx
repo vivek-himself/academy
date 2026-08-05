@@ -42,7 +42,7 @@ export default function MediaPickerModal({ onSelect, onClose }: { onSelect: (url
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
-        className="flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white"
+        className="flex max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-brand-card"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-brand-border px-5 py-4">
