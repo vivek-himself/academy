@@ -30,6 +30,66 @@ model User {
   dateOfBirth  DateTime?
   enrollments  Enrollment[]
   createdAt    DateTime     @default(now())
+
+  // Basic info
+  displayName   String?
+  username      String? @unique
+  coverImageUrl String?
+  bio           String?
+  location      String?
+
+  // Learning interests
+  interestsJson           String @default("[]")
+  additionalInterestsJson String @default("[]")
+
+  // Skill level, role, goals
+  skillLevel        String?
+  currentRole       String?
+  learningGoalsJson String  @default("[]")
+
+  // Experience
+  yearsExperience String?
+  currentIndustry String?
+  currentCompany  String?
+
+  // Learning style & commitment
+  learningStyleJson String  @default("[]")
+  weeklyCommitment  String?
+
+  // Learning preferences
+  preferredLanguage String?
+  subtitleLanguage  String?
+  playbackSpeed     String?
+  themePreference   String?
+
+  // Software familiarity
+  softwareFamiliarityJson String @default("[]")
+
+  // Portfolio & showcase
+  portfolioUrl String?
+  behanceUrl   String?
+  dribbbleUrl  String?
+  githubUrl    String?
+  linkedinUrl  String?
+
+  // Privacy & social
+  isProfilePublic       Boolean @default(false)
+  showLearningActivity  Boolean @default(true)
+  showCompletedCourses  Boolean @default(true)
+  allowMessages         Boolean @default(true)
+  shareProjectsPublicly Boolean @default(false)
+  followingEnabled      Boolean @default(true)
+
+  // Notifications
+  notifyWeeklyReminder       Boolean @default(true)
+  notifyNewCourses           Boolean @default(true)
+  notifyInstructorUpdates    Boolean @default(true)
+  notifyAssignmentDeadlines  Boolean @default(true)
+  notifyProductAnnouncements Boolean @default(false)
+
+  // Account
+  timezone String?
+  country  String?
 }
 
 model Enrollment {

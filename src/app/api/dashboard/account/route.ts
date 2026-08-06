@@ -3,6 +3,54 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { requireStudentSession } from "@/lib/studentAuth";
 
+const STRING_FIELDS = [
+  "displayName",
+  "username",
+  "bio",
+  "location",
+  "phone",
+  "gender",
+  "currentRole",
+  "skillLevel",
+  "yearsExperience",
+  "currentIndustry",
+  "currentCompany",
+  "weeklyCommitment",
+  "preferredLanguage",
+  "subtitleLanguage",
+  "playbackSpeed",
+  "themePreference",
+  "portfolioUrl",
+  "behanceUrl",
+  "dribbbleUrl",
+  "githubUrl",
+  "linkedinUrl",
+  "timezone",
+  "country",
+] as const;
+
+const ARRAY_FIELD_MAP: Record<string, string> = {
+  interests: "interestsJson",
+  additionalInterests: "additionalInterestsJson",
+  learningGoals: "learningGoalsJson",
+  learningStyle: "learningStyleJson",
+  softwareFamiliarity: "softwareFamiliarityJson",
+};
+
+const BOOLEAN_FIELDS = [
+  "isProfilePublic",
+  "showLearningActivity",
+  "showCompletedCourses",
+  "allowMessages",
+  "shareProjectsPublicly",
+  "followingEnabled",
+  "notifyWeeklyReminder",
+  "notifyNewCourses",
+  "notifyInstructorUpdates",
+  "notifyAssignmentDeadlines",
+  "notifyProductAnnouncements",
+] as const;
+
 export async function PATCH(req: NextRequest) {
   let session;
   try {
@@ -11,29 +59,57 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, phone, gender, dateOfBirth, currentPassword, newPassword } = await req.json();
+  const body = await req.json();
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!user) return NextResponse.json({ error: "Account not found." }, { status: 404 });
 
-  const profileData: { name?: string; phone?: string; gender?: string; dateOfBirth?: Date } = {};
-  if (typeof name === "string" && name.trim()) profileData.name = name.trim();
-  if (typeof phone === "string" && phone.trim()) profileData.phone = phone.trim();
-  if (typeof gender === "string" && gender.trim()) profileData.gender = gender.trim();
-  if (typeof dateOfBirth === "string" && dateOfBirth.trim()) profileData.dateOfBirth = new Date(dateOfBirth);
+  const data: Record<string, unknown> = {};
 
-  if (Object.keys(profileData).length > 0) {
-    await prisma.user.update({ where: { id: user.id }, data: profileData });
+  if ("name" in body && typeof body.name === "string" && body.name.trim()) {
+    data.name = body.name.trim();
   }
 
-  if (newPassword) {
-    const valid = await bcrypt.compare(currentPassword ?? "", user.passwordHash);
+  for (const key of STRING_FIELDS) {
+    if (key in body) {
+      const value = body[key];
+      data[key] = typeof value === "string" && value.trim() ? value.trim() : null;
+    }
+  }
+
+  if ("dateOfBirth" in body) {
+    data.dateOfBirth = typeof body.dateOfBirth === "string" && body.dateOfBirth.trim() ? new Date(body.dateOfBirth) : null;
+  }
+
+  for (const [bodyKey, dbKey] of Object.entries(ARRAY_FIELD_MAP)) {
+    if (bodyKey in body && Array.isArray(body[bodyKey])) {
+      data[dbKey] = JSON.stringify(body[bodyKey]);
+    }
+  }
+
+  for (const key of BOOLEAN_FIELDS) {
+    if (key in body) data[key] = Boolean(body[key]);
+  }
+
+  if (Object.keys(data).length > 0) {
+    try {
+      await prisma.user.update({ where: { id: user.id }, data });
+    } catch (err) {
+      if (err && typeof err === "object" && "code" in err && err.code === "P2002") {
+        return NextResponse.json({ error: "That username is already taken." }, { status: 409 });
+      }
+      throw err;
+    }
+  }
+
+  if (body.newPassword) {
+    const valid = await bcrypt.compare(body.currentPassword ?? "", user.passwordHash);
     if (!valid) {
       return NextResponse.json({ error: "Current password is incorrect." }, { status: 400 });
     }
-    if (newPassword.length < 8) {
+    if (body.newPassword.length < 8) {
       return NextResponse.json({ error: "New password must be at least 8 characters." }, { status: 400 });
     }
-    const passwordHash = await bcrypt.hash(newPassword, 10);
+    const passwordHash = await bcrypt.hash(body.newPassword, 10);
     await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
   }
 

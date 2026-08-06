@@ -5,7 +5,17 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import SocialAuthButtons from "./SocialAuthButtons";
 import DateOfBirthSelect, { dobToIso, type DobValue } from "./DateOfBirthSelect";
+import ChipMultiSelect from "./ChipMultiSelect";
+import AvatarUploadField from "./AvatarUploadField";
 import { setLastUser } from "@/lib/lastUserCookie";
+import {
+  CURRENT_ROLE_OPTIONS,
+  SKILL_LEVEL_OPTIONS,
+  INTEREST_OPTIONS,
+  LEARNING_GOAL_OPTIONS,
+  WEEKLY_COMMITMENT_OPTIONS,
+  LANGUAGE_OPTIONS,
+} from "@/lib/profileOptions";
 
 function ProgressDots({ step }: { step: 1 | 2 }) {
   return (
@@ -130,8 +140,46 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
   );
 }
 
-function ProfileStep() {
+function SelectRow({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+}) {
+  return (
+    <div>
+      <label className="mb-1.5 block text-sm font-semibold text-brand-ink">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-ink outline-none focus:border-brand-pink"
+      >
+        <option value="">Select {label.toLowerCase()}</option>
+        {options.map((o) => (
+          <option key={o} value={o}>
+            {o}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function ProfileStep({ name }: { name: string }) {
   const router = useRouter();
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [displayName, setDisplayName] = useState(name);
+  const [currentRole, setCurrentRole] = useState("");
+  const [skillLevel, setSkillLevel] = useState("");
+  const [interests, setInterests] = useState<string[]>([]);
+  const [learningGoal, setLearningGoal] = useState("");
+  const [weeklyCommitment, setWeeklyCommitment] = useState("");
+  const [preferredLanguage, setPreferredLanguage] = useState("");
   const [phone, setPhone] = useState("");
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState<DobValue>({ day: "", month: "", year: "" });
@@ -148,7 +196,18 @@ function ProfileStep() {
     await fetch("/api/dashboard/account", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone: phone || undefined, gender: gender || undefined, dateOfBirth }),
+      body: JSON.stringify({
+        displayName: displayName || undefined,
+        currentRole: currentRole || undefined,
+        skillLevel: skillLevel || undefined,
+        interests: interests.length ? interests : undefined,
+        learningGoals: learningGoal ? [learningGoal] : undefined,
+        weeklyCommitment: weeklyCommitment || undefined,
+        preferredLanguage: preferredLanguage || undefined,
+        phone: phone || undefined,
+        gender: gender || undefined,
+        dateOfBirth,
+      }),
     });
     setSaving(false);
     goToDashboard();
@@ -157,10 +216,40 @@ function ProfileStep() {
   return (
     <div className="mx-auto w-full max-w-sm">
       <p className="mb-5 text-center text-sm text-brand-muted">
-        Add these now, or skip and finish your profile later in Settings — you&apos;ll need them before you can attend a
-        course.
+        Add these now, or skip and finish your profile later in Settings — a few, like phone and date of birth, are
+        needed before you can attend a course.
       </p>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
+        <div>
+          <p className="mb-1.5 text-sm font-semibold text-brand-ink">Profile Photo</p>
+          <AvatarUploadField value={avatarUrl} onChange={setAvatarUrl} fallbackLabel={name} />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Display Name</label>
+          <input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+        </div>
+
+        <SelectRow label="Current Role" value={currentRole} onChange={setCurrentRole} options={CURRENT_ROLE_OPTIONS} />
+        <SelectRow label="Skill Level" value={skillLevel} onChange={setSkillLevel} options={SKILL_LEVEL_OPTIONS} />
+
+        <div>
+          <p className="mb-1.5 text-sm font-semibold text-brand-ink">Learning Interests</p>
+          <ChipMultiSelect options={INTEREST_OPTIONS} value={interests} onChange={setInterests} />
+        </div>
+
+        <SelectRow label="Learning Goal" value={learningGoal} onChange={setLearningGoal} options={LEARNING_GOAL_OPTIONS} />
+        <SelectRow label="Weekly Commitment" value={weeklyCommitment} onChange={setWeeklyCommitment} options={WEEKLY_COMMITMENT_OPTIONS} />
+        <SelectRow label="Preferred Language" value={preferredLanguage} onChange={setPreferredLanguage} options={LANGUAGE_OPTIONS} />
+
+        <div className="border-t border-brand-border pt-5">
+          <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-brand-muted">Needed before attending a course</p>
+        </div>
+
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Phone Number</label>
           <input
@@ -211,11 +300,17 @@ function ProfileStep() {
 
 export default function SignupForm() {
   const [step, setStep] = useState<1 | 2>(1);
+  const [createdName, setCreatedName] = useState("");
+
+  function handleCreated(name: string) {
+    setCreatedName(name);
+    setStep(2);
+  }
 
   return (
     <div>
       <ProgressDots step={step} />
-      {step === 1 ? <AccountStep onCreated={() => setStep(2)} /> : <ProfileStep />}
+      {step === 1 ? <AccountStep onCreated={handleCreated} /> : <ProfileStep name={createdName} />}
     </div>
   );
 }
