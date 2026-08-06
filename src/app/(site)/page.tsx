@@ -17,7 +17,7 @@ import { safeJsonParse } from "@/lib/json";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [heroSlides, stats, trustLogos, blocks, courses, faqs] = await Promise.all([
+  const [heroSlides, stats, trustLogos, blocks, courses, faqs, categories] = await Promise.all([
     prisma.heroSlide.findMany({ orderBy: { order: "asc" } }),
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
@@ -31,6 +31,7 @@ export default async function Home() {
       take: 13,
     }),
     prisma.faq.findMany({ orderBy: { order: "asc" } }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
@@ -83,7 +84,7 @@ export default async function Home() {
       <AsSeenOn logos={trustLogos} />
       <GrowSkill block={growSkill} />
       <RandomPromo block={randomPromo} />
-      <BrowseTopCourses items={mappedCourses.slice(0, 8)} />
+      <BrowseTopCourses items={mappedCourses} categories={categories.map((c) => c.name)} />
       <section className="container-page py-10 sm:py-14">
         <SectionHeading title="FAQs" />
         <div className="mt-8">
