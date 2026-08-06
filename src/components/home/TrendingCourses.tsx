@@ -24,7 +24,7 @@ export default function TrendingCourses({
     <section className="container-page py-10 sm:py-14">
       <h2 className="mb-6 text-center text-2xl font-bold text-brand-ink sm:text-3xl">{title}</h2>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_1fr]">
-        <div className="relative flex min-h-[320px] items-end self-start overflow-hidden rounded-2xl bg-brand-ink">
+        <div className="relative flex aspect-square items-end self-start overflow-hidden rounded-2xl bg-brand-ink">
           {bannerImageUrl && <Image src={bannerImageUrl} alt={bannerText || title} fill className="object-contain" />}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           {bannerText && <h3 className="relative z-10 p-6 text-xl font-bold text-white">{bannerText}</h3>}

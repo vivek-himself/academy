@@ -461,7 +461,7 @@ export default function HomepageEditor({
           label="Banner Image"
           desktopValue={trendingCourses.bannerImageUrl}
           onDesktopChange={(v) => setTrendingCourses({ ...trendingCourses, bannerImageUrl: v })}
-          desktopSize="1280 × 660px (~1.9:1 on desktop, ~1:1 on mobile) — the full image always shows, so it may letterbox slightly at other screen sizes"
+          desktopSize="800 × 800px (1:1 square)"
         />
       </SectionCard>
 
