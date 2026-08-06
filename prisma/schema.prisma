@@ -111,35 +111,38 @@ model Mentor {
 }
 
 model Course {
-  id              String         @id @default(cuid())
-  slug            String         @unique
-  title           String
-  level           String         @default("Beginner")
-  categoryId      String?
-  category        Category?      @relation(fields: [categoryId], references: [id])
-  mentorId        String?
-  mentor          Mentor?        @relation(fields: [mentorId], references: [id])
-  rating          Float          @default(4.5)
-  reviewsCount    Int            @default(0)
-  students        Int            @default(0)
-  modulesCount    Int            @default(5)
-  duration        String         @default("1h 30m")
-  price           Float          @default(0)
-  originalPrice   Float?
-  imageDesktopUrl String?
-  imageMobileUrl  String?
-  description     String         @default("")
-  keyPointsJson   String         @default("[]")
-  modulesJson     String         @default("[]")
-  toolsJson       String         @default("[]")
-  reviews         CourseReview[]
-  enrollments     Enrollment[]
-  seoTitle        String?
-  seoDescription  String?
-  published       Boolean        @default(true)
-  order           Int            @default(0)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  title            String
+  level            String         @default("Beginner")
+  categoryId       String?
+  category         Category?      @relation(fields: [categoryId], references: [id])
+  mentorId         String?
+  mentor           Mentor?        @relation(fields: [mentorId], references: [id])
+  rating           Float          @default(4.5)
+  reviewsCount     Int            @default(0)
+  students         Int            @default(0)
+  modulesCount     Int            @default(5)
+  duration         String         @default("1h 30m")
+  price            Float          @default(0)
+  originalPrice    Float?
+  imageDesktopUrl  String?
+  imageMobileUrl   String?
+  description      String         @default("")
+  includesJson     String         @default("[]")
+  keyPointsJson    String         @default("[]")
+  advantagesJson   String         @default("[]")
+  requirementsJson String         @default("[]")
+  modulesJson      String         @default("[]")
+  toolsJson        String         @default("[]")
+  reviews          CourseReview[]
+  enrollments      Enrollment[]
+  seoTitle         String?
+  seoDescription   String?
+  published        Boolean        @default(true)
+  order            Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 }
 
 model CourseReview {

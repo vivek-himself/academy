@@ -43,7 +43,10 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   const modules = safeJsonParse<{ title: string; duration: string }[]>(dbCourse.modulesJson, []);
   const tools = safeJsonParse<{ name: string; plan: string }[]>(dbCourse.toolsJson, []);
   const reviews = dbCourse.reviews.map((r) => ({ name: r.name, rating: r.rating, date: r.date, text: r.text }));
+  const includes = safeJsonParse<string[]>(dbCourse.includesJson, []);
   const keyPoints = safeJsonParse<string[]>(dbCourse.keyPointsJson, []);
+  const advantages = safeJsonParse<string[]>(dbCourse.advantagesJson, []);
+  const requirements = safeJsonParse<string[]>(dbCourse.requirementsJson, []);
 
   return (
     <>
@@ -99,7 +102,10 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
             <div className="mt-6">
               <CourseTabs
                 description={dbCourse.description}
+                includes={includes}
                 keyPoints={keyPoints}
+                advantages={advantages}
+                requirements={requirements}
                 modules={modules}
                 reviews={reviews}
                 tools={tools}

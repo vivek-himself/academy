@@ -26,7 +26,10 @@ export type CourseFormValue = {
   imageDesktopUrl: string;
   imageMobileUrl: string;
   description: string;
+  includesJson: string;
   keyPointsJson: string;
+  advantagesJson: string;
+  requirementsJson: string;
   modulesJson: string;
   toolsJson: string;
   seoTitle: string;
@@ -48,7 +51,10 @@ export default function CourseForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const includes = safeJsonParse<string[]>(value.includesJson, []);
   const keyPoints = safeJsonParse<string[]>(value.keyPointsJson, []);
+  const advantages = safeJsonParse<string[]>(value.advantagesJson, []);
+  const requirements = safeJsonParse<string[]>(value.requirementsJson, []);
   const modules = safeJsonParse<Record<string, string>[]>(value.modulesJson, []);
   const tools = safeJsonParse<Record<string, string>[]>(value.toolsJson, []);
 
@@ -141,11 +147,32 @@ export default function CourseForm({
           onChange={(v) => set("description", v)}
         />
         <StringListField
-          label="Key Points"
+          label="This Course Includes"
+          description="Bulleted list shown at the top of the About tab (e.g. video hours, downloadable files)."
+          items={includes}
+          onChange={(items) => set("includesJson", JSON.stringify(items))}
+          placeholder="e.g. 3 Hours 5 Minutes of high-density video training"
+        />
+        <StringListField
+          label="What You'll Learn"
           description="Bulleted checklist shown under the description."
           items={keyPoints}
           onChange={(items) => set("keyPointsJson", JSON.stringify(items))}
           placeholder="e.g. Understand the basics of Prototype & Animation"
+        />
+        <StringListField
+          label="Course Advantages"
+          description="Bulleted list shown below What You'll Learn."
+          items={advantages}
+          onChange={(items) => set("advantagesJson", JSON.stringify(items))}
+          placeholder="e.g. Portfolio-Ready Deliverables"
+        />
+        <StringListField
+          label="Requirements"
+          description="Bulleted list shown at the top of the Tools tab (e.g. software, prerequisites, equipment)."
+          items={requirements}
+          onChange={(items) => set("requirementsJson", JSON.stringify(items))}
+          placeholder="e.g. Basic familiarity with graphic design principles"
         />
         <RepeaterField
           label="Modules"
