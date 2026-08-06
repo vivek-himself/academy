@@ -34,7 +34,7 @@ export default function CourseTabs({
   requirements: string[];
   modules?: { title: string; duration: string }[];
   reviews: { name: string; rating: number; date: string; text: string }[];
-  tools: { name: string; plan: string }[];
+  tools: { name: string; plan: string; url?: string }[];
 }) {
   const [active, setActive] = useState<(typeof tabs)[number]>("About");
 
@@ -114,9 +114,20 @@ export default function CourseTabs({
                         <p className="text-xs text-brand-muted">{tool.plan}</p>
                       </div>
                     </div>
-                    <button className="flex items-center gap-1 text-xs font-semibold text-brand-pink">
-                      <Download size={13} /> Download
-                    </button>
+                    {tool.url ? (
+                      <a
+                        href={tool.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-xs font-semibold text-brand-pink hover:underline"
+                      >
+                        <Download size={13} /> Download
+                      </a>
+                    ) : (
+                      <span className="flex items-center gap-1 text-xs font-medium text-brand-muted">
+                        <Download size={13} /> Not available
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>

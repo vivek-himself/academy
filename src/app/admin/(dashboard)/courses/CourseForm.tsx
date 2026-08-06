@@ -188,14 +188,15 @@ export default function CourseForm({
         />
         <RepeaterField
           label="Tools"
-          description="Shown in the Tools tab on the course page."
+          description="Shown in the Tools tab on the course page. Leave Download URL blank to hide the download button for that tool."
           items={tools}
           onChange={(items) => set("toolsJson", JSON.stringify(items))}
           fields={[
             { key: "name", label: "Tool name" },
             { key: "plan", label: "Plan label (e.g. Freemium)" },
+            { key: "url", label: "Download URL" },
           ]}
-          emptyItem={{ name: "", plan: "" }}
+          emptyItem={{ name: "", plan: "", url: "" }}
           addLabel="Add tool"
         />
       </div>
