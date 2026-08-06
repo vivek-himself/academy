@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import BlogSidebar from "@/components/blog/BlogSidebar";
+import KnowledgebaseExplorer from "@/components/blog/KnowledgebaseExplorer";
 import { prisma } from "@/lib/prisma";
 import { mapBlogPost } from "@/lib/mappers";
-import KnowledgebaseExplorer from "@/components/blog/KnowledgebaseExplorer";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,10 @@ export default async function KnowledgebasePage() {
   return (
     <section className="container-page py-10 sm:py-14">
       <h1 className="mb-8 text-2xl font-bold text-brand-ink sm:text-3xl">Knowledgebase</h1>
-      <KnowledgebaseExplorer items={items} />
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1fr_300px]">
+        <KnowledgebaseExplorer items={items} />
+        <BlogSidebar />
+      </div>
     </section>
   );
 }
