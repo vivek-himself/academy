@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Folder, FolderPlus, Upload, Loader2, Pencil, Trash2, ChevronRight, MoreHorizontal, X } from "lucide-react";
+import { ShimmerBlock } from "@/components/ui/Shimmer";
 
 type FolderType = { id: string; name: string; _count: { assets: number } };
 type Asset = {
@@ -301,7 +302,17 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
       </div>
 
       {loading ? (
-        <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">Loading...</p>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="overflow-hidden rounded-xl border border-brand-border bg-brand-card">
+              <ShimmerBlock className="aspect-square w-full rounded-none" />
+              <div className="p-2.5">
+                <ShimmerBlock className="h-3 w-3/4" />
+                <ShimmerBlock className="mt-1.5 h-2.5 w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
       ) : showEmptyState && !openFolder ? (
         <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
           No folders or images yet. Create a folder or upload your first image.

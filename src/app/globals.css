@@ -51,6 +51,12 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -124,4 +130,30 @@ select:focus-visible,
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+@keyframes shimmer-sweep {
+  from {
+    background-position: -400px 0;
+  }
+  to {
+    background-position: 400px 0;
+  }
+}
+
+.shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--color-brand-border) 25%,
+    var(--color-brand-surface) 37%,
+    var(--color-brand-border) 63%
+  );
+  background-size: 800px 100%;
+  animation: shimmer-sweep 1.5s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shimmer {
+    animation: none;
+  }
 }
