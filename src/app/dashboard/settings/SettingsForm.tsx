@@ -510,7 +510,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         <button
           type="submit"
           disabled={saving}
-          className="max-w-xl self-start rounded-full bg-brand-pink px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
+          className="fixed bottom-6 right-6 z-40 rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-pink/30 hover:bg-brand-pink-dark disabled:opacity-60"
         >
           {saving ? "Saving..." : "Save Profile"}
         </button>
