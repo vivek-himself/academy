@@ -31,7 +31,7 @@ export default async function Home() {
       take: 13,
     }),
     prisma.faq.findMany({ orderBy: { order: "asc" } }),
-    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.category.findMany({ orderBy: { createdAt: "desc" } }),
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
