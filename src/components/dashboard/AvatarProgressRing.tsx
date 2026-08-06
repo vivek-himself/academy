@@ -1,7 +1,7 @@
 export default function AvatarProgressRing({
   percent,
   size = 68,
-  strokeWidth = 3,
+  strokeWidth = 5,
   children,
 }: {
   percent: number;
