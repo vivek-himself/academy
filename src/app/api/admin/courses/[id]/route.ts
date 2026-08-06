@@ -29,32 +29,30 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  const course = await prisma.course.update({
-    where: { id },
-    data: {
-      slug: body.slug,
-      title: body.title,
-      level: body.level,
-      categoryId: body.categoryId || null,
-      mentorId: body.mentorId || null,
-      rating: body.rating,
-      reviewsCount: body.reviewsCount,
-      students: body.students,
-      modulesCount: body.modulesCount,
-      duration: body.duration,
-      price: body.price,
-      originalPrice: body.originalPrice || null,
-      imageDesktopUrl: body.imageDesktopUrl || null,
-      imageMobileUrl: body.imageMobileUrl || null,
-      description: body.description,
-      keyPointsJson: body.keyPointsJson,
-      modulesJson: body.modulesJson,
-      toolsJson: body.toolsJson,
-      seoTitle: body.seoTitle || null,
-      seoDescription: body.seoDescription || null,
-      published: body.published,
-    },
-  });
+  // Prisma treats `undefined` fields as "leave unchanged" but treats `null` as "clear it" —
+  // so nullable fields must only be included when the caller actually sent them, otherwise a
+  // partial PATCH (e.g. updating just the price) would wipe out category/mentor/images/SEO.
+  const data: Record<string, unknown> = {
+    slug: body.slug,
+    title: body.title,
+    level: body.level,
+    rating: body.rating,
+    reviewsCount: body.reviewsCount,
+    students: body.students,
+    modulesCount: body.modulesCount,
+    duration: body.duration,
+    price: body.price,
+    description: body.description,
+    keyPointsJson: body.keyPointsJson,
+    modulesJson: body.modulesJson,
+    toolsJson: body.toolsJson,
+    published: body.published,
+  };
+  for (const key of ["categoryId", "mentorId", "originalPrice", "imageDesktopUrl", "imageMobileUrl", "seoTitle", "seoDescription"]) {
+    if (key in body) data[key] = body[key] || null;
+  }
+
+  const course = await prisma.course.update({ where: { id }, data });
 
   return NextResponse.json(course);
 }

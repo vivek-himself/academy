@@ -26,24 +26,24 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  const post = await prisma.blogPost.update({
-    where: { id },
-    data: {
-      slug: body.slug,
-      title: body.title,
-      excerpt: body.excerpt,
-      body: body.body,
-      author: body.author,
-      date: body.date,
-      imageDesktopUrl: body.imageDesktopUrl || null,
-      imageMobileUrl: body.imageMobileUrl || null,
-      tagsJson: body.tagsJson,
-      category: body.category,
-      seoTitle: body.seoTitle || null,
-      seoDescription: body.seoDescription || null,
-      published: body.published,
-    },
-  });
+  // Prisma treats `undefined` as "leave unchanged" but `null` as "clear it" — only touch
+  // nullable fields the caller actually sent, so a partial PATCH can't wipe the rest.
+  const data: Record<string, unknown> = {
+    slug: body.slug,
+    title: body.title,
+    excerpt: body.excerpt,
+    body: body.body,
+    author: body.author,
+    date: body.date,
+    tagsJson: body.tagsJson,
+    category: body.category,
+    published: body.published,
+  };
+  for (const key of ["imageDesktopUrl", "imageMobileUrl", "seoTitle", "seoDescription"]) {
+    if (key in body) data[key] = body[key] || null;
+  }
+
+  const post = await prisma.blogPost.update({ where: { id }, data });
 
   return NextResponse.json(post);
 }

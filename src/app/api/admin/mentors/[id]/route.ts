@@ -18,19 +18,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const { id } = await params;
   const body = await req.json();
-  const mentor = await prisma.mentor.update({
-    where: { id },
-    data: {
-      name: body.name,
-      role: body.role,
-      bio: body.bio,
-      imageDesktopUrl: body.imageDesktopUrl || null,
-      imageMobileUrl: body.imageMobileUrl || null,
-      linkedinUrl: body.linkedinUrl || null,
-      websiteUrl: body.websiteUrl || null,
-      order: body.order ?? 0,
-    },
-  });
+
+  // Prisma treats `undefined` as "leave unchanged" but `null` as "clear it" — only touch
+  // nullable fields the caller actually sent, so a partial PATCH can't wipe the rest.
+  const data: Record<string, unknown> = { name: body.name, role: body.role, bio: body.bio };
+  if ("order" in body) data.order = body.order ?? 0;
+  for (const key of ["imageDesktopUrl", "imageMobileUrl", "linkedinUrl", "websiteUrl"]) {
+    if (key in body) data[key] = body[key] || null;
+  }
+
+  const mentor = await prisma.mentor.update({ where: { id }, data });
   return NextResponse.json(mentor);
 }
 

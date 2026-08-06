@@ -19,29 +19,34 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ sl
   const { slug } = await params;
   const body = await req.json();
 
-  const page = await prisma.growthPage.update({
-    where: { slug },
-    data: {
-      eyebrow: body.eyebrow || null,
-      title: body.title,
-      titleHighlight: body.titleHighlight,
-      subtitle: body.subtitle,
-      checklistJson: body.checklistJson,
-      ctaLabel: body.ctaLabel,
-      heroImageDesktopUrl: body.heroImageDesktopUrl || null,
-      heroImageMobileUrl: body.heroImageMobileUrl || null,
-      expectParagraph: body.expectParagraph,
-      dayTabsJson: body.dayTabsJson,
-      expectImageDesktopUrl: body.expectImageDesktopUrl || null,
-      expectImageMobileUrl: body.expectImageMobileUrl || null,
-      quickFactsJson: body.quickFactsJson,
-      benefitsTitle: body.benefitsTitle,
-      benefitsJson: body.benefitsJson,
-      benefitsCta: body.benefitsCta,
-      seoTitle: body.seoTitle || null,
-      seoDescription: body.seoDescription || null,
-    },
-  });
+  // Prisma treats `undefined` as "leave unchanged" but `null` as "clear it" — only touch
+  // nullable fields the caller actually sent, so a partial PATCH can't wipe the rest.
+  const data: Record<string, unknown> = {
+    title: body.title,
+    titleHighlight: body.titleHighlight,
+    subtitle: body.subtitle,
+    checklistJson: body.checklistJson,
+    ctaLabel: body.ctaLabel,
+    expectParagraph: body.expectParagraph,
+    dayTabsJson: body.dayTabsJson,
+    quickFactsJson: body.quickFactsJson,
+    benefitsTitle: body.benefitsTitle,
+    benefitsJson: body.benefitsJson,
+    benefitsCta: body.benefitsCta,
+  };
+  for (const key of [
+    "eyebrow",
+    "heroImageDesktopUrl",
+    "heroImageMobileUrl",
+    "expectImageDesktopUrl",
+    "expectImageMobileUrl",
+    "seoTitle",
+    "seoDescription",
+  ]) {
+    if (key in body) data[key] = body[key] || null;
+  }
+
+  const page = await prisma.growthPage.update({ where: { slug }, data });
 
   return NextResponse.json(page);
 }
