@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import "../globals.css";
@@ -11,8 +11,8 @@ import PromoBar from "@/components/layout/PromoBar";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardPromoBanner from "@/components/dashboard/DashboardPromoBanner";
 
-const inter = Inter({
-  variable: "--font-inter",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
 });
 
@@ -34,7 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const geoCurrency = currencyForCountry(headersList.get("x-vercel-ip-country"));
 
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${dmSans.variable} h-full antialiased`}>
       <body className="min-h-full bg-brand-surface text-foreground">
         <CurrencyProvider initialCurrency={geoCurrency}>
           <PromoBar />

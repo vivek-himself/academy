@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import { headers } from "next/headers";
 import "../globals.css";
 import PromoBar from "@/components/layout/PromoBar";
@@ -10,8 +10,8 @@ import { getStudentSession } from "@/lib/studentAuth";
 import { currencyForCountry } from "@/lib/currency";
 import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 
-const inter = Inter({
-  variable: "--font-inter",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
 });
 
@@ -46,7 +46,7 @@ export default async function RootLayout({
   const geoCurrency = currencyForCountry(headersList.get("x-vercel-ip-country"));
 
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
+    <html lang="en" className={`${dmSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <a
           href="#main-content"
