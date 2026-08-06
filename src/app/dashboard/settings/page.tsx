@@ -20,11 +20,9 @@ export default async function DashboardSettingsPage() {
         initial={{
           name: user.name,
           displayName: user.displayName ?? "",
-          username: user.username ?? "",
           bio: user.bio ?? "",
           location: user.location ?? "",
           avatarUrl: user.avatarUrl ?? "",
-          coverImageUrl: user.coverImageUrl ?? "",
           phone: user.phone,
           gender: user.gender,
           dateOfBirth: user.dateOfBirth ? user.dateOfBirth.toISOString() : null,

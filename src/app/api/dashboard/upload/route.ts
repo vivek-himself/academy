@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
   const file = formData.get("file") as File | null;
-  const kind = formData.get("kind") === "cover" ? "cover" : "avatar";
 
   if (!file) {
     return NextResponse.json({ error: "No file provided." }, { status: 400 });
@@ -34,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   const buffer = Buffer.from(await file.arrayBuffer());
   const ext = path.extname(file.name) || `.${file.type.split("/")[1]}`;
-  const filename = `${kind}-${session.userId}-${Date.now()}${ext}`;
+  const filename = `avatar-${session.userId}-${Date.now()}${ext}`;
 
   let url: string;
 
@@ -53,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   await prisma.user.update({
     where: { id: session.userId },
-    data: kind === "cover" ? { coverImageUrl: url } : { avatarUrl: url },
+    data: { avatarUrl: url },
   });
 
   return NextResponse.json({ url });

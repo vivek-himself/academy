@@ -7,12 +7,10 @@ import { Camera, Loader2 } from "lucide-react";
 export default function AvatarUploadField({
   value,
   onChange,
-  kind = "avatar",
   fallbackLabel,
 }: {
   value: string;
   onChange: (url: string) => void;
-  kind?: "avatar" | "cover";
   fallbackLabel?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -25,7 +23,6 @@ export default function AvatarUploadField({
     try {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("kind", kind);
       const res = await fetch("/api/dashboard/upload", { method: "POST", body: formData });
       const data = await res.json();
       if (!res.ok) {

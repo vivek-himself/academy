@@ -40,7 +40,6 @@ export function getMissingProfileFields(user: ProfileUser): string[] {
 }
 
 export type FullProfileUser = ProfileUser & {
-  username: string | null;
   bio: string | null;
   currentRole: string | null;
   skillLevel: string | null;
@@ -62,7 +61,6 @@ export function getFullProfileCompletionPercent(user: FullProfileUser) {
 
   const fields = [
     Boolean(user.displayName),
-    Boolean(user.username),
     Boolean(user.avatarUrl),
     Boolean(user.bio),
     Boolean(user.location),

@@ -6,7 +6,6 @@ import { isValidLinkedInUrl, LINKEDIN_URL_ERROR } from "@/lib/validators";
 
 const STRING_FIELDS = [
   "displayName",
-  "username",
   "bio",
   "location",
   "phone",

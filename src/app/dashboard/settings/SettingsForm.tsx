@@ -25,11 +25,9 @@ import {
 export type SettingsInitial = {
   name: string;
   displayName: string;
-  username: string;
   bio: string;
   location: string;
   avatarUrl: string;
-  coverImageUrl: string;
   phone: string | null;
   gender: string | null;
   dateOfBirth: string | null;
@@ -247,7 +245,6 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
 
   const strength = getFullProfileCompletionPercent({
     ...profileForCheck,
-    username: form.username || null,
     bio: form.bio || null,
     currentRole: form.currentRole || null,
     skillLevel: form.skillLevel || null,
@@ -276,7 +273,6 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
       body: JSON.stringify({
         name: form.name,
         displayName: form.displayName,
-        username: form.username,
         bio: form.bio,
         location: form.location,
         phone: form.phone ?? "",
@@ -406,13 +402,8 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
                 </p>
                 <AvatarUploadField value={form.avatarUrl} onChange={(url) => set("avatarUrl", url)} fallbackLabel={form.displayName || form.name} />
               </div>
-              <div>
-                <p className="mb-1.5 text-sm font-semibold text-brand-ink">Cover Image (optional)</p>
-                <AvatarUploadField value={form.coverImageUrl} onChange={(url) => set("coverImageUrl", url)} kind="cover" fallbackLabel={form.displayName || form.name} />
-              </div>
               <TextInput label="Full Name" value={form.name} onChange={(v) => set("name", v)} required />
               <TextInput label="Display Name" value={form.displayName} onChange={(v) => set("displayName", v)} required />
-              <TextInput label="Username" value={form.username} onChange={(v) => set("username", v)} placeholder="e.g. jane_designs" />
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Short Bio (optional)</label>
                 <textarea
