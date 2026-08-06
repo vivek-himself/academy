@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { safeJsonParse } from "@/lib/json";
+import { getStudentSession } from "@/lib/studentAuth";
 
 export default async function CTABanner({
   title,
@@ -31,6 +32,11 @@ export default async function CTABanner({
       }
     );
     resolved = { title: data.title, description: data.description, buttonLabel: data.ctaLabel, href: data.href, imageUrl: data.imageUrl };
+  }
+
+  if (resolved.href === "/courses") {
+    const session = await getStudentSession();
+    resolved = { ...resolved, href: session ? "/dashboard" : "/signup" };
   }
 
   return (
