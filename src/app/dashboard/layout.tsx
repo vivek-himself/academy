@@ -29,9 +29,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full bg-brand-surface text-foreground">
         <PromoBar />
-        <div className="flex">
+        <div className="flex flex-col lg:flex-row">
           <DashboardSidebar />
-          <main className="min-w-0 flex-1 p-6 sm:p-8">
+          <main className="min-w-0 flex-1 p-4 sm:p-8">
             <DashboardPromoBanner />
             <div className="mt-6">{children}</div>
           </main>
