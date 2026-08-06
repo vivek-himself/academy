@@ -70,7 +70,7 @@ export type SettingsInitial = {
 
 function Card({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div className="flex max-w-xl flex-col gap-4 rounded-2xl border border-brand-border bg-white p-6">
+    <div className="mb-6 flex break-inside-avoid flex-col gap-4 rounded-2xl border border-brand-border bg-white p-6">
       <div>
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">{title}</h3>
         {subtitle && <p className="mt-1 text-xs text-brand-muted">{subtitle}</p>}
@@ -339,8 +339,8 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="max-w-xl rounded-2xl border border-brand-border bg-white p-6">
+    <div className="flex max-w-5xl flex-col gap-6">
+      <div className="rounded-2xl border border-brand-border bg-white p-6">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Profile Strength</h3>
           <span className="text-sm font-bold text-brand-pink">{strength}%</span>
@@ -353,7 +353,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         </p>
       </div>
 
-      <div className="max-w-xl rounded-2xl border border-brand-border bg-white p-6">
+      <div className="rounded-2xl border border-brand-border bg-white p-6">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Course Access Requirements</h3>
           <span
@@ -370,7 +370,8 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         <RequirementsChecklist items={requirementItems} />
       </div>
 
-      <form onSubmit={handleSaveProfile} className="flex flex-col gap-6">
+      <form onSubmit={handleSaveProfile}>
+        <div className="lg:columns-2 lg:gap-6">
         <Card title="Basic Information">
           <div>
             <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
@@ -504,6 +505,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
           <Toggle label="Product announcements" checked={form.notifyProductAnnouncements} onChange={(v) => set("notifyProductAnnouncements", v)} />
           <p className="text-xs text-brand-muted">Email delivery is coming soon — these preferences are saved for when it launches.</p>
         </Card>
+        </div>
 
         {status && <p className="text-sm font-medium text-emerald-600">{status}</p>}
         {error && <p className="text-sm font-medium text-red-500">{error}</p>}
