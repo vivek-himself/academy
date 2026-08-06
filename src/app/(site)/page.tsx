@@ -42,7 +42,7 @@ export default async function Home() {
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
-  const mappedCourses = courses.map((c) => ({ ...mapCourse(c), id: c.id, slug: c.slug }));
+  const mappedCourses = courses.map((c) => ({ ...mapCourse(c), slug: c.slug }));
 
   // Category tabs on "Browse Our Top Courses" lead with whichever category most recently
   // received a new course upload; categories with no courses yet fall back to alphabetical.
@@ -84,16 +84,10 @@ export default async function Home() {
   );
   const trendingCoursesBlock = safeJsonParse(blockMap["home_trending_courses"], {
     title: "Trending Courses",
-    featuredCourseId: "",
-    featuredImageUrl: "",
+    bannerImageUrl: "",
+    bannerText: "",
   });
-
-  const pickedFeatured = mappedCourses.find((c) => c.id === trendingCoursesBlock.featuredCourseId);
-  const baseFeaturedCourse = pickedFeatured ?? mappedCourses[Math.min(4, mappedCourses.length - 1)];
-  const featuredCourse = baseFeaturedCourse
-    ? { ...baseFeaturedCourse, image: trendingCoursesBlock.featuredImageUrl || baseFeaturedCourse.image }
-    : undefined;
-  const trendingItems = mappedCourses.filter((c) => c.slug !== baseFeaturedCourse?.slug).slice(0, 4);
+  const trendingItems = mappedCourses.slice(0, 4);
 
   return (
     <>
@@ -112,11 +106,11 @@ export default async function Home() {
       />
       <StatsBar stats={stats} reviewBadges={reviewBadges} />
       <TechStackBanner block={techStack} />
-      {featuredCourse && (
+      {trendingItems.length > 0 && (
         <TrendingCourses
           title={trendingCoursesBlock.title || "Trending Courses"}
-          featured={featuredCourse}
-          featuredIsBannerOnly={Boolean(trendingCoursesBlock.featuredImageUrl)}
+          bannerImageUrl={trendingCoursesBlock.bannerImageUrl}
+          bannerText={trendingCoursesBlock.bannerText}
           items={trendingItems}
         />
       )}

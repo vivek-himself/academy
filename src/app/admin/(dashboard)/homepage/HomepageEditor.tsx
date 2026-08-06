@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Plus, Trash2 } from "lucide-react";
-import { TextField, TextAreaField, SelectField } from "../../components/FormField";
+import { TextField, TextAreaField } from "../../components/FormField";
 import ImageUploadField from "../../components/ImageUploadField";
 import StringListField from "../../components/StringListField";
 import RepeaterField from "../../components/RepeaterField";
@@ -21,7 +21,7 @@ type GrowSkill = { title: string; description: string; checklist: string[]; ctaL
 type CtaBanner = { title: string; description: string; ctaLabel: string; href: string; imageUrl: string };
 type ReviewBadge = { label: string; rating: string; imageUrl: string };
 const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: "", imageUrl: "" };
-type TrendingCourses = { title: string; featuredCourseId: string; featuredImageUrl: string };
+type TrendingCourses = { title: string; bannerImageUrl: string; bannerText: string };
 
 function SectionCard({
   id,
@@ -83,7 +83,6 @@ export default function HomepageEditor({
   ctaBanner: initCtaBanner,
   reviewBadges: initReviewBadges,
   trendingCourses: initTrendingCourses,
-  courses,
 }: {
   heroSlides: HeroSlide[];
   stats: Stat[];
@@ -94,7 +93,6 @@ export default function HomepageEditor({
   ctaBanner: CtaBanner;
   reviewBadges: ReviewBadge[];
   trendingCourses: TrendingCourses;
-  courses: { id: string; title: string }[];
 }) {
   const router = useRouter();
   const [heroSlides, setHeroSlides] = useState(initHeroSlides.length ? initHeroSlides : [EMPTY_HERO_SLIDE]);
@@ -445,7 +443,7 @@ export default function HomepageEditor({
       <SectionCard
         id="trending-courses"
         title="Trending Courses"
-        description="The section title and featured banner course shown just below the tech stack banner. The other 4 cards next to it are picked automatically from your top courses."
+        description="The section title and the large banner tile shown just below the tech stack banner. The banner is a plain image with its own text — it isn't tied to any course and never links anywhere. The 4 cards next to it are picked automatically from your top courses."
       >
         <TextField
           label="Section Title"
@@ -453,18 +451,17 @@ export default function HomepageEditor({
           value={trendingCourses.title}
           onChange={(v) => setTrendingCourses({ ...trendingCourses, title: v })}
         />
-        <SelectField
-          label="Featured Banner Course"
-          description="Shown as the large image tile with the title overlaid. Leave unset to pick automatically."
-          value={trendingCourses.featuredCourseId}
-          onChange={(v) => setTrendingCourses({ ...trendingCourses, featuredCourseId: v })}
-          options={[{ label: "Auto (pick for me)", value: "" }, ...courses.map((c) => ({ label: c.title, value: c.id }))]}
+        <TextField
+          label="Banner Text"
+          maxLength={80}
+          value={trendingCourses.bannerText}
+          onChange={(v) => setTrendingCourses({ ...trendingCourses, bannerText: v })}
         />
         <ImageUploadField
-          label="Custom Banner Image (optional)"
-          desktopValue={trendingCourses.featuredImageUrl}
-          onDesktopChange={(v) => setTrendingCourses({ ...trendingCourses, featuredImageUrl: v })}
-          desktopSize="1280 × 720px (16:9) — overrides the featured course's own cover image for just this tile"
+          label="Banner Image"
+          desktopValue={trendingCourses.bannerImageUrl}
+          onDesktopChange={(v) => setTrendingCourses({ ...trendingCourses, bannerImageUrl: v })}
+          desktopSize="1280 × 720px (16:9)"
         />
       </SectionCard>
 

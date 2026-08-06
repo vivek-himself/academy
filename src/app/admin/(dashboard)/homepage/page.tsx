@@ -6,7 +6,7 @@ import HomepageEditor from "./HomepageEditor";
 export const dynamic = "force-dynamic";
 
 export default async function HomepageContentPage() {
-  const [heroSlides, stats, trustLogos, blocks, courses] = await Promise.all([
+  const [heroSlides, stats, trustLogos, blocks] = await Promise.all([
     prisma.heroSlide.findMany({ orderBy: { order: "asc" } }),
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
@@ -24,7 +24,6 @@ export default async function HomepageContentPage() {
         },
       },
     }),
-    prisma.course.findMany({ where: { published: true }, select: { id: true, title: true }, orderBy: { title: "asc" } }),
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
@@ -60,10 +59,9 @@ export default async function HomepageContentPage() {
         ])}
         trendingCourses={safeJsonParse(blockMap["home_trending_courses"], {
           title: "Trending Courses",
-          featuredCourseId: "",
-          featuredImageUrl: "",
+          bannerImageUrl: "",
+          bannerText: "",
         })}
-        courses={courses}
       />
     </div>
   );
