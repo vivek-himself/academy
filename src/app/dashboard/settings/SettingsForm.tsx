@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Circle } from "lucide-react";
 import DateOfBirthSelect, { dobToIso, isoToDob, type DobValue } from "@/components/ui/DateOfBirthSelect";
@@ -83,6 +83,7 @@ function RequiredTag() {
 }
 
 function TextInput({
+  id,
   label,
   value,
   onChange,
@@ -90,6 +91,7 @@ function TextInput({
   required,
   error,
 }: {
+  id?: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -98,7 +100,7 @@ function TextInput({
   error?: string;
 }) {
   return (
-    <div>
+    <div id={id}>
       <label className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
         {label}
         {required && <RequiredTag />}
@@ -117,12 +119,14 @@ function TextInput({
 }
 
 function SelectInput({
+  id,
   label,
   value,
   onChange,
   options,
   required,
 }: {
+  id?: string;
   label: string;
   value: string;
   onChange: (v: string) => void;
@@ -130,7 +134,7 @@ function SelectInput({
   required?: boolean;
 }) {
   return (
-    <div>
+    <div id={id}>
       <label className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
         {label}
         {required && <RequiredTag />}
@@ -182,17 +186,31 @@ function AdditionalInterestsInput({ value, onChange }: { value: string[]; onChan
   );
 }
 
-function RequirementsChecklist({ items }: { items: { label: string; done: boolean }[] }) {
+function RequirementsChecklist({
+  items,
+  onSelect,
+}: {
+  items: { key: string; label: string; done: boolean }[];
+  onSelect: (key: string) => void;
+}) {
   return (
-    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
       {items.map((item) => (
-        <li key={item.label} className={`flex items-center gap-2 text-sm ${item.done ? "text-emerald-700" : "text-brand-muted"}`}>
-          {item.done ? (
-            <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
-          ) : (
-            <Circle size={15} className="shrink-0 text-brand-border" />
-          )}
-          {item.label}
+        <li key={item.key}>
+          <button
+            type="button"
+            onClick={() => onSelect(item.key)}
+            className={`flex w-full items-center gap-2 rounded-lg px-1.5 py-1 text-left text-sm transition-colors hover:bg-brand-surface ${
+              item.done ? "text-emerald-700" : "text-brand-muted"
+            }`}
+          >
+            {item.done ? (
+              <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+            ) : (
+              <Circle size={15} className="shrink-0 text-brand-border" />
+            )}
+            {item.label}
+          </button>
         </li>
       ))}
     </ul>
@@ -208,11 +226,25 @@ const SETTINGS_TABS = [
 
 type SettingsTabId = (typeof SETTINGS_TABS)[number]["id"];
 
+const FIELD_TAB_MAP: Record<string, SettingsTabId> = {
+  avatarUrl: "basic",
+  name: "basic",
+  displayName: "basic",
+  location: "basic",
+  phone: "basic",
+  dateOfBirth: "basic",
+  gender: "basic",
+  linkedinUrl: "portfolio",
+  timezone: "basic",
+  country: "basic",
+};
+
 export default function SettingsForm({ initial }: { initial: SettingsInitial }) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
   const [dob, setDob] = useState<DobValue>(isoToDob(initial.dateOfBirth));
   const [activeTab, setActiveTab] = useState<SettingsTabId>("basic");
+  const [scrollTarget, setScrollTarget] = useState<{ key: string; nonce: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
@@ -226,6 +258,20 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
   function set<K extends keyof SettingsInitial>(key: K, value: SettingsInitial[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
+
+  function goToField(key: string) {
+    setActiveTab(FIELD_TAB_MAP[key] ?? "basic");
+    setScrollTarget({ key, nonce: Date.now() });
+  }
+
+  useEffect(() => {
+    if (!scrollTarget) return;
+    const el = document.getElementById(`field-${scrollTarget.key}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    const focusable = el.matches("input, textarea, select") ? el : el.querySelector("input, textarea, select");
+    (focusable as HTMLElement | null)?.focus({ preventScroll: true });
+  }, [scrollTarget]);
 
   const profileForCheck = {
     name: form.name,
@@ -241,7 +287,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
   };
 
   const courseAccessComplete = isProfileComplete(profileForCheck);
-  const requirementItems = MANDATORY_PROFILE_FIELDS.map((f) => ({ label: f.label, done: Boolean(profileForCheck[f.key]) }));
+  const requirementItems = MANDATORY_PROFILE_FIELDS.map((f) => ({ key: f.key, label: f.label, done: Boolean(profileForCheck[f.key]) }));
 
   const strength = getFullProfileCompletionPercent({
     ...profileForCheck,
@@ -373,7 +419,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         <p className="mt-1 mb-3 text-xs text-brand-muted">
           All fields below are required before you can attend a course you&apos;re enrolled in.
         </p>
-        <RequirementsChecklist items={requirementItems} />
+        <RequirementsChecklist items={requirementItems} onSelect={goToField} />
       </div>
 
       <div className="flex gap-2 overflow-x-auto rounded-2xl border border-brand-border bg-white p-1.5">
@@ -395,15 +441,15 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         {activeTab === "basic" && (
           <div className="lg:columns-2 lg:gap-6">
             <Card title="Basic Information">
-              <div>
+              <div id="field-avatarUrl">
                 <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
                   Profile Photo
                   <RequiredTag />
                 </p>
                 <AvatarUploadField value={form.avatarUrl} onChange={(url) => set("avatarUrl", url)} fallbackLabel={form.displayName || form.name} />
               </div>
-              <TextInput label="Full Name" value={form.name} onChange={(v) => set("name", v)} required />
-              <TextInput label="Display Name" value={form.displayName} onChange={(v) => set("displayName", v)} required />
+              <TextInput id="field-name" label="Full Name" value={form.name} onChange={(v) => set("name", v)} required />
+              <TextInput id="field-displayName" label="Display Name" value={form.displayName} onChange={(v) => set("displayName", v)} required />
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Short Bio (optional)</label>
                 <textarea
@@ -413,12 +459,12 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
                   className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
                 />
               </div>
-              <TextInput label="Location" value={form.location} onChange={(v) => set("location", v)} placeholder="e.g. Mumbai, India" required />
+              <TextInput id="field-location" label="Location" value={form.location} onChange={(v) => set("location", v)} placeholder="e.g. Mumbai, India" required />
             </Card>
 
             <Card title="Contact Details">
-              <TextInput label="Phone Number" value={form.phone ?? ""} onChange={(v) => set("phone", v)} required />
-              <div>
+              <TextInput id="field-phone" label="Phone Number" value={form.phone ?? ""} onChange={(v) => set("phone", v)} required />
+              <div id="field-gender">
                 <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
                   Gender
                   <RequiredTag />
@@ -432,7 +478,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
                   ))}
                 </div>
               </div>
-              <div>
+              <div id="field-dateOfBirth">
                 <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
                   Date of Birth
                   <RequiredTag />
@@ -442,8 +488,8 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
             </Card>
 
             <Card title="Account">
-              <TextInput label="Time Zone" value={form.timezone} onChange={(v) => set("timezone", v)} placeholder="e.g. Asia/Kolkata" required />
-              <TextInput label="Country" value={form.country} onChange={(v) => set("country", v)} placeholder="e.g. India" required />
+              <TextInput id="field-timezone" label="Time Zone" value={form.timezone} onChange={(v) => set("timezone", v)} placeholder="e.g. Asia/Kolkata" required />
+              <TextInput id="field-country" label="Country" value={form.country} onChange={(v) => set("country", v)} placeholder="e.g. India" required />
             </Card>
           </div>
         )}
@@ -498,6 +544,7 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         {activeTab === "portfolio" && (
           <Card title="Portfolio & Showcase" subtitle="LinkedIn is required before you can attend a course; the rest are optional.">
             <TextInput
+              id="field-linkedinUrl"
               label="LinkedIn"
               value={form.linkedinUrl}
               onChange={(v) => set("linkedinUrl", v)}
