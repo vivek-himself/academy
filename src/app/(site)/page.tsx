@@ -17,7 +17,7 @@ import { safeJsonParse } from "@/lib/json";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const [heroSlides, stats, trustLogos, blocks, courses, faqs, categories] = await Promise.all([
+  const [heroSlides, stats, trustLogos, blocks, courses, faqs, categories, coursesByRecency] = await Promise.all([
     prisma.heroSlide.findMany({ orderBy: { order: "asc" } }),
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
@@ -31,11 +31,29 @@ export default async function Home() {
       take: 13,
     }),
     prisma.faq.findMany({ orderBy: { order: "asc" } }),
-    prisma.category.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.category.findMany({ orderBy: { name: "asc" } }),
+    prisma.course.findMany({
+      where: { published: true },
+      select: { category: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
   const mappedCourses = courses.map((c) => ({ ...mapCourse(c), slug: c.slug }));
+
+  // Category tabs on "Browse Our Top Courses" lead with whichever category most recently
+  // received a new course upload; categories with no courses yet fall back to alphabetical.
+  const categoriesByRecentUpload: string[] = [];
+  for (const c of coursesByRecency) {
+    if (c.category && !categoriesByRecentUpload.includes(c.category.name)) {
+      categoriesByRecentUpload.push(c.category.name);
+    }
+  }
+  const categoryNames = [
+    ...categoriesByRecentUpload,
+    ...categories.map((c) => c.name).filter((name) => !categoriesByRecentUpload.includes(name)),
+  ];
 
   const techStack = safeJsonParse(blockMap["home_tech_stack"], {
     eyebrow: "",
@@ -84,7 +102,7 @@ export default async function Home() {
       <AsSeenOn logos={trustLogos} />
       <GrowSkill block={growSkill} />
       <RandomPromo block={randomPromo} />
-      <BrowseTopCourses items={mappedCourses} categories={categories.map((c) => c.name)} />
+      <BrowseTopCourses items={mappedCourses} categories={categoryNames} />
       <section className="container-page py-10 sm:py-14">
         <SectionHeading title="FAQs" />
         <div className="mt-8">
