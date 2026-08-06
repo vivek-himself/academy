@@ -82,11 +82,18 @@ export default async function Home() {
     blockMap["home_review_badges"],
     undefined
   );
-  const trendingCoursesBlock = safeJsonParse(blockMap["home_trending_courses"], { title: "Trending Courses", featuredCourseId: "" });
+  const trendingCoursesBlock = safeJsonParse(blockMap["home_trending_courses"], {
+    title: "Trending Courses",
+    featuredCourseId: "",
+    featuredImageUrl: "",
+  });
 
   const pickedFeatured = mappedCourses.find((c) => c.id === trendingCoursesBlock.featuredCourseId);
-  const featuredCourse = pickedFeatured ?? mappedCourses[Math.min(4, mappedCourses.length - 1)];
-  const trendingItems = mappedCourses.filter((c) => c.slug !== featuredCourse?.slug).slice(0, 4);
+  const baseFeaturedCourse = pickedFeatured ?? mappedCourses[Math.min(4, mappedCourses.length - 1)];
+  const featuredCourse = baseFeaturedCourse
+    ? { ...baseFeaturedCourse, image: trendingCoursesBlock.featuredImageUrl || baseFeaturedCourse.image }
+    : undefined;
+  const trendingItems = mappedCourses.filter((c) => c.slug !== baseFeaturedCourse?.slug).slice(0, 4);
 
   return (
     <>

@@ -21,7 +21,7 @@ type GrowSkill = { title: string; description: string; checklist: string[]; ctaL
 type CtaBanner = { title: string; description: string; ctaLabel: string; href: string; imageUrl: string };
 type ReviewBadge = { label: string; rating: string; imageUrl: string };
 const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: "", imageUrl: "" };
-type TrendingCourses = { title: string; featuredCourseId: string };
+type TrendingCourses = { title: string; featuredCourseId: string; featuredImageUrl: string };
 
 function SectionCard({
   id,
@@ -459,6 +459,12 @@ export default function HomepageEditor({
           value={trendingCourses.featuredCourseId}
           onChange={(v) => setTrendingCourses({ ...trendingCourses, featuredCourseId: v })}
           options={[{ label: "Auto (pick for me)", value: "" }, ...courses.map((c) => ({ label: c.title, value: c.id }))]}
+        />
+        <ImageUploadField
+          label="Custom Banner Image (optional)"
+          desktopValue={trendingCourses.featuredImageUrl}
+          onDesktopChange={(v) => setTrendingCourses({ ...trendingCourses, featuredImageUrl: v })}
+          desktopSize="1280 × 720px (16:9) — overrides the featured course's own cover image for just this tile"
         />
       </SectionCard>
 

@@ -58,7 +58,11 @@ export default async function HomepageContentPage() {
           { label: "Capterra", rating: "★★★★★ 4.7/5", imageUrl: "" },
           { label: "G2", rating: "★★★★★ 4.3/5", imageUrl: "" },
         ])}
-        trendingCourses={safeJsonParse(blockMap["home_trending_courses"], { title: "Trending Courses", featuredCourseId: "" })}
+        trendingCourses={safeJsonParse(blockMap["home_trending_courses"], {
+          title: "Trending Courses",
+          featuredCourseId: "",
+          featuredImageUrl: "",
+        })}
         courses={courses}
       />
     </div>
