@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import { Users, Layers, Clock } from "lucide-react";
 import type { Course, CourseModule } from "@/lib/data";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 export default function CourseSidebar({ course, modules }: { course: Course; modules: CourseModule[] }) {
+  const { format } = useCurrency();
   return (
     <div className="rounded-2xl border border-brand-border bg-white p-5">
       <h3 className="text-base font-bold text-brand-ink">{course.title}</h3>
@@ -27,7 +31,7 @@ export default function CourseSidebar({ course, modules }: { course: Course; mod
 
       <div className="mt-4 flex items-center justify-between border-t border-brand-border pt-4">
         <span className="text-sm font-semibold text-brand-ink">{course.modules} Modules</span>
-        <span className="text-lg font-bold text-brand-ink">${course.price.toFixed(0)}</span>
+        <span className="text-lg font-bold text-brand-ink">{format(course.price)}</span>
       </div>
 
       <ul className="relative mt-3 max-h-60 space-y-1 overflow-y-auto border-l-2 border-brand-pink/20 pl-0">

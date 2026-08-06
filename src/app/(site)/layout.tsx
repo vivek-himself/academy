@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import "../globals.css";
 import PromoBar from "@/components/layout/PromoBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
+import { currencyForCountry } from "@/lib/currency";
+import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,8 +41,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getStudentSession();
+  const [session, headersList] = await Promise.all([getStudentSession(), headers()]);
   const user = session ? await prisma.user.findUnique({ where: { id: session.userId }, select: { name: true } }) : null;
+  const geoCurrency = currencyForCountry(headersList.get("x-vercel-ip-country"));
 
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
@@ -50,12 +54,14 @@ export default async function RootLayout({
         >
           Skip to content
         </a>
-        <PromoBar />
-        <Header user={user} />
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <CurrencyProvider initialCurrency={geoCurrency}>
+          <PromoBar />
+          <Header user={user} />
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
+          <Footer />
+        </CurrencyProvider>
       </body>
     </html>
   );

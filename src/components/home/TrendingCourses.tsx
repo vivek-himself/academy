@@ -1,11 +1,15 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import StarRating from "@/components/ui/StarRating";
 import type { mapCourse } from "@/lib/mappers";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 type Course = ReturnType<typeof mapCourse> & { slug: string };
 
 export default function TrendingCourses({ featured, items }: { featured: Course; items: Course[] }) {
+  const { format } = useCurrency();
   return (
     <section className="container-page py-10 sm:py-14">
       <h2 className="mb-6 text-center text-2xl font-bold text-brand-ink sm:text-3xl">Trending Courses</h2>
@@ -47,11 +51,9 @@ export default function TrendingCourses({ featured, items }: { featured: Course;
                   <span className="text-[10px] text-brand-muted">({course.reviews})</span>
                 </div>
                 <div className="mt-1.5 flex items-baseline gap-2">
-                  <span className="text-sm font-bold text-brand-ink">${course.price.toFixed(2)}</span>
+                  <span className="text-sm font-bold text-brand-ink">{format(course.price)}</span>
                   {course.originalPrice && (
-                    <span className="text-[11px] text-brand-muted line-through">
-                      ${course.originalPrice.toFixed(2)}
-                    </span>
+                    <span className="text-[11px] text-brand-muted line-through">{format(course.originalPrice)}</span>
                   )}
                 </div>
               </div>

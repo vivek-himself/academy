@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Menu, X, LayoutGrid } from "lucide-react";
 import Logo from "./Logo";
+import CurrencyDropdown from "./CurrencyDropdown";
 import { navLinks } from "@/lib/data";
 
 function DesktopDropdown({
@@ -90,6 +91,7 @@ export default function Header({ user }: { user: { name: string } | null }) {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <CurrencyDropdown />
           {user ? (
             <>
               <Link
@@ -146,6 +148,10 @@ export default function Header({ user }: { user: { name: string } | null }) {
               >
                 <X size={18} />
               </button>
+            </div>
+
+            <div className="mb-4 flex justify-end">
+              <CurrencyDropdown />
             </div>
 
             <Link

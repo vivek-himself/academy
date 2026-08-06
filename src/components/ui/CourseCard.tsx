@@ -1,7 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Users, Layers, Clock, Heart } from "lucide-react";
 import type { Course } from "@/lib/data";
+import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 const LEVEL_BARS: Record<string, { count: number; color: string }> = {
   Beginner: { count: 1, color: "#22C55E" },
@@ -30,6 +33,7 @@ function SignalBarsIcon({ level }: { level: string }) {
 }
 
 export default function CourseCard({ course }: { course: Course }) {
+  const { format } = useCurrency();
   return (
     <Link
       href={`/courses/${course.slug}`}
@@ -79,9 +83,9 @@ export default function CourseCard({ course }: { course: Course }) {
           </div>
         </div>
         <div className="flex items-baseline gap-2 border-t border-brand-border pt-3.5">
-          <span className="text-base font-bold text-brand-ink">${course.price.toFixed(2)}</span>
+          <span className="text-base font-bold text-brand-ink">{format(course.price)}</span>
           {course.originalPrice && (
-            <span className="text-sm text-brand-muted line-through">${course.originalPrice.toFixed(2)}</span>
+            <span className="text-sm text-brand-muted line-through">{format(course.originalPrice)}</span>
           )}
         </div>
       </div>
