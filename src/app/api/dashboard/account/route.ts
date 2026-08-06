@@ -91,14 +91,7 @@ export async function PATCH(req: NextRequest) {
   }
 
   if (Object.keys(data).length > 0) {
-    try {
-      await prisma.user.update({ where: { id: user.id }, data });
-    } catch (err) {
-      if (err && typeof err === "object" && "code" in err && err.code === "P2002") {
-        return NextResponse.json({ error: "That username is already taken." }, { status: 409 });
-      }
-      throw err;
-    }
+    await prisma.user.update({ where: { id: user.id }, data });
   }
 
   if (body.newPassword) {
