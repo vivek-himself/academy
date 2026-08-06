@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2 } from "lucide-react";
+import ConfirmModal, { type ConfirmModalState } from "../../components/ConfirmModal";
 
 type Category = { id: string; name: string; courseCount: number };
 
@@ -11,6 +12,7 @@ export default function CategoriesManager({ categories }: { categories: Category
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [confirmState, setConfirmState] = useState<ConfirmModalState | null>(null);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -31,15 +33,21 @@ export default function CategoriesManager({ categories }: { categories: Category
     router.refresh();
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Delete this category?")) return;
-    const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "Failed to delete.");
-      return;
-    }
-    router.refresh();
+  function handleDelete(id: string, name: string) {
+    setConfirmState({
+      title: `Delete "${name}"?`,
+      message: "This can't be undone.",
+      confirmLabel: "Delete Category",
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.error ?? "Failed to delete.");
+          return;
+        }
+        router.refresh();
+      },
+    });
   }
 
   return (
@@ -71,7 +79,7 @@ export default function CategoriesManager({ categories }: { categories: Category
               <p className="text-xs text-brand-muted">{c.courseCount} course(s)</p>
             </div>
             <button
-              onClick={() => handleDelete(c.id)}
+              onClick={() => handleDelete(c.id, c.name)}
               className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-red-500 hover:bg-red-50"
             >
               <Trash2 size={14} />
@@ -80,6 +88,7 @@ export default function CategoriesManager({ categories }: { categories: Category
         ))}
         {categories.length === 0 && <p className="px-5 py-8 text-center text-sm text-brand-muted">No categories yet.</p>}
       </div>
+      {confirmState && <ConfirmModal state={confirmState} onClose={() => setConfirmState(null)} />}
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Pencil, Trash2 } from "lucide-react";
+import ConfirmModal, { type ConfirmModalState } from "../../components/ConfirmModal";
 
 type CourseRow = {
   id: string;
@@ -19,16 +20,23 @@ type CourseRow = {
 export default function CoursesTable({ courses }: { courses: CourseRow[] }) {
   const router = useRouter();
   const [error, setError] = useState("");
+  const [confirmState, setConfirmState] = useState<ConfirmModalState | null>(null);
 
-  async function handleDelete(id: string, title: string) {
-    if (!confirm(`Delete "${title}"? This can't be undone.`)) return;
-    const res = await fetch(`/api/admin/courses/${id}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json();
-      setError(data.error ?? "Failed to delete.");
-      return;
-    }
-    router.refresh();
+  function handleDelete(id: string, title: string) {
+    setConfirmState({
+      title: `Delete "${title}"?`,
+      message: "This can't be undone.",
+      confirmLabel: "Delete Course",
+      onConfirm: async () => {
+        const res = await fetch(`/api/admin/courses/${id}`, { method: "DELETE" });
+        if (!res.ok) {
+          const data = await res.json();
+          setError(data.error ?? "Failed to delete.");
+          return;
+        }
+        router.refresh();
+      },
+    });
   }
 
   return (
@@ -94,6 +102,7 @@ export default function CoursesTable({ courses }: { courses: CourseRow[] }) {
           )}
         </tbody>
       </table>
+      {confirmState && <ConfirmModal state={confirmState} onClose={() => setConfirmState(null)} />}
     </div>
   );
 }
