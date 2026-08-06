@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import ExploreHero from "@/components/courses/ExploreHero";
 import CoursesExplorer from "@/components/courses/CoursesExplorer";
-import Pagination from "@/components/ui/Pagination";
 import CTABanner from "@/components/ui/CTABanner";
 import { prisma } from "@/lib/prisma";
 import { mapCourse } from "@/lib/mappers";
@@ -29,7 +28,6 @@ export default async function ExploreCoursesPage() {
         {items.length === 0 && (
           <p className="py-16 text-center text-sm text-brand-muted">No courses published yet.</p>
         )}
-        {items.length > 0 && <Pagination total={3} />}
       </section>
       <CTABanner />
     </>

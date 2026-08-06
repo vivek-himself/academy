@@ -4,7 +4,9 @@ import { useMemo, useState } from "react";
 import { Search, BarChart3, Grid2x2, ArrowUpDown, Check } from "lucide-react";
 import type { Course } from "@/lib/data";
 import CourseCard from "@/components/ui/CourseCard";
+import Pagination from "@/components/ui/Pagination";
 
+const PAGE_SIZE = 8;
 const LEVELS = ["Beginner", "Intermediate", "Master"] as const;
 const SORTS = [
   { value: "popular", label: "Popular" },
@@ -82,6 +84,7 @@ export default function CoursesExplorer({ items }: { items: Course[] }) {
   const [level, setLevel] = useState("");
   const [category, setCategory] = useState("");
   const [sort, setSort] = useState<string>("popular");
+  const [page, setPage] = useState(1);
 
   const categories = useMemo(() => Array.from(new Set(items.map((c) => c.category))).sort(), [items]);
 
@@ -103,6 +106,22 @@ export default function CoursesExplorer({ items }: { items: Course[] }) {
 
     return result;
   }, [items, query, level, category, sort]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
+  const filterKey = `${query}|${level}|${category}|${sort}`;
+  const [lastFilterKey, setLastFilterKey] = useState(filterKey);
+  let currentPage = page;
+  if (filterKey !== lastFilterKey) {
+    setLastFilterKey(filterKey);
+    currentPage = 1;
+    setPage(1);
+  } else if (page > totalPages) {
+    currentPage = totalPages;
+    setPage(totalPages);
+  }
+
+  const pageItems = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <>
@@ -142,14 +161,15 @@ export default function CoursesExplorer({ items }: { items: Course[] }) {
         </div>
       </div>
 
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {filtered.map((course) => (
+      <div key={currentPage} className="page-slide-in mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {pageItems.map((course) => (
           <CourseCard key={course.slug} course={course} />
         ))}
       </div>
       {filtered.length === 0 && (
         <p className="py-16 text-center text-sm text-brand-muted">No courses match your search or filters.</p>
       )}
+      <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} />
     </>
   );
 }

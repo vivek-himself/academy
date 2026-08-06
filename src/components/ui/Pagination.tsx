@@ -1,38 +1,48 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export default function Pagination({ total = 3 }: { total?: number }) {
-  const [active, setActive] = useState(1);
+export default function Pagination({
+  page,
+  totalPages,
+  onChange,
+}: {
+  page: number;
+  totalPages: number;
+  onChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
 
   return (
     <div className="mt-10 flex items-center justify-center gap-2">
       <button
-        onClick={() => setActive((p) => Math.max(1, p - 1))}
+        onClick={() => onChange(Math.max(1, page - 1))}
+        disabled={page === 1}
         aria-label="Previous page"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-muted hover:bg-white"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-muted hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
       >
         <ChevronLeft size={16} />
       </button>
-      {Array.from({ length: total }).map((_, i) => {
-        const page = i + 1;
+      {Array.from({ length: totalPages }).map((_, i) => {
+        const p = i + 1;
         return (
           <button
-            key={page}
-            onClick={() => setActive(page)}
+            key={p}
+            onClick={() => onChange(p)}
+            aria-current={page === p ? "page" : undefined}
             className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-medium ${
-              active === page ? "bg-brand-pink text-white" : "text-brand-ink hover:bg-white"
+              page === p ? "bg-brand-pink text-white" : "text-brand-ink hover:bg-white"
             }`}
           >
-            {page}
+            {p}
           </button>
         );
       })}
       <button
-        onClick={() => setActive((p) => Math.min(total, p + 1))}
+        onClick={() => onChange(Math.min(totalPages, page + 1))}
+        disabled={page === totalPages}
         aria-label="Next page"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-muted hover:bg-white"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-muted hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
       >
         <ChevronRight size={16} />
       </button>
