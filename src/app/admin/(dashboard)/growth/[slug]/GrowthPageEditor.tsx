@@ -84,6 +84,7 @@ export default function GrowthPageEditor({ page }: { page: GrowthPageValue }) {
             mobileValue={value.heroImageMobileUrl}
             onMobileChange={(v) => set("heroImageMobileUrl", v)}
             desktopSize="800 × 800px (square)"
+            mobileSize="800 × 600px (4:3)"
           />
         </div>
       </div>

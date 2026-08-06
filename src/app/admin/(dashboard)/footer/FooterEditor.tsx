@@ -125,7 +125,7 @@ export default function FooterEditor({
                 onDesktopChange={(v) =>
                   setPaymentMethods(paymentMethods.map((p, idx) => (idx === i ? { ...p, imageUrl: v } : p)))
                 }
-                desktopSize="120 × 76px"
+                desktopSize="150 × 90px (5:3) — any aspect ratio works, it's scaled to fit"
               />
             </div>
           ))}

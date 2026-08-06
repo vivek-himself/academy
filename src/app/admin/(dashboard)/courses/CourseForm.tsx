@@ -132,8 +132,8 @@ export default function CourseForm({
           onDesktopChange={(v) => set("imageDesktopUrl", v)}
           mobileValue={value.imageMobileUrl}
           onMobileChange={(v) => set("imageMobileUrl", v)}
-          desktopSize="1200 × 900px (4:3)"
-          mobileSize="800 × 600px (4:3)"
+          desktopSize="1280 × 720px (16:9) — the real shape used in course grids and the course page hero"
+          mobileSize="960 × 540px (16:9)"
         />
       </div>
 

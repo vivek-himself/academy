@@ -80,8 +80,8 @@ export default function BlogPostForm({ initial }: { initial: BlogPostFormValue }
           onDesktopChange={(v) => set("imageDesktopUrl", v)}
           mobileValue={value.imageMobileUrl}
           onMobileChange={(v) => set("imageMobileUrl", v)}
-          desktopSize="1400 × 900px (16:10)"
-          mobileSize="900 × 600px (16:10)"
+          desktopSize="1440 × 900px (16:10)"
+          mobileSize="960 × 600px (16:10)"
         />
       </div>
 

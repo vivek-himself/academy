@@ -217,8 +217,8 @@ export default function HomepageEditor({
                 onDesktopChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, imageDesktopUrl: v } : s)))}
                 mobileValue={slide.imageMobileUrl}
                 onMobileChange={(v) => setHeroSlides(heroSlides.map((s, idx) => (idx === i ? { ...s, imageMobileUrl: v } : s)))}
-                desktopSize="1600 × 700px — leave room on the left for the text overlay"
-                mobileSize="700 × 700px"
+                desktopSize="1600 × 610px (~2.6:1) — leave room on the left for the text overlay"
+                mobileSize="700 × 700px (~1:1)"
               />
             </div>
           </div>
@@ -373,7 +373,7 @@ export default function HomepageEditor({
           label="Banner Image"
           desktopValue={techStack.imageUrl}
           onDesktopChange={(v) => setTechStack({ ...techStack, imageUrl: v })}
-          desktopSize="1200 × 500px — leave room on the left for the text overlay"
+          desktopSize="1600 × 480px, wide banner — height adapts to your text length, so keep key visuals on the right, clear of the text on the left"
         />
       </SectionCard>
 
@@ -415,7 +415,7 @@ export default function HomepageEditor({
           label="Banner Image"
           desktopValue={randomPromo.imageUrl}
           onDesktopChange={(v) => setRandomPromo({ ...randomPromo, imageUrl: v })}
-          desktopSize="1200 × 500px — leave room on the left for the text overlay"
+          desktopSize="1600 × 480px, wide banner — height adapts to your text length, so keep key visuals on the right, clear of the text on the left"
         />
       </SectionCard>
 
@@ -436,7 +436,7 @@ export default function HomepageEditor({
           label="Banner Image"
           desktopValue={ctaBanner.imageUrl}
           onDesktopChange={(v) => setCtaBanner({ ...ctaBanner, imageUrl: v })}
-          desktopSize="1200 × 400px — leave room on the left for the text overlay"
+          desktopSize="1600 × 400px, wide banner — height adapts to your text length, so keep key visuals on the right, clear of the text on the left"
         />
       </SectionCard>
 
@@ -461,7 +461,7 @@ export default function HomepageEditor({
           label="Banner Image"
           desktopValue={trendingCourses.bannerImageUrl}
           onDesktopChange={(v) => setTrendingCourses({ ...trendingCourses, bannerImageUrl: v })}
-          desktopSize="1280 × 720px (16:9)"
+          desktopSize="1280 × 660px (~1.9:1 on desktop, ~1:1 on mobile) — the full image always shows, so it may letterbox slightly at other screen sizes"
         />
       </SectionCard>
 
