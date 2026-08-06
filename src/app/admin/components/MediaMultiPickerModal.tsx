@@ -107,11 +107,11 @@ export default function MediaMultiPickerModal({
                       key={a.id}
                       type="button"
                       onClick={() => toggle(a)}
-                      className={`group relative aspect-square overflow-hidden rounded-lg border-2 ${
+                      className={`group relative aspect-square overflow-hidden rounded-lg border-2 bg-brand-surface ${
                         isSelected ? "border-brand-pink" : "border-brand-border hover:border-brand-pink/50"
                       }`}
                     >
-                      <Image src={a.url} alt={a.altText ?? a.name ?? ""} fill className="object-cover" unoptimized />
+                      <Image src={a.url} alt={a.altText ?? a.name ?? ""} fill className="object-contain" unoptimized />
                       <div
                         className={`absolute inset-0 flex items-center justify-center transition-colors ${
                           isSelected ? "bg-brand-pink/30" : "bg-black/0 group-hover:bg-black/10"

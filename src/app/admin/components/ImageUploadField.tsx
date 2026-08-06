@@ -45,7 +45,7 @@ function UploadSlot({ label, value, onChange, recommendedSize }: Slot) {
         {value ? (
           <div className="relative w-full max-w-[240px]">
             <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-brand-card">
-              <Image src={value} alt={label} fill className="object-cover" unoptimized />
+              <Image src={value} alt={label} fill className="object-contain" unoptimized />
             </div>
             <button
               type="button"

@@ -381,7 +381,7 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
           {assets.map((a) => (
             <div key={a.id} className="overflow-hidden rounded-xl border border-brand-border bg-brand-card">
               <div className="relative aspect-square w-full bg-brand-surface">
-                <Image src={a.url} alt={a.name ?? ""} fill className="object-cover" unoptimized />
+                <Image src={a.url} alt={a.name ?? ""} fill className="object-contain" unoptimized />
               </div>
               <div className="p-2.5">
                 <p className="truncate text-xs font-medium text-brand-ink" title={a.name ?? a.url}>

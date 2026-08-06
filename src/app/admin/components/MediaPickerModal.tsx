@@ -107,9 +107,9 @@ export default function MediaPickerModal({ onSelect, onClose }: { onSelect: (url
                     key={a.id}
                     type="button"
                     onClick={() => onSelect(a.url)}
-                    className="group relative aspect-square overflow-hidden rounded-lg border border-brand-border hover:border-brand-pink"
+                    className="group relative aspect-square overflow-hidden rounded-lg border border-brand-border bg-brand-surface hover:border-brand-pink"
                   >
-                    <Image src={a.url} alt={a.altText ?? a.name ?? ""} fill className="object-cover" unoptimized />
+                    <Image src={a.url} alt={a.altText ?? a.name ?? ""} fill className="object-contain" unoptimized />
                     <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
                   </button>
                 ))}
