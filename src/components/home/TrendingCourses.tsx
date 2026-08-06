@@ -16,13 +16,13 @@ export default function TrendingCourses({ featured, items }: { featured: Course;
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_1fr]">
         <Link
           href={`/courses/${featured.slug}`}
-          className="group relative flex min-h-[320px] items-end overflow-hidden rounded-2xl"
+          className="group relative flex min-h-[320px] items-end overflow-hidden rounded-2xl bg-brand-ink"
         >
           <Image
             src={featured.image}
             alt={featured.title}
             fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-contain transition-transform duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
           <h3 className="relative z-10 p-6 text-xl font-bold text-white">{featured.title}</h3>
