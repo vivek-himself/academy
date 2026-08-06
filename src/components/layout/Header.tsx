@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronDown, Menu, X, LayoutGrid } from "lucide-react";
@@ -135,74 +136,76 @@ export default function Header({ user }: { user: { name: string } | null }) {
         </button>
       </div>
 
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <div className="absolute right-0 top-0 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-5 shadow-xl">
-            <div className="mb-4 flex items-center justify-between">
-              <Logo />
-              <button
+      {mobileOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-50 lg:hidden">
+            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
+            <div className="absolute right-0 top-0 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-5 shadow-xl">
+              <div className="mb-4 flex items-center justify-between">
+                <Logo />
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Close menu"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-brand-ink/15"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="mb-4 flex justify-end">
+                <CurrencyDropdown />
+              </div>
+
+              <Link
+                href="/courses"
                 onClick={() => setMobileOpen(false)}
-                aria-label="Close menu"
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-brand-ink/15"
+                className="block border-b border-brand-border py-3 text-sm font-medium text-brand-ink"
               >
-                <X size={18} />
-              </button>
-            </div>
+                Explore Courses
+              </Link>
+              <MobileAccordion label="Growth" items={navLinks.growth} />
+              <MobileAccordion label="Resources" items={navLinks.resources} />
 
-            <div className="mb-4 flex justify-end">
-              <CurrencyDropdown />
+              <div className="mt-6 flex flex-col gap-3">
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
+                    >
+                      Dashboard
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setMobileOpen(false)}
+                      className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
-
-            <Link
-              href="/courses"
-              onClick={() => setMobileOpen(false)}
-              className="block border-b border-brand-border py-3 text-sm font-medium text-brand-ink"
-            >
-              Explore Courses
-            </Link>
-            <MobileAccordion label="Growth" items={navLinks.growth} />
-            <MobileAccordion label="Resources" items={navLinks.resources} />
-
-            <div className="mt-6 flex flex-col gap-3">
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
-                  >
-                    Dashboard
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-full border border-brand-ink/15 px-5 py-2.5 text-center text-sm font-semibold text-brand-ink"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-full bg-brand-pink px-5 py-2.5 text-center text-sm font-semibold text-white"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </header>
   );
 }
