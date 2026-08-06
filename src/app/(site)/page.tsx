@@ -22,7 +22,9 @@ export default async function Home() {
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
     prisma.contentBlock.findMany({
-      where: { key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo", "home_review_badges"] } },
+      where: {
+        key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo", "home_review_badges", "home_trending_courses"] },
+      },
     }),
     prisma.course.findMany({
       where: { published: true },
@@ -40,7 +42,7 @@ export default async function Home() {
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
-  const mappedCourses = courses.map((c) => ({ ...mapCourse(c), slug: c.slug }));
+  const mappedCourses = courses.map((c) => ({ ...mapCourse(c), id: c.id, slug: c.slug }));
 
   // Category tabs on "Browse Our Top Courses" lead with whichever category most recently
   // received a new course upload; categories with no courses yet fall back to alphabetical.
@@ -80,6 +82,11 @@ export default async function Home() {
     blockMap["home_review_badges"],
     undefined
   );
+  const trendingCoursesBlock = safeJsonParse(blockMap["home_trending_courses"], { title: "Trending Courses", featuredCourseId: "" });
+
+  const pickedFeatured = mappedCourses.find((c) => c.id === trendingCoursesBlock.featuredCourseId);
+  const featuredCourse = pickedFeatured ?? mappedCourses[Math.min(4, mappedCourses.length - 1)];
+  const trendingItems = mappedCourses.filter((c) => c.slug !== featuredCourse?.slug).slice(0, 4);
 
   return (
     <>
@@ -98,7 +105,9 @@ export default async function Home() {
       />
       <StatsBar stats={stats} reviewBadges={reviewBadges} />
       <TechStackBanner block={techStack} />
-      {mappedCourses.length >= 5 && <TrendingCourses featured={mappedCourses[4]} items={mappedCourses.slice(0, 4)} />}
+      {featuredCourse && (
+        <TrendingCourses title={trendingCoursesBlock.title || "Trending Courses"} featured={featuredCourse} items={trendingItems} />
+      )}
       <AsSeenOn logos={trustLogos} />
       <GrowSkill block={growSkill} />
       <RandomPromo block={randomPromo} />

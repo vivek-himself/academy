@@ -8,11 +8,11 @@ import { useCurrency } from "@/components/providers/CurrencyProvider";
 
 type Course = ReturnType<typeof mapCourse> & { slug: string };
 
-export default function TrendingCourses({ featured, items }: { featured: Course; items: Course[] }) {
+export default function TrendingCourses({ title, featured, items }: { title: string; featured: Course; items: Course[] }) {
   const { format } = useCurrency();
   return (
     <section className="container-page py-10 sm:py-14">
-      <h2 className="mb-6 text-center text-2xl font-bold text-brand-ink sm:text-3xl">Trending Courses</h2>
+      <h2 className="mb-6 text-center text-2xl font-bold text-brand-ink sm:text-3xl">{title}</h2>
       <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_1fr]">
         <Link
           href={`/courses/${featured.slug}`}

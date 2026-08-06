@@ -6,15 +6,25 @@ import HomepageEditor from "./HomepageEditor";
 export const dynamic = "force-dynamic";
 
 export default async function HomepageContentPage() {
-  const [heroSlides, stats, trustLogos, blocks] = await Promise.all([
+  const [heroSlides, stats, trustLogos, blocks, courses] = await Promise.all([
     prisma.heroSlide.findMany({ orderBy: { order: "asc" } }),
     prisma.homepageStat.findMany({ orderBy: { order: "asc" } }),
     prisma.trustLogo.findMany({ orderBy: { order: "asc" } }),
     prisma.contentBlock.findMany({
       where: {
-        key: { in: ["home_tech_stack", "home_grow_skill", "home_random_promo", "cta_banner_default", "home_review_badges"] },
+        key: {
+          in: [
+            "home_tech_stack",
+            "home_grow_skill",
+            "home_random_promo",
+            "cta_banner_default",
+            "home_review_badges",
+            "home_trending_courses",
+          ],
+        },
       },
     }),
+    prisma.course.findMany({ where: { published: true }, select: { id: true, title: true }, orderBy: { title: "asc" } }),
   ]);
 
   const blockMap = Object.fromEntries(blocks.map((b) => [b.key, b.dataJson]));
@@ -48,6 +58,8 @@ export default async function HomepageContentPage() {
           { label: "Capterra", rating: "★★★★★ 4.7/5", imageUrl: "" },
           { label: "G2", rating: "★★★★★ 4.3/5", imageUrl: "" },
         ])}
+        trendingCourses={safeJsonParse(blockMap["home_trending_courses"], { title: "Trending Courses", featuredCourseId: "" })}
+        courses={courses}
       />
     </div>
   );

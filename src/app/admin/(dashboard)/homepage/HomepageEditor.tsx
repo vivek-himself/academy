@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Plus, Trash2 } from "lucide-react";
-import { TextField, TextAreaField } from "../../components/FormField";
+import { TextField, TextAreaField, SelectField } from "../../components/FormField";
 import ImageUploadField from "../../components/ImageUploadField";
 import StringListField from "../../components/StringListField";
 import RepeaterField from "../../components/RepeaterField";
@@ -21,6 +21,7 @@ type GrowSkill = { title: string; description: string; checklist: string[]; ctaL
 type CtaBanner = { title: string; description: string; ctaLabel: string; href: string; imageUrl: string };
 type ReviewBadge = { label: string; rating: string; imageUrl: string };
 const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: "", imageUrl: "" };
+type TrendingCourses = { title: string; featuredCourseId: string };
 
 function SectionCard({
   id,
@@ -66,6 +67,10 @@ const JUMP_GROUPS = [
       { id: "cta-banner", label: "Default CTA Banner" },
     ],
   },
+  {
+    heading: "Courses",
+    items: [{ id: "trending-courses", label: "Trending Courses" }],
+  },
 ];
 
 export default function HomepageEditor({
@@ -77,6 +82,8 @@ export default function HomepageEditor({
   randomPromo: initRandomPromo,
   ctaBanner: initCtaBanner,
   reviewBadges: initReviewBadges,
+  trendingCourses: initTrendingCourses,
+  courses,
 }: {
   heroSlides: HeroSlide[];
   stats: Stat[];
@@ -86,6 +93,8 @@ export default function HomepageEditor({
   randomPromo: EyebrowBlock;
   ctaBanner: CtaBanner;
   reviewBadges: ReviewBadge[];
+  trendingCourses: TrendingCourses;
+  courses: { id: string; title: string }[];
 }) {
   const router = useRouter();
   const [heroSlides, setHeroSlides] = useState(initHeroSlides.length ? initHeroSlides : [EMPTY_HERO_SLIDE]);
@@ -121,6 +130,7 @@ export default function HomepageEditor({
   const [randomPromo, setRandomPromo] = useState(initRandomPromo);
   const [ctaBanner, setCtaBanner] = useState(initCtaBanner);
   const [reviewBadges, setReviewBadges] = useState(initReviewBadges);
+  const [trendingCourses, setTrendingCourses] = useState(initTrendingCourses);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
 
@@ -140,6 +150,7 @@ export default function HomepageEditor({
           home_random_promo: JSON.stringify(randomPromo),
           cta_banner_default: JSON.stringify(ctaBanner),
           home_review_badges: JSON.stringify(reviewBadges),
+          home_trending_courses: JSON.stringify(trendingCourses),
         },
       }),
     });
@@ -428,6 +439,26 @@ export default function HomepageEditor({
           desktopValue={ctaBanner.imageUrl}
           onDesktopChange={(v) => setCtaBanner({ ...ctaBanner, imageUrl: v })}
           desktopSize="1200 × 400px — leave room on the left for the text overlay"
+        />
+      </SectionCard>
+
+      <SectionCard
+        id="trending-courses"
+        title="Trending Courses"
+        description="The section title and featured banner course shown just below the tech stack banner. The other 4 cards next to it are picked automatically from your top courses."
+      >
+        <TextField
+          label="Section Title"
+          maxLength={60}
+          value={trendingCourses.title}
+          onChange={(v) => setTrendingCourses({ ...trendingCourses, title: v })}
+        />
+        <SelectField
+          label="Featured Banner Course"
+          description="Shown as the large image tile with the title overlaid. Leave unset to pick automatically."
+          value={trendingCourses.featuredCourseId}
+          onChange={(v) => setTrendingCourses({ ...trendingCourses, featuredCourseId: v })}
+          options={[{ label: "Auto (pick for me)", value: "" }, ...courses.map((c) => ({ label: c.title, value: c.id }))]}
         />
       </SectionCard>
 

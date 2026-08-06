@@ -8,6 +8,7 @@ const BLOCK_KEYS = [
   "home_random_promo",
   "cta_banner_default",
   "home_review_badges",
+  "home_trending_courses",
 ] as const;
 
 export async function GET() {
