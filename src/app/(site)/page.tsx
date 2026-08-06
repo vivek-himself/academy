@@ -113,7 +113,12 @@ export default async function Home() {
       <StatsBar stats={stats} reviewBadges={reviewBadges} />
       <TechStackBanner block={techStack} />
       {featuredCourse && (
-        <TrendingCourses title={trendingCoursesBlock.title || "Trending Courses"} featured={featuredCourse} items={trendingItems} />
+        <TrendingCourses
+          title={trendingCoursesBlock.title || "Trending Courses"}
+          featured={featuredCourse}
+          featuredIsBannerOnly={Boolean(trendingCoursesBlock.featuredImageUrl)}
+          items={trendingItems}
+        />
       )}
       <AsSeenOn logos={trustLogos} />
       <GrowSkill block={growSkill} />
