@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
 import { getProgress } from "@/lib/enrollment";
-import { isProfileComplete } from "@/lib/profile";
+import { isProfileComplete, getMissingProfileFields } from "@/lib/profile";
 import DashboardCourseCard from "@/components/dashboard/DashboardCourseCard";
 import ProfileIncompleteBanner from "@/components/dashboard/ProfileIncompleteBanner";
 
@@ -30,12 +30,13 @@ export default async function MyCoursesPage() {
 
   const continueWatching = withProgress.filter((e) => e.progress.percent > 0);
   const upcoming = withProgress.filter((e) => e.progress.percent === 0);
+  const missing = getMissingProfileFields(user);
 
   if (enrollments.length === 0) {
     return (
       <div>
         <h1 className="mb-6 text-xl font-bold text-brand-ink">My Courses</h1>
-        {!isProfileComplete(user) && <div className="mb-6"><ProfileIncompleteBanner /></div>}
+        {!isProfileComplete(user) && <div className="mb-6"><ProfileIncompleteBanner missing={missing} /></div>}
         <div className="rounded-2xl border border-brand-border bg-white px-6 py-14 text-center">
           <h2 className="text-lg font-bold text-brand-ink">You&apos;re not enrolled in any courses yet</h2>
           <p className="mx-auto mt-2 max-w-sm text-sm text-brand-muted">
@@ -56,7 +57,7 @@ export default async function MyCoursesPage() {
     <div className="flex flex-col gap-8">
       <h1 className="text-xl font-bold text-brand-ink">My Courses</h1>
 
-      {!isProfileComplete(user) && <ProfileIncompleteBanner />}
+      {!isProfileComplete(user) && <ProfileIncompleteBanner missing={missing} />}
 
       {continueWatching.length > 0 && (
         <div>

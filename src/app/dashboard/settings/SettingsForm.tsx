@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { CheckCircle2, Circle } from "lucide-react";
 import DateOfBirthSelect, { dobToIso, isoToDob, type DobValue } from "@/components/ui/DateOfBirthSelect";
 import ChipMultiSelect from "@/components/ui/ChipMultiSelect";
 import AvatarUploadField from "@/components/ui/AvatarUploadField";
-import { isProfileComplete, getFullProfileCompletionPercent } from "@/lib/profile";
+import { isProfileComplete, getFullProfileCompletionPercent, MANDATORY_PROFILE_FIELDS } from "@/lib/profile";
 import {
   CURRENT_ROLE_OPTIONS,
   SKILL_LEVEL_OPTIONS,
@@ -78,20 +79,29 @@ function Card({ title, subtitle, children }: { title: string; subtitle?: string;
   );
 }
 
+function RequiredTag() {
+  return <span className="ml-1.5 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">Required</span>;
+}
+
 function TextInput({
   label,
   value,
   onChange,
   placeholder,
+  required,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  required?: boolean;
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-semibold text-brand-ink">{label}</label>
+      <label className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
+        {label}
+        {required && <RequiredTag />}
+      </label>
       <input
         value={value}
         placeholder={placeholder}
@@ -102,10 +112,25 @@ function TextInput({
   );
 }
 
-function SelectInput({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[] }) {
+function SelectInput({
+  label,
+  value,
+  onChange,
+  options,
+  required,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: string[];
+  required?: boolean;
+}) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-semibold text-brand-ink">{label}</label>
+      <label className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
+        {label}
+        {required && <RequiredTag />}
+      </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -153,6 +178,23 @@ function AdditionalInterestsInput({ value, onChange }: { value: string[]; onChan
   );
 }
 
+function RequirementsChecklist({ items }: { items: { label: string; done: boolean }[] }) {
+  return (
+    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      {items.map((item) => (
+        <li key={item.label} className={`flex items-center gap-2 text-sm ${item.done ? "text-emerald-700" : "text-brand-muted"}`}>
+          {item.done ? (
+            <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+          ) : (
+            <Circle size={15} className="shrink-0 text-brand-border" />
+          )}
+          {item.label}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function SettingsForm({ initial }: { initial: SettingsInitial }) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
@@ -171,21 +213,26 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  const courseAccessComplete = isProfileComplete({
+  const profileForCheck = {
+    name: form.name,
+    displayName: form.displayName || null,
+    avatarUrl: form.avatarUrl || null,
+    location: form.location || null,
     phone: form.phone,
     gender: form.gender,
     dateOfBirth: dobToIso(dob) ? new Date(dobToIso(dob)!) : null,
-  });
+    linkedinUrl: form.linkedinUrl || null,
+    timezone: form.timezone || null,
+    country: form.country || null,
+  };
+
+  const courseAccessComplete = isProfileComplete(profileForCheck);
+  const requirementItems = MANDATORY_PROFILE_FIELDS.map((f) => ({ label: f.label, done: Boolean(profileForCheck[f.key]) }));
 
   const strength = getFullProfileCompletionPercent({
-    phone: form.phone,
-    gender: form.gender,
-    dateOfBirth: dobToIso(dob) ? new Date(dobToIso(dob)!) : null,
-    displayName: form.displayName || null,
+    ...profileForCheck,
     username: form.username || null,
-    avatarUrl: form.avatarUrl || null,
     bio: form.bio || null,
-    location: form.location || null,
     currentRole: form.currentRole || null,
     skillLevel: form.skillLevel || null,
     interestsJson: JSON.stringify(form.interests),
@@ -294,18 +341,38 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         </p>
       </div>
 
+      <div className="max-w-xl rounded-2xl border border-brand-border bg-white p-6">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Course Access Requirements</h3>
+          <span
+            className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${
+              courseAccessComplete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+            }`}
+          >
+            {courseAccessComplete ? "Complete" : "Incomplete"}
+          </span>
+        </div>
+        <p className="mt-1 mb-3 text-xs text-brand-muted">
+          All fields below are required before you can attend a course you&apos;re enrolled in.
+        </p>
+        <RequirementsChecklist items={requirementItems} />
+      </div>
+
       <form onSubmit={handleSaveProfile} className="flex flex-col gap-6">
         <Card title="Basic Information">
           <div>
-            <p className="mb-1.5 text-sm font-semibold text-brand-ink">Profile Photo</p>
+            <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
+              Profile Photo
+              <RequiredTag />
+            </p>
             <AvatarUploadField value={form.avatarUrl} onChange={(url) => set("avatarUrl", url)} fallbackLabel={form.displayName || form.name} />
           </div>
           <div>
             <p className="mb-1.5 text-sm font-semibold text-brand-ink">Cover Image (optional)</p>
             <AvatarUploadField value={form.coverImageUrl} onChange={(url) => set("coverImageUrl", url)} kind="cover" fallbackLabel={form.displayName || form.name} />
           </div>
-          <TextInput label="Full Name" value={form.name} onChange={(v) => set("name", v)} />
-          <TextInput label="Display Name" value={form.displayName} onChange={(v) => set("displayName", v)} />
+          <TextInput label="Full Name" value={form.name} onChange={(v) => set("name", v)} required />
+          <TextInput label="Display Name" value={form.displayName} onChange={(v) => set("displayName", v)} required />
           <TextInput label="Username" value={form.username} onChange={(v) => set("username", v)} placeholder="e.g. jane_designs" />
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Short Bio (optional)</label>
@@ -316,26 +383,16 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
               className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
             />
           </div>
-          <TextInput label="Location (optional)" value={form.location} onChange={(v) => set("location", v)} placeholder="e.g. Mumbai, India" />
+          <TextInput label="Location" value={form.location} onChange={(v) => set("location", v)} placeholder="e.g. Mumbai, India" required />
         </Card>
 
-        <Card
-          title="Contact Details"
-          subtitle="Phone, gender, and date of birth are needed before you can attend a course."
-        >
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-brand-ink">Course access status</p>
-            <span
-              className={`rounded-full px-2.5 py-1 text-[10px] font-semibold ${
-                courseAccessComplete ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
-              }`}
-            >
-              {courseAccessComplete ? "Complete" : "Incomplete"}
-            </span>
-          </div>
-          <TextInput label="Phone Number" value={form.phone ?? ""} onChange={(v) => set("phone", v)} />
+        <Card title="Contact Details">
+          <TextInput label="Phone Number" value={form.phone ?? ""} onChange={(v) => set("phone", v)} required />
           <div>
-            <p className="mb-1.5 text-sm font-semibold text-brand-ink">Gender</p>
+            <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
+              Gender
+              <RequiredTag />
+            </p>
             <div className="flex flex-wrap gap-4">
               {["Female", "Male", "Non-binary"].map((g) => (
                 <label key={g} className="flex items-center gap-1.5 text-sm text-brand-ink">
@@ -346,7 +403,10 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
             </div>
           </div>
           <div>
-            <p className="mb-1.5 text-sm font-semibold text-brand-ink">Date of Birth</p>
+            <p className="mb-1.5 flex items-center text-sm font-semibold text-brand-ink">
+              Date of Birth
+              <RequiredTag />
+            </p>
             <DateOfBirthSelect value={dob} onChange={setDob} />
           </div>
         </Card>
@@ -394,17 +454,17 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
           <ChipMultiSelect options={SOFTWARE_OPTIONS} value={form.softwareFamiliarity} onChange={(v) => set("softwareFamiliarity", v)} />
         </Card>
 
-        <Card title="Portfolio & Showcase" subtitle="All optional.">
+        <Card title="Portfolio & Showcase" subtitle="LinkedIn is required before you can attend a course; the rest are optional.">
+          <TextInput label="LinkedIn" value={form.linkedinUrl} onChange={(v) => set("linkedinUrl", v)} placeholder="https://linkedin.com/in/..." required />
           <TextInput label="Portfolio Website" value={form.portfolioUrl} onChange={(v) => set("portfolioUrl", v)} placeholder="https://" />
           <TextInput label="Behance" value={form.behanceUrl} onChange={(v) => set("behanceUrl", v)} placeholder="https://behance.net/..." />
           <TextInput label="Dribbble" value={form.dribbbleUrl} onChange={(v) => set("dribbbleUrl", v)} placeholder="https://dribbble.com/..." />
           <TextInput label="GitHub" value={form.githubUrl} onChange={(v) => set("githubUrl", v)} placeholder="https://github.com/..." />
-          <TextInput label="LinkedIn" value={form.linkedinUrl} onChange={(v) => set("linkedinUrl", v)} placeholder="https://linkedin.com/in/..." />
         </Card>
 
         <Card title="Account">
-          <TextInput label="Time Zone" value={form.timezone} onChange={(v) => set("timezone", v)} placeholder="e.g. Asia/Kolkata" />
-          <TextInput label="Country" value={form.country} onChange={(v) => set("country", v)} placeholder="e.g. India" />
+          <TextInput label="Time Zone" value={form.timezone} onChange={(v) => set("timezone", v)} placeholder="e.g. Asia/Kolkata" required />
+          <TextInput label="Country" value={form.country} onChange={(v) => set("country", v)} placeholder="e.g. India" required />
         </Card>
 
         <Card title="Privacy & Social">

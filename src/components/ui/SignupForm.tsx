@@ -174,15 +174,19 @@ function ProfileStep({ name }: { name: string }) {
   const router = useRouter();
   const [avatarUrl, setAvatarUrl] = useState("");
   const [displayName, setDisplayName] = useState(name);
+  const [location, setLocation] = useState("");
+  const [phone, setPhone] = useState("");
+  const [gender, setGender] = useState("");
+  const [dob, setDob] = useState<DobValue>({ day: "", month: "", year: "" });
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [timezone, setTimezone] = useState("");
+  const [country, setCountry] = useState("");
   const [currentRole, setCurrentRole] = useState("");
   const [skillLevel, setSkillLevel] = useState("");
   const [interests, setInterests] = useState<string[]>([]);
   const [learningGoal, setLearningGoal] = useState("");
   const [weeklyCommitment, setWeeklyCommitment] = useState("");
   const [preferredLanguage, setPreferredLanguage] = useState("");
-  const [phone, setPhone] = useState("");
-  const [gender, setGender] = useState("");
-  const [dob, setDob] = useState<DobValue>({ day: "", month: "", year: "" });
   const [saving, setSaving] = useState(false);
 
   function goToDashboard() {
@@ -198,15 +202,19 @@ function ProfileStep({ name }: { name: string }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         displayName: displayName || undefined,
+        location: location || undefined,
+        phone: phone || undefined,
+        gender: gender || undefined,
+        dateOfBirth,
+        linkedinUrl: linkedinUrl || undefined,
+        timezone: timezone || undefined,
+        country: country || undefined,
         currentRole: currentRole || undefined,
         skillLevel: skillLevel || undefined,
         interests: interests.length ? interests : undefined,
         learningGoals: learningGoal ? [learningGoal] : undefined,
         weeklyCommitment: weeklyCommitment || undefined,
         preferredLanguage: preferredLanguage || undefined,
-        phone: phone || undefined,
-        gender: gender || undefined,
-        dateOfBirth,
       }),
     });
     setSaving(false);
@@ -216,8 +224,8 @@ function ProfileStep({ name }: { name: string }) {
   return (
     <div className="mx-auto w-full max-w-sm">
       <p className="mb-5 text-center text-sm text-brand-muted">
-        Add these now, or skip and finish your profile later in Settings — a few, like phone and date of birth, are
-        needed before you can attend a course.
+        Add these now, or skip and finish your profile later in Settings — the fields below are needed before you
+        can attend a course.
       </p>
       <div className="flex flex-col gap-5">
         <div>
@@ -234,20 +242,14 @@ function ProfileStep({ name }: { name: string }) {
           />
         </div>
 
-        <SelectRow label="Current Role" value={currentRole} onChange={setCurrentRole} options={CURRENT_ROLE_OPTIONS} />
-        <SelectRow label="Skill Level" value={skillLevel} onChange={setSkillLevel} options={SKILL_LEVEL_OPTIONS} />
-
         <div>
-          <p className="mb-1.5 text-sm font-semibold text-brand-ink">Learning Interests</p>
-          <ChipMultiSelect options={INTEREST_OPTIONS} value={interests} onChange={setInterests} />
-        </div>
-
-        <SelectRow label="Learning Goal" value={learningGoal} onChange={setLearningGoal} options={LEARNING_GOAL_OPTIONS} />
-        <SelectRow label="Weekly Commitment" value={weeklyCommitment} onChange={setWeeklyCommitment} options={WEEKLY_COMMITMENT_OPTIONS} />
-        <SelectRow label="Preferred Language" value={preferredLanguage} onChange={setPreferredLanguage} options={LANGUAGE_OPTIONS} />
-
-        <div className="border-t border-brand-border pt-5">
-          <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-brand-muted">Needed before attending a course</p>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Location</label>
+          <input
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="e.g. Mumbai, India"
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
         </div>
 
         <div>
@@ -275,6 +277,52 @@ function ProfileStep({ name }: { name: string }) {
           <p className="mb-1.5 text-sm font-semibold text-brand-ink">Date of Birth</p>
           <DateOfBirthSelect value={dob} onChange={setDob} />
         </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">LinkedIn</label>
+          <input
+            value={linkedinUrl}
+            onChange={(e) => setLinkedinUrl(e.target.value)}
+            placeholder="https://linkedin.com/in/..."
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Time Zone</label>
+          <input
+            value={timezone}
+            onChange={(e) => setTimezone(e.target.value)}
+            placeholder="e.g. Asia/Kolkata"
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+        </div>
+
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Country</label>
+          <input
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            placeholder="e.g. India"
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+        </div>
+
+        <div className="border-t border-brand-border pt-5">
+          <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-brand-muted">Personalize your learning (optional)</p>
+        </div>
+
+        <SelectRow label="Current Role" value={currentRole} onChange={setCurrentRole} options={CURRENT_ROLE_OPTIONS} />
+        <SelectRow label="Skill Level" value={skillLevel} onChange={setSkillLevel} options={SKILL_LEVEL_OPTIONS} />
+
+        <div>
+          <p className="mb-1.5 text-sm font-semibold text-brand-ink">Learning Interests</p>
+          <ChipMultiSelect options={INTEREST_OPTIONS} value={interests} onChange={setInterests} />
+        </div>
+
+        <SelectRow label="Learning Goal" value={learningGoal} onChange={setLearningGoal} options={LEARNING_GOAL_OPTIONS} />
+        <SelectRow label="Weekly Commitment" value={weeklyCommitment} onChange={setWeeklyCommitment} options={WEEKLY_COMMITMENT_OPTIONS} />
+        <SelectRow label="Preferred Language" value={preferredLanguage} onChange={setPreferredLanguage} options={LANGUAGE_OPTIONS} />
 
         <div className="mt-2 flex flex-col gap-2">
           <button

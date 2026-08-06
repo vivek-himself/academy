@@ -10,7 +10,7 @@ import { getStudentSession } from "@/lib/studentAuth";
 import { mapCourse } from "@/lib/mappers";
 import { safeJsonParse } from "@/lib/json";
 import { getCompletedModules } from "@/lib/enrollment";
-import { isProfileComplete } from "@/lib/profile";
+import { isProfileComplete, getMissingProfileFields } from "@/lib/profile";
 
 export const dynamic = "force-dynamic";
 
@@ -51,12 +51,13 @@ export default async function DashboardCourseWatchPage({ params }: { params: Pro
   }
 
   if (!isProfileComplete(user)) {
+    const missing = getMissingProfileFields(user);
     return (
       <div className="rounded-2xl border border-brand-border bg-white px-6 py-14 text-center">
         <h2 className="text-lg font-bold text-brand-ink">Complete your profile to attend {dbCourse.title}</h2>
         <p className="mx-auto mt-2 max-w-sm text-sm text-brand-muted">
-          You&apos;re enrolled, but we need your phone number, gender, and date of birth before you can start this
-          course.
+          You&apos;re enrolled, but a few profile details are still missing before you can start this course:{" "}
+          <span className="font-medium text-brand-ink">{missing.join(", ")}</span>.
         </p>
         <Link
           href="/dashboard/settings"

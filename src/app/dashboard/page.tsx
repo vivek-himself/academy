@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
 import { getCompletedModules, getProgress } from "@/lib/enrollment";
-import { isProfileComplete, getProfileCompletionPercent } from "@/lib/profile";
+import { isProfileComplete, getProfileCompletionPercent, getMissingProfileFields } from "@/lib/profile";
 import { safeJsonParse } from "@/lib/json";
 import DashboardCourseCard from "@/components/dashboard/DashboardCourseCard";
 import NotificationsBell, { type NotificationItem } from "@/components/dashboard/NotificationsBell";
@@ -77,11 +77,12 @@ export default async function DashboardOverviewPage() {
   const hasEnrollments = enrollments.length > 0;
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
+  const missing = getMissingProfileFields(user);
 
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
       <div className="flex flex-col gap-6">
-        {!isProfileComplete(user) && <ProfileIncompleteBanner />}
+        {!isProfileComplete(user) && <ProfileIncompleteBanner missing={missing} />}
 
         {!hasEnrollments ? (
           <div className="rounded-2xl border border-brand-border bg-white px-6 py-14 text-center">
