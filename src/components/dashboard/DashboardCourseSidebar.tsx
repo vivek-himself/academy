@@ -135,7 +135,7 @@ export default function DashboardCourseSidebar({
         </span>
       </div>
 
-      <ul className="relative mt-3 space-y-1 border-l-2 border-brand-pink/20 pl-0">
+      <ul className="mt-3 space-y-1 pl-0">
         {modules.map((m, i) => {
           const done = completed.includes(i);
           return (
@@ -143,10 +143,10 @@ export default function DashboardCourseSidebar({
               <button
                 type="button"
                 onClick={() => toggleModule(i)}
-                className="relative flex w-full items-center gap-3 py-2 pl-4 text-left hover:bg-brand-surface"
+                className="flex w-full items-center gap-3 py-2 text-left hover:bg-brand-surface"
               >
                 <span
-                  className={`absolute -left-[9px] flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold ${
+                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
                     done ? "bg-emerald-500 text-white" : "bg-white text-brand-muted ring-1 ring-brand-border"
                   }`}
                 >
