@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { requireStudentSession } from "@/lib/studentAuth";
+import { isValidLinkedInUrl, LINKEDIN_URL_ERROR } from "@/lib/validators";
 
 const STRING_FIELDS = [
   "displayName",
@@ -62,6 +63,15 @@ export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const user = await prisma.user.findUnique({ where: { id: session.userId } });
   if (!user) return NextResponse.json({ error: "Account not found." }, { status: 404 });
+
+  if (
+    "linkedinUrl" in body &&
+    typeof body.linkedinUrl === "string" &&
+    body.linkedinUrl.trim() &&
+    !isValidLinkedInUrl(body.linkedinUrl)
+  ) {
+    return NextResponse.json({ error: LINKEDIN_URL_ERROR }, { status: 400 });
+  }
 
   const data: Record<string, unknown> = {};
 

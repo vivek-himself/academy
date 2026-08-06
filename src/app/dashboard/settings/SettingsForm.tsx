@@ -7,6 +7,7 @@ import DateOfBirthSelect, { dobToIso, isoToDob, type DobValue } from "@/componen
 import ChipMultiSelect from "@/components/ui/ChipMultiSelect";
 import AvatarUploadField from "@/components/ui/AvatarUploadField";
 import { isProfileComplete, getFullProfileCompletionPercent, MANDATORY_PROFILE_FIELDS } from "@/lib/profile";
+import { isValidLinkedInUrl, LINKEDIN_URL_ERROR } from "@/lib/validators";
 import {
   CURRENT_ROLE_OPTIONS,
   SKILL_LEVEL_OPTIONS,
@@ -89,12 +90,14 @@ function TextInput({
   onChange,
   placeholder,
   required,
+  error,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   required?: boolean;
+  error?: string;
 }) {
   return (
     <div>
@@ -106,8 +109,11 @@ function TextInput({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+        className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:border-brand-pink ${
+          error ? "border-red-400" : "border-brand-border"
+        }`}
       />
+      {error && <p className="mt-1 text-xs font-medium text-red-500">{error}</p>}
     </div>
   );
 }
@@ -243,11 +249,17 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
     learningStyleJson: JSON.stringify(form.learningStyle),
   });
 
+  const linkedinError = form.linkedinUrl.trim() && !isValidLinkedInUrl(form.linkedinUrl) ? LINKEDIN_URL_ERROR : "";
+
   async function handleSaveProfile(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true);
     setStatus("");
     setError("");
+    if (linkedinError) {
+      setError(linkedinError);
+      return;
+    }
+    setSaving(true);
     const res = await fetch("/api/dashboard/account", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -455,7 +467,14 @@ export default function SettingsForm({ initial }: { initial: SettingsInitial }) 
         </Card>
 
         <Card title="Portfolio & Showcase" subtitle="LinkedIn is required before you can attend a course; the rest are optional.">
-          <TextInput label="LinkedIn" value={form.linkedinUrl} onChange={(v) => set("linkedinUrl", v)} placeholder="https://linkedin.com/in/..." required />
+          <TextInput
+            label="LinkedIn"
+            value={form.linkedinUrl}
+            onChange={(v) => set("linkedinUrl", v)}
+            placeholder="https://linkedin.com/in/..."
+            required
+            error={linkedinError}
+          />
           <TextInput label="Portfolio Website" value={form.portfolioUrl} onChange={(v) => set("portfolioUrl", v)} placeholder="https://" />
           <TextInput label="Behance" value={form.behanceUrl} onChange={(v) => set("behanceUrl", v)} placeholder="https://behance.net/..." />
           <TextInput label="Dribbble" value={form.dribbbleUrl} onChange={(v) => set("dribbbleUrl", v)} placeholder="https://dribbble.com/..." />

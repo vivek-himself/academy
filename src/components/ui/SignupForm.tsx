@@ -8,6 +8,7 @@ import DateOfBirthSelect, { dobToIso, type DobValue } from "./DateOfBirthSelect"
 import ChipMultiSelect from "./ChipMultiSelect";
 import AvatarUploadField from "./AvatarUploadField";
 import { setLastUser } from "@/lib/lastUserCookie";
+import { isValidLinkedInUrl, LINKEDIN_URL_ERROR } from "@/lib/validators";
 import {
   CURRENT_ROLE_OPTIONS,
   SKILL_LEVEL_OPTIONS,
@@ -188,6 +189,9 @@ function ProfileStep({ name }: { name: string }) {
   const [weeklyCommitment, setWeeklyCommitment] = useState("");
   const [preferredLanguage, setPreferredLanguage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const linkedinError = linkedinUrl.trim() && !isValidLinkedInUrl(linkedinUrl) ? LINKEDIN_URL_ERROR : "";
 
   function goToDashboard() {
     router.push("/dashboard");
@@ -195,9 +199,14 @@ function ProfileStep({ name }: { name: string }) {
   }
 
   async function handleSave() {
+    setError("");
+    if (linkedinError) {
+      setError(linkedinError);
+      return;
+    }
     setSaving(true);
     const dateOfBirth = dobToIso(dob);
-    await fetch("/api/dashboard/account", {
+    const res = await fetch("/api/dashboard/account", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -218,6 +227,11 @@ function ProfileStep({ name }: { name: string }) {
       }),
     });
     setSaving(false);
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error ?? "Something went wrong. Please try again.");
+      return;
+    }
     goToDashboard();
   }
 
@@ -284,8 +298,11 @@ function ProfileStep({ name }: { name: string }) {
             value={linkedinUrl}
             onChange={(e) => setLinkedinUrl(e.target.value)}
             placeholder="https://linkedin.com/in/..."
-            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+            className={`w-full rounded-lg border px-3 py-2.5 text-sm outline-none focus:border-brand-pink ${
+              linkedinError ? "border-red-400" : "border-brand-border"
+            }`}
           />
+          {linkedinError && <p className="mt-1 text-xs font-medium text-red-500">{linkedinError}</p>}
         </div>
 
         <div>
@@ -323,6 +340,8 @@ function ProfileStep({ name }: { name: string }) {
         <SelectRow label="Learning Goal" value={learningGoal} onChange={setLearningGoal} options={LEARNING_GOAL_OPTIONS} />
         <SelectRow label="Weekly Commitment" value={weeklyCommitment} onChange={setWeeklyCommitment} options={WEEKLY_COMMITMENT_OPTIONS} />
         <SelectRow label="Preferred Language" value={preferredLanguage} onChange={setPreferredLanguage} options={LANGUAGE_OPTIONS} />
+
+        {error && <p className="text-xs font-medium text-red-500">{error}</p>}
 
         <div className="mt-2 flex flex-col gap-2">
           <button
