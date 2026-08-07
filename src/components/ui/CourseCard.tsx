@@ -37,7 +37,7 @@ export default function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/courses/${course.slug}`}
-      className="group flex flex-col rounded-2xl border border-brand-border bg-white p-3 transition-shadow hover:shadow-lg"
+      className="glass-card group flex flex-col rounded-2xl border border-brand-border bg-white p-3 transition-shadow hover:shadow-lg"
     >
       <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
         <Image

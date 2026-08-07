@@ -79,7 +79,7 @@ export default function Header({ user }: { user: { name: string } | null }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-border bg-[#f7f6f9]/95 backdrop-blur">
+    <header className="glass-header sticky top-0 z-50 border-b border-brand-border bg-[#f7f6f9]/95 backdrop-blur">
       <div className="container-page flex h-[72px] items-center justify-between gap-6">
         <Logo />
 

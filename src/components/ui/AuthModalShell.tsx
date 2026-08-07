@@ -14,7 +14,7 @@ export default function AuthModalShell({
   const router = useRouter();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 p-4">
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+      <div className="glass-modal relative w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
         <button
           type="button"
           onClick={() => router.push("/")}
