@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 import SocialAuthButtons from "./SocialAuthButtons";
 import AuthModalShell from "./AuthModalShell";
 import DateOfBirthSelect, { dobToIso, type DobValue } from "./DateOfBirthSelect";
@@ -67,13 +67,13 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
       <div className="sm:pr-8">
         <div className="flex flex-col gap-3">
           <SocialAuthButtons label="Sign up with Google" />
-          <Link
-            href="/login"
-            className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
-          >
-            <LogIn size={16} /> Login if you already have an account
-          </Link>
         </div>
+        <p className="mt-4 text-center text-sm text-brand-muted">
+          Already registered?{" "}
+          <Link href="/login" className="font-semibold text-brand-pink hover:underline">
+            Log in
+          </Link>
+        </p>
         <p className="mt-4 text-xs text-brand-muted">
           By signing up, you agree to the{" "}
           <Link href="/terms" className="font-semibold text-brand-ink underline hover:text-brand-pink">
