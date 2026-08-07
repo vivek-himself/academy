@@ -11,6 +11,7 @@ import { getStudentSession } from "@/lib/studentAuth";
 import { currencyForCountry } from "@/lib/currency";
 import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 import LiquidCursor from "@/components/ui/LiquidCursor";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -50,6 +51,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        <SmoothScroll />
         <LiquidCursor />
         <a
           href="#main-content"
