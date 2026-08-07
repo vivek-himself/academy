@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { TextField, NumberField, SelectField } from "../../components/FormField";
 import ChipMultiSelect from "@/components/ui/ChipMultiSelect";
+import TimeSelect from "@/components/ui/TimeSelect";
 import SaveBar from "../../components/SaveBar";
 import { WEEKDAY_OPTIONS } from "@/lib/batch";
 
@@ -80,8 +81,8 @@ export default function BatchForm({ initial, courses }: { initial: BatchFormValu
           <ChipMultiSelect options={WEEKDAY_OPTIONS} value={value.classDays} onChange={(v) => set("classDays", v)} />
         </div>
 
-        <TextField label="Start Time" type="time" value={value.startTime} onChange={(v) => set("startTime", v)} />
-        <TextField label="End Time" type="time" value={value.endTime} onChange={(v) => set("endTime", v)} />
+        <TimeSelect label="Start Time" value={value.startTime} onChange={(v) => set("startTime", v)} />
+        <TimeSelect label="End Time" value={value.endTime} onChange={(v) => set("endTime", v)} />
 
         <NumberField
           label="Capacity"
