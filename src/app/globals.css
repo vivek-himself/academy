@@ -159,6 +159,32 @@ select:focus-visible,
   overflow: hidden;
 }
 
+/* Replaces the plain OS/browser scrollbar with a branded gradient one, site-wide. Firefox's
+   scrollbar-color only accepts a solid color (no gradient support), so it falls back to brand
+   pink there; WebKit/Blink browsers get the full gradient thumb via ::-webkit-scrollbar. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand-pink) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--color-brand-pink), var(--color-brand-purple));
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--color-brand-pink-dark), var(--color-brand-purple-dark));
+}
+
 .brand-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: var(--color-brand-pink) transparent;
@@ -173,7 +199,7 @@ select:focus-visible,
 }
 
 .brand-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-brand-pink);
+  background: linear-gradient(180deg, var(--color-brand-pink), var(--color-brand-purple));
   border-radius: 9999px;
 }
 
