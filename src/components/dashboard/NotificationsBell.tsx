@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Bell, Mail } from "lucide-react";
 
 export type NotificationItem = { id: string; title: string; message: string; when: string };
@@ -8,9 +9,11 @@ export type NotificationItem = { id: string; title: string; message: string; whe
 export default function NotificationsBell({
   notifications,
   unreadCount,
+  unreadMessageCount,
 }: {
   notifications: NotificationItem[];
   unreadCount?: number;
+  unreadMessageCount?: number;
 }) {
   const [open, setOpen] = useState(false);
   const dotCount = unreadCount ?? notifications.length;
@@ -61,9 +64,16 @@ export default function NotificationsBell({
           </div>
         )}
       </div>
-      <span className="flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-ink">
+      <Link
+        href="/dashboard/messages?tab=direct"
+        aria-label="Direct messages"
+        className="relative flex h-9 w-9 items-center justify-center rounded-full border border-brand-border text-brand-ink hover:bg-brand-surface"
+      >
         <Mail size={16} />
-      </span>
+        {(unreadMessageCount ?? 0) > 0 && (
+          <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-brand-pink" />
+        )}
+      </Link>
     </div>
   );
 }

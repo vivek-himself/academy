@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Send } from "lucide-react";
 
 const TABS = [
@@ -22,7 +22,9 @@ export default function MessagesTabs({
   messages: MessageRow[];
 }) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabId>("notifications");
+  const searchParams = useSearchParams();
+  const initialTab: TabId = searchParams.get("tab") === "direct" ? "direct" : "notifications";
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab);
   const [reply, setReply] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");

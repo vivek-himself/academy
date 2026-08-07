@@ -30,7 +30,7 @@ export default async function DashboardOverviewPage() {
   const session = await getStudentSession();
   if (!session) redirect("/login");
 
-  const [user, enrollments, notificationRecipients] = await Promise.all([
+  const [user, enrollments, notificationRecipients, unreadMessageCount] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.userId } }),
     prisma.enrollment.findMany({
       where: { userId: session.userId },
@@ -43,6 +43,7 @@ export default async function DashboardOverviewPage() {
       orderBy: { notification: { createdAt: "desc" } },
       take: 6,
     }),
+    prisma.directMessage.count({ where: { userId: session.userId, sender: "admin", readAt: null } }),
   ]);
   if (!user) redirect("/login");
 
@@ -229,7 +230,7 @@ export default async function DashboardOverviewPage() {
           </p>
           <p className="mt-1 text-xs text-brand-muted">Continue your journey and achieve your target</p>
           <div className="mt-4 flex justify-center">
-            <NotificationsBell notifications={notifications} unreadCount={unreadNotificationCount} />
+            <NotificationsBell notifications={notifications} unreadCount={unreadNotificationCount} unreadMessageCount={unreadMessageCount} />
           </div>
         </div>
 
