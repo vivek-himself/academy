@@ -78,7 +78,7 @@ export default async function Home() {
     ctaLabel: "Explore Course",
     imageUrl: "",
   });
-  const reviewBadges = safeJsonParse<{ label: string; rating: string; imageUrl: string }[] | undefined>(
+  const reviewBadges = safeJsonParse<{ label: string; rating: number; imageUrl: string }[] | undefined>(
     blockMap["home_review_badges"],
     undefined
   );

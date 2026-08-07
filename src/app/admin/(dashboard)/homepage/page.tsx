@@ -56,9 +56,9 @@ export default async function HomepageContentPage() {
         randomPromo={safeJsonParse(blockMap["home_random_promo"], { eyebrow: "", title: "", description: "", ctaLabel: "", imageUrl: "" })}
         ctaBanner={safeJsonParse(blockMap["cta_banner_default"], { title: "", description: "", ctaLabel: "", href: "", imageUrl: "" })}
         reviewBadges={safeJsonParse(blockMap["home_review_badges"], [
-          { label: "Google", rating: "★★★★★ 4.6/5", imageUrl: "" },
-          { label: "Capterra", rating: "★★★★★ 4.7/5", imageUrl: "" },
-          { label: "G2", rating: "★★★★★ 4.3/5", imageUrl: "" },
+          { label: "Google", rating: 4.6, imageUrl: "" },
+          { label: "Capterra", rating: 4.7, imageUrl: "" },
+          { label: "G2", rating: 4.3, imageUrl: "" },
         ])}
         trendingCourses={safeJsonParse(blockMap["home_trending_courses"], {
           title: "Trending Courses",

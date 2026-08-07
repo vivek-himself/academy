@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Users, BookOpen, Award, TrendingUp, Star } from "lucide-react";
+import StarRating from "@/components/ui/StarRating";
 
 const iconMap: Record<string, typeof Users> = {
   users: Users,
@@ -9,12 +10,12 @@ const iconMap: Record<string, typeof Users> = {
 };
 
 type Stat = { icon: string; value: string; label: string };
-type ReviewBadge = { label: string; rating: string; imageUrl: string };
+type ReviewBadge = { label: string; rating: number; imageUrl: string };
 
 const DEFAULT_REVIEW_BADGES: ReviewBadge[] = [
-  { label: "Google", rating: "★★★★★ 4.6/5", imageUrl: "" },
-  { label: "Capterra", rating: "★★★★★ 4.7/5", imageUrl: "" },
-  { label: "G2", rating: "★★★★★ 4.3/5", imageUrl: "" },
+  { label: "Google", rating: 4.6, imageUrl: "" },
+  { label: "Capterra", rating: 4.7, imageUrl: "" },
+  { label: "G2", rating: 4.3, imageUrl: "" },
 ];
 
 export default function StatsBar({ stats, reviewBadges = DEFAULT_REVIEW_BADGES }: { stats: Stat[]; reviewBadges?: ReviewBadge[] }) {
@@ -37,18 +38,17 @@ export default function StatsBar({ stats, reviewBadges = DEFAULT_REVIEW_BADGES }
         })}
       </div>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-8 opacity-70">
-        {reviewBadges.map((b) =>
-          b.imageUrl ? (
-            <span key={b.label} className="flex items-center gap-2">
+        {reviewBadges.map((b) => (
+          <span key={b.label} className="flex items-center gap-2">
+            {b.imageUrl ? (
               <Image src={b.imageUrl} alt={b.label} width={80} height={20} className="h-5 w-auto object-contain" />
-              <span className="text-sm font-semibold text-brand-ink">{b.rating}</span>
-            </span>
-          ) : (
-            <span key={b.label} className="text-sm font-semibold text-brand-ink">
-              {b.label} {b.rating}
-            </span>
-          )
-        )}
+            ) : (
+              <span className="text-sm font-semibold text-brand-ink">{b.label}</span>
+            )}
+            <StarRating rating={b.rating} size={14} />
+            <span className="text-sm font-semibold text-brand-ink">{b.rating}/5</span>
+          </span>
+        ))}
       </div>
     </section>
   );

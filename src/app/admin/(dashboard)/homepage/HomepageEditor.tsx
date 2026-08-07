@@ -19,8 +19,8 @@ type TrustLogo = { name: string; imageUrl: string };
 type EyebrowBlock = { eyebrow: string; title: string; description: string; ctaLabel: string; imageUrl: string };
 type GrowSkill = { title: string; description: string; checklist: string[]; ctaLabel: string; imageUrl: string };
 type CtaBanner = { title: string; description: string; ctaLabel: string; href: string; imageUrl: string };
-type ReviewBadge = { label: string; rating: string; imageUrl: string };
-const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: "", imageUrl: "" };
+type ReviewBadge = { label: string; rating: number; imageUrl: string };
+const EMPTY_REVIEW_BADGE: ReviewBadge = { label: "", rating: 5, imageUrl: "" };
 type TrendingCourses = { title: string; bannerImageUrl: string; bannerText: string };
 
 function SectionCard({
@@ -276,9 +276,15 @@ export default function HomepageEditor({
                 className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
               />
               <input
+                type="number"
+                min={0}
+                max={5}
+                step={0.1}
                 value={b.rating}
-                onChange={(e) => setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, rating: e.target.value } : r)))}
-                placeholder="Rating (e.g. ★★★★★ 4.6/5)"
+                onChange={(e) =>
+                  setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, rating: Number(e.target.value) || 0 } : r)))
+                }
+                placeholder="Rating out of 5 (e.g. 4.6)"
                 className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
               />
               <button
