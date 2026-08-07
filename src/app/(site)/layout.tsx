@@ -5,6 +5,7 @@ import "../globals.css";
 import PromoBar from "@/components/layout/PromoBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import ConditionalFooter from "@/components/layout/ConditionalFooter";
 import { prisma } from "@/lib/prisma";
 import { getStudentSession } from "@/lib/studentAuth";
 import { currencyForCountry } from "@/lib/currency";
@@ -62,7 +63,7 @@ export default async function RootLayout({
           <main id="main-content" className="flex-1">
             {children}
           </main>
-          <Footer />
+          <ConditionalFooter footer={<Footer />} />
         </CurrencyProvider>
       </body>
     </html>
