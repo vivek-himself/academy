@@ -11,7 +11,6 @@ import { getStudentSession } from "@/lib/studentAuth";
 import { currencyForCountry } from "@/lib/currency";
 import { CurrencyProvider } from "@/components/providers/CurrencyProvider";
 import LiquidCursor from "@/components/ui/LiquidCursor";
-import SmoothScroll from "@/components/ui/SmoothScroll";
 import { LIQUID_GLASS_ENABLED } from "@/lib/experiments";
 
 const dmSans = DM_Sans({
@@ -52,7 +51,6 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${dmSans.variable} h-full antialiased`} data-glass={LIQUID_GLASS_ENABLED ? "on" : "off"}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <SmoothScroll />
         <LiquidCursor />
         <a
           href="#main-content"

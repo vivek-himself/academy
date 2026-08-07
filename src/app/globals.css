@@ -112,13 +112,6 @@ body.liquid-cursor-active [role="button"] {
   }
 }
 
-/* Lenis (public site only) drives scroll itself via repeated scrollTo calls — native smooth-scroll
-   fighting those causes jank, so it's disabled on the html element Lenis actually attaches to. */
-html.lenis,
-html.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

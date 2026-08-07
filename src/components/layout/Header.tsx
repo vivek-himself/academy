@@ -140,7 +140,7 @@ export default function Header({ user }: { user: { name: string } | null }) {
         createPortal(
           <div className="fixed inset-0 z-50 lg:hidden">
             <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-            <div data-lenis-prevent className="absolute right-0 top-0 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-5 shadow-xl">
+            <div className="absolute right-0 top-0 h-full w-[85%] max-w-sm overflow-y-auto bg-white p-5 shadow-xl">
               <div className="mb-4 flex items-center justify-between">
                 <Logo />
                 <button
