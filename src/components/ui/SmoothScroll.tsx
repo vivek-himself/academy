@@ -18,11 +18,6 @@ export default function SmoothScroll() {
         lerp: 0.1,
         smoothWheel: true,
         touchMultiplier: 1,
-        // Without this, Lenis hijacks wheel/touch input over any nested scrollable element
-        // (the course module list, modal bodies, dropdown menus) and tries to scroll the
-        // page instead — the inner element only moves if you drag its scrollbar directly.
-        // This is Lenis's own documented fix for that.
-        allowNestedScroll: true,
       }}
     />
   );

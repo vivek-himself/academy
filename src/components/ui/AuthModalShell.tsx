@@ -29,7 +29,7 @@ export default function AuthModalShell({
           <p className="mt-4 text-lg text-brand-muted">{subtitle}</p>
         </div>
 
-        <div className="max-h-[70vh] overflow-y-auto">{children}</div>
+        <div data-lenis-prevent className="max-h-[70vh] overflow-y-auto">{children}</div>
 
         <div className="flex items-center justify-center gap-1 border-t border-brand-border px-8 py-4 text-sm text-brand-muted">
           English (United States)

@@ -34,7 +34,7 @@ export default function CourseSidebar({ course, modules }: { course: Course; mod
         <span className="text-lg font-bold text-brand-ink">{format(course.price)}</span>
       </div>
 
-      <ul className="brand-scrollbar relative mt-3 max-h-60 space-y-1 overflow-y-auto pl-0 pr-3">
+      <ul data-lenis-prevent className="brand-scrollbar relative mt-3 max-h-60 space-y-1 overflow-y-auto pl-0 pr-3">
         {modules.map((m, i) => (
           <li key={m.title} className="flex items-center gap-3 py-2">
             <span
