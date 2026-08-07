@@ -91,7 +91,7 @@ export default function Hero({ slides }: { slides: Slide[] }) {
                 <Image src={slide.imageDesktopUrl} alt="" fill priority={i === firstRealIndex} className="object-cover" />
               )}
               <div className="relative z-10 px-6 py-10 sm:px-10 sm:py-14 lg:py-24">
-                <div className="glass-hero-panel">
+                <div>
                   {i === position ? (
                     <h1 className="max-w-sm text-3xl font-bold leading-tight text-white sm:text-4xl">{slide.title}</h1>
                   ) : (

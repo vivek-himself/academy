@@ -306,19 +306,3 @@ html[data-glass="on"] .glass-modal {
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow: 0 24px 60px rgba(26, 21, 35, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
-
-/* Floating caption panel over the hero photo — the classic "glass widget on a photo" look.
-   Padding/radius live here too (not as plain Tailwind classes on the element) so with the
-   flag off this wrapper has zero box model of its own and the layout is pixel-identical
-   to the pre-experiment design. */
-html[data-glass="on"] .glass-hero-panel {
-  --glass-blur: blur(14px) saturate(160%);
-  display: inline-block;
-  border-radius: 1.25rem;
-  padding: 1.25rem 1.5rem;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
-  -webkit-backdrop-filter: var(--glass-blur);
-  backdrop-filter: var(--glass-blur);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-}
