@@ -20,6 +20,9 @@ export default async function HomepageContentPage() {
             "cta_banner_default",
             "home_review_badges",
             "home_trending_courses",
+            "courses_explore_hero_image",
+            "courses_webinar_card_image",
+            "courses_subscribe_banner_image",
           ],
         },
       },
@@ -62,6 +65,9 @@ export default async function HomepageContentPage() {
           bannerImageUrl: "",
           bannerText: "",
         })}
+        exploreHeroImage={safeJsonParse(blockMap["courses_explore_hero_image"], "")}
+        webinarCardImage={safeJsonParse(blockMap["courses_webinar_card_image"], "")}
+        subscribeBannerImage={safeJsonParse(blockMap["courses_subscribe_banner_image"], "")}
       />
     </div>
   );

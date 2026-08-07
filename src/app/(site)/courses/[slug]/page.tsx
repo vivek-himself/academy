@@ -33,10 +33,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const dbCourse = await prisma.course.findUnique({
-    where: { slug },
-    include: { category: true, mentor: true, reviews: { orderBy: { createdAt: "desc" } } },
-  });
+  const [dbCourse, webinarImageBlock, subscribeImageBlock] = await Promise.all([
+    prisma.course.findUnique({
+      where: { slug },
+      include: { category: true, mentor: true, reviews: { orderBy: { createdAt: "desc" } } },
+    }),
+    prisma.contentBlock.findUnique({ where: { key: "courses_webinar_card_image" } }),
+    prisma.contentBlock.findUnique({ where: { key: "courses_subscribe_banner_image" } }),
+  ]);
   if (!dbCourse) notFound();
 
   const course = mapCourse(dbCourse);
@@ -47,6 +51,8 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
   const keyPoints = safeJsonParse<string[]>(dbCourse.keyPointsJson, []);
   const advantages = safeJsonParse<string[]>(dbCourse.advantagesJson, []);
   const requirements = safeJsonParse<string[]>(dbCourse.requirementsJson, []);
+  const webinarCardImage = safeJsonParse(webinarImageBlock?.dataJson, "");
+  const subscribeBannerImage = safeJsonParse(subscribeImageBlock?.dataJson, "");
 
   return (
     <>
@@ -116,13 +122,13 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
           <div>
             <div className="lg:sticky lg:top-24">
               <CourseSidebar course={course} modules={modules} />
-              <WebinarCard />
+              <WebinarCard imageUrl={webinarCardImage} />
             </div>
           </div>
         </div>
       </section>
 
-      <SubscribeBanner />
+      <SubscribeBanner imageUrl={subscribeBannerImage} />
     </>
   );
 }

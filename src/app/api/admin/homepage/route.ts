@@ -9,6 +9,9 @@ const BLOCK_KEYS = [
   "cta_banner_default",
   "home_review_badges",
   "home_trending_courses",
+  "courses_explore_hero_image",
+  "courses_webinar_card_image",
+  "courses_subscribe_banner_image",
 ] as const;
 
 export async function GET() {

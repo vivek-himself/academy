@@ -1,11 +1,17 @@
 "use client";
 
-import DecorativeBlobs from "./DecorativeBlobs";
+import Image from "next/image";
 
-export default function SubscribeBanner() {
+export default function SubscribeBanner({ imageUrl }: { imageUrl?: string }) {
   return (
     <section className="container-page py-10 sm:py-14">
       <div className="relative overflow-hidden rounded-2xl bg-brand-purple px-6 py-10 sm:px-12 sm:py-14">
+        {imageUrl && (
+          <>
+            <Image src={imageUrl} alt="" fill className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-brand-purple/90 via-brand-purple/60 to-brand-purple/30" />
+          </>
+        )}
         <div className="relative z-10 flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h3 className="text-2xl font-bold text-white sm:text-3xl">Join and get amazing discount</h3>
@@ -31,7 +37,6 @@ export default function SubscribeBanner() {
             </button>
           </form>
         </div>
-        <DecorativeBlobs className="pointer-events-none absolute -bottom-10 -right-6 h-44 w-48 sm:h-56 sm:w-60" />
       </div>
     </section>
   );

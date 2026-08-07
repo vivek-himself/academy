@@ -69,7 +69,10 @@ const JUMP_GROUPS = [
   },
   {
     heading: "Courses",
-    items: [{ id: "trending-courses", label: "Trending Courses" }],
+    items: [
+      { id: "trending-courses", label: "Trending Courses" },
+      { id: "courses-page-banners", label: "Courses Page Banners" },
+    ],
   },
 ];
 
@@ -83,6 +86,9 @@ export default function HomepageEditor({
   ctaBanner: initCtaBanner,
   reviewBadges: initReviewBadges,
   trendingCourses: initTrendingCourses,
+  exploreHeroImage: initExploreHeroImage,
+  webinarCardImage: initWebinarCardImage,
+  subscribeBannerImage: initSubscribeBannerImage,
 }: {
   heroSlides: HeroSlide[];
   stats: Stat[];
@@ -93,6 +99,9 @@ export default function HomepageEditor({
   ctaBanner: CtaBanner;
   reviewBadges: ReviewBadge[];
   trendingCourses: TrendingCourses;
+  exploreHeroImage: string;
+  webinarCardImage: string;
+  subscribeBannerImage: string;
 }) {
   const router = useRouter();
   const [heroSlides, setHeroSlides] = useState(initHeroSlides.length ? initHeroSlides : [EMPTY_HERO_SLIDE]);
@@ -129,6 +138,9 @@ export default function HomepageEditor({
   const [ctaBanner, setCtaBanner] = useState(initCtaBanner);
   const [reviewBadges, setReviewBadges] = useState(initReviewBadges);
   const [trendingCourses, setTrendingCourses] = useState(initTrendingCourses);
+  const [exploreHeroImage, setExploreHeroImage] = useState(initExploreHeroImage);
+  const [webinarCardImage, setWebinarCardImage] = useState(initWebinarCardImage);
+  const [subscribeBannerImage, setSubscribeBannerImage] = useState(initSubscribeBannerImage);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
 
@@ -149,6 +161,9 @@ export default function HomepageEditor({
           cta_banner_default: JSON.stringify(ctaBanner),
           home_review_badges: JSON.stringify(reviewBadges),
           home_trending_courses: JSON.stringify(trendingCourses),
+          courses_explore_hero_image: JSON.stringify(exploreHeroImage),
+          courses_webinar_card_image: JSON.stringify(webinarCardImage),
+          courses_subscribe_banner_image: JSON.stringify(subscribeBannerImage),
         },
       }),
     });
@@ -462,6 +477,31 @@ export default function HomepageEditor({
           desktopValue={trendingCourses.bannerImageUrl}
           onDesktopChange={(v) => setTrendingCourses({ ...trendingCourses, bannerImageUrl: v })}
           desktopSize="800 × 800px (1:1 square)"
+        />
+      </SectionCard>
+
+      <SectionCard
+        id="courses-page-banners"
+        title="Courses Page Banners"
+        description="Background images for the three purple banners on the /courses pages (Explore Courses hero, the sidebar webinar card, and the newsletter banner). Each is optional — with no image, the banner just shows its plain purple background."
+      >
+        <ImageUploadField
+          label="Explore Courses Hero"
+          desktopValue={exploreHeroImage}
+          onDesktopChange={setExploreHeroImage}
+          desktopSize="1600 × 480px, wide banner — height adapts to your text length, so keep key visuals on the right, clear of the text on the left"
+        />
+        <ImageUploadField
+          label="Webinar Card (course page sidebar)"
+          desktopValue={webinarCardImage}
+          onDesktopChange={setWebinarCardImage}
+          desktopSize="600 × 400px — height adapts to content"
+        />
+        <ImageUploadField
+          label="Newsletter Banner"
+          desktopValue={subscribeBannerImage}
+          onDesktopChange={setSubscribeBannerImage}
+          desktopSize="1600 × 400px, wide banner — height adapts to your text length, so keep key visuals on the right, clear of the text on the left"
         />
       </SectionCard>
 
