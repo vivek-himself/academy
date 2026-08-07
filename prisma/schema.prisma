@@ -90,6 +90,15 @@ model User {
   // Account
   timezone String?
   country  String?
+
+  // Batch & status
+  status  String  @default("Active")
+  batchId String?
+  batch   Batch?  @relation(fields: [batchId], references: [id], onDelete: SetNull)
+
+  // Communication
+  notificationRecipients NotificationRecipient[]
+  directMessages         DirectMessage[]
 }
 
 model Enrollment {
@@ -103,6 +112,53 @@ model Enrollment {
   lastAccessedAt       DateTime @default(now())
 
   @@unique([userId, courseId])
+}
+
+model Batch {
+  id            String         @id @default(cuid())
+  name          String
+  classTimings  String?
+  capacity      Int?
+  startDate     DateTime?
+  endDate       DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  students      User[]
+  notifications Notification[]
+}
+
+model Notification {
+  id               String   @id @default(cuid())
+  title            String
+  body             String
+  scope            String // "individual" | "batch" | "all"
+  batchId          String?
+  batch            Batch?   @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  sentByAdminEmail String?
+  createdAt        DateTime @default(now())
+
+  recipients NotificationRecipient[]
+}
+
+model NotificationRecipient {
+  id             String       @id @default(cuid())
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  readAt         DateTime?
+
+  @@unique([notificationId, userId])
+}
+
+model DirectMessage {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sender    String // "admin" | "student"
+  body      String
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
 }
 
 model ContactSubmission {
