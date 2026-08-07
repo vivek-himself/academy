@@ -14,6 +14,7 @@ type BatchRow = {
   startDate: string | null;
   endDate: string | null;
   enrolledCount: number;
+  course: { id: string; title: string } | null;
 };
 
 function formatDate(iso: string | null) {
@@ -66,6 +67,7 @@ export default function BatchesTable({ batches }: { batches: BatchRow[] }) {
               <div className="min-w-0">
                 <p className="text-sm font-bold text-brand-ink">{b.name}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-brand-muted">
+                  {b.course && <span className="rounded-full bg-brand-pink/10 px-2 py-0.5 font-semibold text-brand-pink">{b.course.title}</span>}
                   {b.classTimings && <span>{b.classTimings}</span>}
                   <span className="flex items-center gap-1">
                     <Users size={12} />

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export default async function BatchesPage() {
   const batches = await prisma.batch.findMany({
-    include: { _count: { select: { students: true } } },
+    include: { _count: { select: { students: true } }, course: { select: { id: true, title: true } } },
     orderBy: { createdAt: "desc" },
   });
 
@@ -20,6 +20,7 @@ export default async function BatchesPage() {
     startDate: b.startDate ? b.startDate.toISOString() : null,
     endDate: b.endDate ? b.endDate.toISOString() : null,
     enrolledCount: b._count.students,
+    course: b.course,
   }));
 
   return (

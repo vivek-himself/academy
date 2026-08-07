@@ -2,19 +2,26 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TextField, NumberField } from "../../components/FormField";
+import { TextField, NumberField, SelectField } from "../../components/FormField";
+import ChipMultiSelect from "@/components/ui/ChipMultiSelect";
 import SaveBar from "../../components/SaveBar";
+import { WEEKDAY_OPTIONS } from "@/lib/batch";
 
 export type BatchFormValue = {
   id?: string;
   name: string;
-  classTimings: string;
+  classDays: string[];
+  startTime: string; // "" or "HH:MM"
+  endTime: string; // "" or "HH:MM"
   capacity: number;
   startDate: string; // "" or "YYYY-MM-DD"
   endDate: string; // "" or "YYYY-MM-DD"
+  courseId: string;
 };
 
-export default function BatchForm({ initial }: { initial: BatchFormValue }) {
+type CourseOption = { id: string; title: string };
+
+export default function BatchForm({ initial, courses }: { initial: BatchFormValue; courses: CourseOption[] }) {
   const router = useRouter();
   const [value, setValue] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -34,10 +41,13 @@ export default function BatchForm({ initial }: { initial: BatchFormValue }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: value.name,
-        classTimings: value.classTimings,
+        classDays: value.classDays,
+        startTime: value.startTime || null,
+        endTime: value.endTime || null,
         capacity: value.capacity || null,
         startDate: value.startDate || null,
         endDate: value.endDate || null,
+        courseId: value.courseId || null,
       }),
     });
     const data = await res.json();
@@ -57,12 +67,22 @@ export default function BatchForm({ initial }: { initial: BatchFormValue }) {
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-5 rounded-2xl border border-brand-border bg-brand-card p-6 sm:grid-cols-2">
         <TextField label="Batch Name" required maxLength={80} value={value.name} onChange={(v) => set("name", v)} />
-        <TextField
-          label="Class Timings"
-          placeholder="e.g. Mon/Wed/Fri, 6:00–8:00 PM IST"
-          value={value.classTimings}
-          onChange={(v) => set("classTimings", v)}
+        <SelectField
+          label="Course"
+          description="Optional — the course this batch is studying."
+          value={value.courseId}
+          onChange={(v) => set("courseId", v)}
+          options={[{ label: "No course linked", value: "" }, ...courses.map((c) => ({ label: c.title, value: c.id }))]}
         />
+
+        <div className="sm:col-span-2">
+          <p className="mb-1.5 block text-sm font-semibold text-brand-ink">Class Days</p>
+          <ChipMultiSelect options={WEEKDAY_OPTIONS} value={value.classDays} onChange={(v) => set("classDays", v)} />
+        </div>
+
+        <TextField label="Start Time" type="time" value={value.startTime} onChange={(v) => set("startTime", v)} />
+        <TextField label="End Time" type="time" value={value.endTime} onChange={(v) => set("endTime", v)} />
+
         <NumberField
           label="Capacity"
           description="Leave at 0 for no fixed limit."
