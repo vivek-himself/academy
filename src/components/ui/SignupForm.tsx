@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import SocialAuthButtons from "./SocialAuthButtons";
+import AuthModalShell from "./AuthModalShell";
 import DateOfBirthSelect, { dobToIso, type DobValue } from "./DateOfBirthSelect";
 import ChipMultiSelect from "./ChipMultiSelect";
 import AvatarUploadField from "./AvatarUploadField";
@@ -29,22 +30,22 @@ function ProgressDots({ step }: { step: 1 | 2 }) {
   );
 }
 
+function deriveNameFromEmail(email: string) {
+  const local = email.split("@")[0]?.trim() || "Student";
+  return local.charAt(0).toUpperCase() + local.slice(1);
+}
+
 function AccountStep({ onCreated }: { onCreated: (name: string, email: string) => void }) {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!agreed) {
-      setError("Please agree to the Terms & Privacy Policy to continue.");
-      return;
-    }
+    const name = deriveNameFromEmail(email);
     setSubmitting(true);
     const res = await fetch("/api/auth/signup", {
       method: "POST",
@@ -62,89 +63,75 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
   }
 
   return (
-    <div className="mx-auto w-full max-w-sm">
-      <div className="flex flex-col gap-3">
-        <Link
-          href="/login"
-          className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
-        >
-          <LogIn size={16} /> Login if you already have an account
-        </Link>
-        <SocialAuthButtons label="Sign up with Google" />
-      </div>
-      <div className="my-5 flex items-center gap-3">
-        <span className="h-px flex-1 bg-brand-border" />
-        <span className="text-xs font-medium text-brand-muted">OR</span>
-        <span className="h-px flex-1 bg-brand-border" />
-      </div>
-      <p className="mb-4 text-center text-sm font-semibold text-brand-ink">Sign up with your email address</p>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Profile name</label>
-          <input
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your profile name"
-            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none placeholder:text-brand-muted focus:border-brand-pink"
-          />
+    <div className="grid grid-cols-1 gap-8 px-8 pb-8 pt-6 sm:grid-cols-2 sm:divide-x sm:divide-brand-border">
+      <div className="sm:pr-8">
+        <div className="flex flex-col gap-3">
+          <SocialAuthButtons label="Sign up with Google" />
+          <Link
+            href="/login"
+            className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
+          >
+            <LogIn size={16} /> Login if you already have an account
+          </Link>
         </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Email</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email address"
-            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none placeholder:text-brand-muted focus:border-brand-pink"
-          />
-        </div>
-        <div>
-          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Password</label>
-          <div className="relative">
+        <p className="mt-4 text-xs text-brand-muted">
+          By signing up, you agree to the{" "}
+          <Link href="/terms" className="font-semibold text-brand-ink underline hover:text-brand-pink">
+            Terms of Service
+          </Link>{" "}
+          and acknowledge you&apos;ve read our{" "}
+          <Link href="/privacy-policy" className="font-semibold text-brand-ink underline hover:text-brand-pink">
+            Privacy Policy.
+          </Link>
+        </p>
+      </div>
+
+      <div className="sm:pl-8">
+        <h3 className="mb-4 text-lg font-bold text-brand-ink">Sign up</h3>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-brand-ink">Email address</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+            />
+          </div>
+          <div>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="text-sm font-medium text-brand-ink">Password</label>
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="flex items-center gap-1 text-xs font-medium text-brand-muted hover:text-brand-ink"
+              >
+                {showPassword ? <EyeOff size={13} /> : <Eye size={13} />}
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
             <input
               type={showPassword ? "text" : "password"}
               required
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              className="w-full rounded-lg border border-brand-border px-3 py-2.5 pr-10 text-sm outline-none placeholder:text-brand-muted focus:border-brand-pink"
+              className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-ink"
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
+            <p className="mt-1 text-xs text-brand-muted">Use 8 or more characters with a mix of letters, numbers &amp; symbols.</p>
           </div>
-          <p className="mt-1 text-xs text-brand-muted">Use 8 or more characters with a mix of letters, numbers &amp; symbols.</p>
-        </div>
 
-        <label className="flex items-start gap-2 text-xs text-brand-muted">
-          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5" />
-          I agree to the{" "}
-          <Link href="/terms" className="font-semibold text-brand-pink hover:underline">
-            Terms
-          </Link>{" "}
-          &amp;{" "}
-          <Link href="/privacy-policy" className="font-semibold text-brand-pink hover:underline">
-            Privacy Policy
-          </Link>
-        </label>
-
-        {error && <p className="text-xs font-medium text-red-500">{error}</p>}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded-full bg-brand-pink px-6 py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
-        >
-          {submitting ? "Creating account..." : "Create Account"}
-        </button>
-      </form>
+          {error && <p className="text-xs font-medium text-red-500">{error}</p>}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="rounded-full bg-brand-pink px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-pink-dark disabled:opacity-60"
+          >
+            {submitting ? "Creating account..." : "Create Account"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
@@ -244,7 +231,7 @@ function ProfileStep({ name }: { name: string }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-sm">
+    <div className="mx-auto w-full max-w-sm px-8 pb-8 pt-2">
       <p className="mb-5 text-center text-sm text-brand-muted">
         Add these now, or skip and finish your profile later in Settings — the fields below are needed before you
         can attend a course.
@@ -383,9 +370,9 @@ export default function SignupForm() {
   }
 
   return (
-    <div>
+    <AuthModalShell subtitle="Sign up for free to see our courses">
       <ProgressDots step={step} />
       {step === 1 ? <AccountStep onCreated={handleCreated} /> : <ProfileStep name={createdName} />}
-    </div>
+    </AuthModalShell>
   );
 }
