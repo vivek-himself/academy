@@ -30,7 +30,7 @@ export default async function DashboardOverviewPage() {
   const session = await getStudentSession();
   if (!session) redirect("/login");
 
-  const [user, enrollments, notificationRecipients, unreadMessageCount] = await Promise.all([
+  const [user, enrollments, notificationRecipients, unreadNotificationCount, unreadMessageCount] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.userId } }),
     prisma.enrollment.findMany({
       where: { userId: session.userId },
@@ -43,6 +43,7 @@ export default async function DashboardOverviewPage() {
       orderBy: { notification: { createdAt: "desc" } },
       take: 6,
     }),
+    prisma.notificationRecipient.count({ where: { userId: session.userId, readAt: null } }),
     prisma.directMessage.count({ where: { userId: session.userId, sender: "admin", readAt: null } }),
   ]);
   if (!user) redirect("/login");
@@ -79,8 +80,8 @@ export default async function DashboardOverviewPage() {
     title: r.notification.title,
     message: r.notification.body,
     when: timeAgo(r.notification.createdAt),
+    read: Boolean(r.readAt),
   }));
-  const unreadNotificationCount = notificationRecipients.filter((r) => !r.readAt).length;
 
   const hasEnrollments = enrollments.length > 0;
   const hour = new Date().getHours();
