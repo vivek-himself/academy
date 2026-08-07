@@ -51,6 +51,14 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Public site only — the admin and student dashboard each render their own <body> and don't include this class. */
+.site-cursor,
+.site-cursor a,
+.site-cursor button,
+.site-cursor [role="button"] {
+  cursor: url("/cursors/cursor-brand.png") 25 4, auto;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;

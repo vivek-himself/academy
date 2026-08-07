@@ -47,7 +47,7 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${dmSans.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="site-cursor flex min-h-full flex-col bg-background text-foreground">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand-pink focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-white"
