@@ -30,12 +30,18 @@ export default async function DashboardOverviewPage() {
   const session = await getStudentSession();
   if (!session) redirect("/login");
 
-  const [user, enrollments] = await Promise.all([
+  const [user, enrollments, notificationRecipients] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.userId } }),
     prisma.enrollment.findMany({
       where: { userId: session.userId },
       include: { course: { include: { category: true, mentor: true } } },
       orderBy: { lastAccessedAt: "desc" },
+    }),
+    prisma.notificationRecipient.findMany({
+      where: { userId: session.userId },
+      include: { notification: true },
+      orderBy: { notification: { createdAt: "desc" } },
+      take: 6,
     }),
   ]);
   if (!user) redirect("/login");
@@ -67,12 +73,13 @@ export default async function DashboardOverviewPage() {
       date: e.enrollment.enrolledAt,
     }));
 
-  const notifications: NotificationItem[] = withProgress.slice(0, 6).map((e) => ({
-    id: e.enrollment.id,
-    title: e.progress.percent >= 100 ? "Course completed" : "Enrolled in a course",
-    message: e.enrollment.course.title,
-    when: timeAgo(e.enrollment.enrolledAt),
+  const notifications: NotificationItem[] = notificationRecipients.map((r) => ({
+    id: r.id,
+    title: r.notification.title,
+    message: r.notification.body,
+    when: timeAgo(r.notification.createdAt),
   }));
+  const unreadNotificationCount = notificationRecipients.filter((r) => !r.readAt).length;
 
   const hasEnrollments = enrollments.length > 0;
   const hour = new Date().getHours();
@@ -222,7 +229,7 @@ export default async function DashboardOverviewPage() {
           </p>
           <p className="mt-1 text-xs text-brand-muted">Continue your journey and achieve your target</p>
           <div className="mt-4 flex justify-center">
-            <NotificationsBell notifications={notifications} />
+            <NotificationsBell notifications={notifications} unreadCount={unreadNotificationCount} />
           </div>
         </div>
 

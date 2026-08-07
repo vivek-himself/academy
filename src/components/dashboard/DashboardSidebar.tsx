@@ -4,13 +4,14 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutGrid, Search, MonitorPlay, Award, TrendingUp, Settings, LogOut, Menu, X } from "lucide-react";
+import { LayoutGrid, Search, MonitorPlay, Award, TrendingUp, MessageSquare, Settings, LogOut, Menu, X } from "lucide-react";
 import Logo from "@/components/layout/Logo";
 
 const navItems = [
   { label: "Overview", href: "/dashboard", icon: LayoutGrid },
   { label: "Explore Courses", href: "/dashboard/explore", icon: Search },
   { label: "My Courses", href: "/dashboard/my-courses", icon: MonitorPlay },
+  { label: "Messages", href: "/dashboard/messages", icon: MessageSquare },
   { label: "Certificates", href: "/dashboard/certificates", icon: Award },
   { label: "Growth", href: "/dashboard/growth", icon: TrendingUp },
 ];

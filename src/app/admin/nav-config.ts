@@ -18,6 +18,7 @@ import {
   FileBarChart,
   Heart,
   Globe,
+  Bell,
   Image as ImageIcon,
   Settings,
 } from "lucide-react";
@@ -61,6 +62,10 @@ export const navSections: NavSection[] = [
       { label: "Email Automation", href: "/admin/email-automation", icon: Mail, stub: true },
       { label: "Email Activity", href: "/admin/email-activity", icon: Activity, stub: true },
     ],
+  },
+  {
+    heading: "Communication",
+    items: [{ label: "Notifications", href: "/admin/notifications", icon: Bell }],
   },
   {
     heading: "Insights & Reporting",

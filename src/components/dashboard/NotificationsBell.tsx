@@ -5,8 +5,15 @@ import { Bell, Mail } from "lucide-react";
 
 export type NotificationItem = { id: string; title: string; message: string; when: string };
 
-export default function NotificationsBell({ notifications }: { notifications: NotificationItem[] }) {
+export default function NotificationsBell({
+  notifications,
+  unreadCount,
+}: {
+  notifications: NotificationItem[];
+  unreadCount?: number;
+}) {
   const [open, setOpen] = useState(false);
+  const dotCount = unreadCount ?? notifications.length;
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -28,7 +35,7 @@ export default function NotificationsBell({ notifications }: { notifications: No
         >
           <Bell size={16} />
         </button>
-        {notifications.length > 0 && (
+        {dotCount > 0 && (
           <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-brand-pink" />
         )}
         {open && (
