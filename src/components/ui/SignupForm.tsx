@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Eye, EyeOff, LogIn } from "lucide-react";
 import SocialAuthButtons from "./SocialAuthButtons";
 import DateOfBirthSelect, { dobToIso, type DobValue } from "./DateOfBirthSelect";
 import ChipMultiSelect from "./ChipMultiSelect";
@@ -32,6 +33,7 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [notRobot, setNotRobot] = useState(false);
   const [error, setError] = useState("");
@@ -66,20 +68,30 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
 
   return (
     <div className="mx-auto w-full max-w-sm">
-      <SocialAuthButtons />
+      <div className="flex flex-col gap-3">
+        <Link
+          href="/login"
+          className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
+        >
+          <LogIn size={16} /> Login if you already have an account
+        </Link>
+        <SocialAuthButtons label="Sign up with Google" />
+      </div>
       <div className="my-5 flex items-center gap-3">
         <span className="h-px flex-1 bg-brand-border" />
         <span className="text-xs font-medium text-brand-muted">OR</span>
         <span className="h-px flex-1 bg-brand-border" />
       </div>
+      <p className="mb-4 text-center text-sm font-semibold text-brand-ink">Sign up with your email address</p>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div>
-          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Full Name</label>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Profile name</label>
           <input
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+            placeholder="Enter your profile name"
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none placeholder:text-brand-muted focus:border-brand-pink"
           />
         </div>
         <div>
@@ -89,20 +101,32 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+            placeholder="Enter your email address"
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none placeholder:text-brand-muted focus:border-brand-pink"
           />
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Password</label>
-          <input
-            type="password"
-            required
-            minLength={8}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
-          />
-          <p className="mt-1 text-xs text-brand-muted">At least 8 characters.</p>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="w-full rounded-lg border border-brand-border px-3 py-2.5 pr-10 text-sm outline-none placeholder:text-brand-muted focus:border-brand-pink"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-ink"
+            >
+              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+            </button>
+          </div>
+          <p className="mt-1 text-xs text-brand-muted">Use 8 or more characters with a mix of letters, numbers &amp; symbols.</p>
         </div>
 
         <label className="flex items-start gap-2 text-xs text-brand-muted">
@@ -130,12 +154,6 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
         >
           {submitting ? "Creating account..." : "Create Account"}
         </button>
-        <p className="text-center text-sm text-brand-muted">
-          Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-brand-pink hover:underline">
-            Log in
-          </Link>
-        </p>
       </form>
     </div>
   );

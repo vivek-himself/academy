@@ -22,7 +22,7 @@ export function GoogleIcon() {
   );
 }
 
-export default function SocialAuthButtons() {
+export default function SocialAuthButtons({ label = "Continue with Google" }: { label?: string }) {
   const [notice, setNotice] = useState(false);
 
   return (
@@ -32,7 +32,7 @@ export default function SocialAuthButtons() {
         onClick={() => setNotice(true)}
         className="flex w-full items-center justify-center gap-2 rounded-full border border-brand-border px-4 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface"
       >
-        <GoogleIcon /> Continue with Google
+        <GoogleIcon /> {label}
       </button>
       {notice && (
         <p className="mt-2 text-center text-xs text-brand-muted">

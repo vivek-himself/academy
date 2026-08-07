@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 import SignupForm from "@/components/ui/SignupForm";
 
 export const metadata: Metadata = {
@@ -9,14 +9,9 @@ export const metadata: Metadata = {
 
 export default function SignupPage() {
   return (
-    <section className="container-page py-20 text-center">
-      <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-brand-pink/10 text-brand-pink">
-        <Sparkles size={22} />
-      </span>
-      <h1 className="mt-4 text-2xl font-bold text-brand-ink sm:text-3xl">Create Your Account</h1>
-      <p className="mx-auto mt-3 max-w-md text-sm text-brand-muted">
-        Sign up to track your progress and pick up any course, any time.
-      </p>
+    <section className="container-page py-16 text-center">
+      <Image src="/logo.svg" alt="Academy" width={281} height={98} className="mx-auto h-20 w-auto" priority />
+      <h1 className="mt-6 text-2xl font-bold text-brand-ink sm:text-3xl">Sign up for free to see our courses</h1>
       <div className="mt-8">
         <SignupForm />
       </div>
