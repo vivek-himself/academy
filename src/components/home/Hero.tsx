@@ -14,12 +14,14 @@ type Slide = {
 };
 
 const AUTO_ADVANCE_MS = 3000;
+const TRANSITION_MS = 700;
 
 export default function Hero({ slides }: { slides: Slide[] }) {
   const n = slides.length;
   const looped = n > 1;
   // Clone the last slide before the first and the first slide after the last, so stepping
-  // past either end lands on a lookalike frame instead of snapping backward across the whole track.
+  // past either end keeps sliding the same direction into a lookalike frame instead of
+  // snapping backward across the whole track.
   const track = looped ? [slides[n - 1], ...slides, slides[0]] : slides;
   const firstRealIndex = looped ? 1 : 0;
   const lastRealIndex = looped ? n : 0;
@@ -28,27 +30,38 @@ export default function Hero({ slides }: { slides: Slide[] }) {
   const [instant, setInstant] = useState(false);
   const [paused, setPaused] = useState(false);
 
+  // True while the track is sitting on a cloned frame, waiting for its transition to finish
+  // before the instant correction runs. Autoplay and manual nav both pause here so a step
+  // can never land on the clone a second time before the correction has a chance to fire.
+  const atBoundary = looped && (position > lastRealIndex || position < firstRealIndex);
   const activeIndex = looped ? (((position - 1) % n) + n) % n : 0;
 
-  const goTo = (i: number) => setPosition(firstRealIndex + i);
-  const step = (delta: number) => setPosition((p) => p + delta);
+  const goTo = (i: number) => {
+    if (atBoundary) return;
+    setPosition(firstRealIndex + i);
+  };
+  const step = (delta: number) => {
+    if (atBoundary) return;
+    setPosition((p) => p + delta);
+  };
 
   useEffect(() => {
-    if (!looped || paused) return;
-    const id = setInterval(() => step(1), AUTO_ADVANCE_MS);
+    if (!looped || paused || atBoundary) return;
+    const id = setInterval(() => setPosition((p) => p + 1), AUTO_ADVANCE_MS);
     return () => clearInterval(id);
-  }, [looped, paused]);
+  }, [looped, paused, atBoundary]);
 
-  function handleTransitionEnd(e: React.TransitionEvent<HTMLDivElement>) {
-    if (!looped || e.propertyName !== "transform" || e.target !== e.currentTarget) return;
-    if (position > lastRealIndex) {
+  // Once a step lands on the cloned frame past either end, wait for the slide transition to
+  // finish, then snap straight to the matching real slide with no transition — the clone and
+  // the real slide are visually identical, so the jump is invisible.
+  useEffect(() => {
+    if (!atBoundary) return;
+    const id = setTimeout(() => {
       setInstant(true);
-      setPosition(firstRealIndex);
-    } else if (position < firstRealIndex) {
-      setInstant(true);
-      setPosition(lastRealIndex);
-    }
-  }
+      setPosition(position > lastRealIndex ? firstRealIndex : lastRealIndex);
+    }, TRANSITION_MS);
+    return () => clearTimeout(id);
+  }, [atBoundary, position, firstRealIndex, lastRealIndex]);
 
   useEffect(() => {
     if (!instant) return;
@@ -65,9 +78,12 @@ export default function Hero({ slides }: { slides: Slide[] }) {
         onMouseLeave={() => setPaused(false)}
       >
         <div
-          onTransitionEnd={handleTransitionEnd}
-          className={`flex h-full ${instant ? "" : "transition-transform duration-700 ease-in-out"}`}
-          style={{ width: `${track.length * 100}%`, transform: `translateX(-${position * (100 / track.length)}%)` }}
+          className="flex h-full transition-transform ease-in-out"
+          style={{
+            width: `${track.length * 100}%`,
+            transform: `translateX(-${position * (100 / track.length)}%)`,
+            transitionDuration: instant ? "0ms" : `${TRANSITION_MS}ms`,
+          }}
         >
           {track.map((slide, i) => (
             <div key={i} className="relative min-h-[340px] shrink-0 sm:min-h-[400px] lg:min-h-[460px]" style={{ width: `${100 / track.length}%` }}>
