@@ -11,6 +11,7 @@ import { mapCourse } from "@/lib/mappers";
 import { safeJsonParse } from "@/lib/json";
 import { getCompletedModules } from "@/lib/enrollment";
 import { isProfileComplete, getMissingProfileFields } from "@/lib/profile";
+import { dateOnly } from "@/lib/attendance";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +26,14 @@ export default async function DashboardCourseWatchPage({ params }: { params: Pro
   });
   if (!dbCourse) notFound();
 
-  const [enrollment, user] = await Promise.all([
+  const [enrollment, user, todaysAttendance] = await Promise.all([
     prisma.enrollment.findUnique({ where: { userId_courseId: { userId: session.userId, courseId: dbCourse.id } } }),
-    prisma.user.findUnique({ where: { id: session.userId } }),
+    prisma.user.findUnique({ where: { id: session.userId }, include: { batch: true } }),
+    prisma.attendance.findUnique({
+      where: {
+        userId_courseId_date: { userId: session.userId, courseId: dbCourse.id, date: dateOnly(new Date()) },
+      },
+    }),
   ]);
   if (!user) redirect("/login");
 
@@ -80,6 +86,10 @@ export default async function DashboardCourseWatchPage({ params }: { params: Pro
   const advantages = safeJsonParse<string[]>(dbCourse.advantagesJson, []);
   const requirements = safeJsonParse<string[]>(dbCourse.requirementsJson, []);
   const completed = getCompletedModules(enrollment.completedModulesJson);
+  const batch = user.batch && user.batch.courseId === dbCourse.id ? user.batch : null;
+  const attendanceSchedule = batch
+    ? { classDays: safeJsonParse<string[]>(batch.classDaysJson, []), startTime: batch.startTime, endTime: batch.endTime }
+    : null;
 
   return (
     <div>
@@ -134,7 +144,14 @@ export default async function DashboardCourseWatchPage({ params }: { params: Pro
 
         <div>
           <div className="lg:sticky lg:top-24">
-            <DashboardCourseSidebar course={course} courseId={dbCourse.id} modules={modules} initialCompleted={completed} />
+            <DashboardCourseSidebar
+              course={course}
+              courseId={dbCourse.id}
+              modules={modules}
+              initialCompleted={completed}
+              attendanceSchedule={attendanceSchedule}
+              alreadyMarkedToday={Boolean(todaysAttendance)}
+            />
           </div>
         </div>
       </div>

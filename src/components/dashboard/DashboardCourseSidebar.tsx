@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, CalendarClock, CheckCheck } from "lucide-react";
 import type { Course, CourseModule } from "@/lib/data";
 
 function LeaveReviewModal({ slug, onClose }: { slug: string; onClose: () => void }) {
@@ -81,19 +81,57 @@ function LeaveReviewModal({ slug, onClose }: { slug: string; onClose: () => void
   );
 }
 
+type AttendanceSchedule = { classDays: string[]; startTime: string | null; endTime: string | null } | null;
+
+function AttendanceModal({ message, schedule, onClose }: { message: string; schedule: AttendanceSchedule; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4" onClick={onClose}>
+      <div className="w-full max-w-sm rounded-2xl border border-brand-border bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+          <CalendarClock size={18} />
+        </div>
+        <h3 className="mt-3 text-sm font-bold text-brand-ink">Can&apos;t mark attendance right now</h3>
+        <p className="mt-1.5 text-sm text-brand-muted">{message}</p>
+        {schedule && schedule.classDays.length > 0 && schedule.startTime && schedule.endTime && (
+          <div className="mt-3 rounded-lg bg-brand-surface px-3 py-2.5 text-xs text-brand-ink">
+            <p className="font-semibold">Your batch&apos;s class schedule</p>
+            <p className="mt-1 text-brand-muted">
+              {schedule.classDays.join(", ")} · {schedule.startTime} – {schedule.endTime}
+            </p>
+          </div>
+        )}
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-4 w-full rounded-full bg-brand-pink py-2.5 text-sm font-semibold text-white hover:bg-brand-pink-dark"
+        >
+          Got it
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function DashboardCourseSidebar({
   course,
   courseId,
   modules,
   initialCompleted,
+  attendanceSchedule,
+  alreadyMarkedToday,
 }: {
   course: Course;
   courseId: string;
   modules: CourseModule[];
   initialCompleted: number[];
+  attendanceSchedule: AttendanceSchedule;
+  alreadyMarkedToday: boolean;
 }) {
   const [completed, setCompleted] = useState<number[]>(initialCompleted);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [marked, setMarked] = useState(alreadyMarkedToday);
+  const [marking, setMarking] = useState(false);
+  const [attendanceNotice, setAttendanceNotice] = useState<{ message: string; schedule: AttendanceSchedule } | null>(null);
   const total = Math.max(modules.length, 1);
   const percent = Math.min(100, Math.round((completed.length / total) * 100));
 
@@ -105,6 +143,18 @@ export default function DashboardCourseSidebar({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ courseId, completedModules: next }),
     });
+  }
+
+  async function handleMarkAttendance() {
+    setMarking(true);
+    const res = await fetch(`/api/dashboard/courses/${course.slug}/attendance`, { method: "POST" });
+    const data = await res.json();
+    setMarking(false);
+    if (!res.ok) {
+      setAttendanceNotice({ message: data.message ?? "Attendance isn't available right now.", schedule: data.schedule ?? null });
+      return;
+    }
+    setMarked(true);
   }
 
   return (
@@ -162,13 +212,46 @@ export default function DashboardCourseSidebar({
 
       <button
         type="button"
+        onClick={handleMarkAttendance}
+        disabled={marked || marking}
+        className={`mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold ${
+          marked
+            ? "bg-emerald-50 text-emerald-600"
+            : "border border-brand-border text-brand-ink hover:bg-brand-surface disabled:opacity-60"
+        }`}
+      >
+        {marked ? (
+          <>
+            <CheckCheck size={15} /> Attendance Marked Today
+          </>
+        ) : (
+          <>
+            <CalendarClock size={15} /> {marking ? "Marking..." : "Mark Attendance"}
+          </>
+        )}
+      </button>
+      {!marked && attendanceSchedule && attendanceSchedule.classDays.length > 0 && attendanceSchedule.startTime && attendanceSchedule.endTime && (
+        <p className="mt-1.5 text-center text-[11px] text-brand-muted">
+          Class days: {attendanceSchedule.classDays.join(", ")} · {attendanceSchedule.startTime}–{attendanceSchedule.endTime}
+        </p>
+      )}
+
+      <button
+        type="button"
         onClick={() => setReviewOpen(true)}
-        className="mt-5 w-full rounded-full bg-brand-pink py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark"
+        className="mt-2.5 w-full rounded-full bg-brand-pink py-3 text-sm font-semibold text-white hover:bg-brand-pink-dark"
       >
         Leave a Review
       </button>
 
       {reviewOpen && <LeaveReviewModal slug={course.slug} onClose={() => setReviewOpen(false)} />}
+      {attendanceNotice && (
+        <AttendanceModal
+          message={attendanceNotice.message}
+          schedule={attendanceNotice.schedule}
+          onClose={() => setAttendanceNotice(null)}
+        />
+      )}
     </div>
   );
 }

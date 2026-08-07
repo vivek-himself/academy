@@ -99,6 +99,7 @@ model User {
   // Communication
   notificationRecipients NotificationRecipient[]
   directMessages         DirectMessage[]
+  attendances            Attendance[]
 }
 
 model Enrollment {
@@ -164,6 +165,18 @@ model DirectMessage {
   body      String
   readAt    DateTime?
   createdAt DateTime  @default(now())
+}
+
+model Attendance {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId String
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  date     DateTime // calendar date only (UTC midnight) — one record per student per course per day
+  markedAt DateTime @default(now())
+
+  @@unique([userId, courseId, date])
 }
 
 model ContactSubmission {
@@ -259,6 +272,7 @@ model Course {
   reviews          CourseReview[]
   enrollments      Enrollment[]
   batches          Batch[]
+  attendances      Attendance[]
   seoTitle         String?
   seoDescription   String?
   published        Boolean        @default(true)
