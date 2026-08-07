@@ -14,6 +14,7 @@ export type BatchFormValue = {
   classDays: string[];
   startTime: string; // "" or "HH:MM"
   endTime: string; // "" or "HH:MM"
+  meetingUrl: string;
   capacity: number;
   startDate: string; // "" or "YYYY-MM-DD"
   endDate: string; // "" or "YYYY-MM-DD"
@@ -45,6 +46,7 @@ export default function BatchForm({ initial, courses }: { initial: BatchFormValu
         classDays: value.classDays,
         startTime: value.startTime || null,
         endTime: value.endTime || null,
+        meetingUrl: value.meetingUrl || null,
         capacity: value.capacity || null,
         startDate: value.startDate || null,
         endDate: value.endDate || null,
@@ -83,6 +85,16 @@ export default function BatchForm({ initial, courses }: { initial: BatchFormValu
 
         <TimeSelect label="Start Time" value={value.startTime} onChange={(v) => set("startTime", v)} />
         <TimeSelect label="End Time" value={value.endTime} onChange={(v) => set("endTime", v)} />
+
+        <div className="sm:col-span-2">
+          <TextField
+            label="Meeting Link"
+            description="Google Meet or Zoom link — students are sent here after marking attendance."
+            placeholder="https://meet.google.com/xxx-xxxx-xxx"
+            value={value.meetingUrl}
+            onChange={(v) => set("meetingUrl", v)}
+          />
+        </div>
 
         <NumberField
           label="Capacity"

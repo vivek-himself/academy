@@ -30,6 +30,7 @@ export default async function EditBatchPage({ params }: { params: Promise<{ id: 
     classDays: safeJsonParse<string[]>(batch.classDaysJson, []),
     startTime: batch.startTime ?? "",
     endTime: batch.endTime ?? "",
+    meetingUrl: batch.meetingUrl ?? "",
     capacity: batch.capacity ?? 0,
     startDate: toDateInput(batch.startDate),
     endDate: toDateInput(batch.endDate),

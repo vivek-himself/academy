@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { CheckCircle2, CalendarClock, CheckCheck } from "lucide-react";
+import { CheckCircle2, CalendarClock, CheckCheck, Video } from "lucide-react";
 import type { Course, CourseModule } from "@/lib/data";
 
 function LeaveReviewModal({ slug, onClose }: { slug: string; onClose: () => void }) {
@@ -81,7 +81,12 @@ function LeaveReviewModal({ slug, onClose }: { slug: string; onClose: () => void
   );
 }
 
-type AttendanceSchedule = { classDays: string[]; startTime: string | null; endTime: string | null } | null;
+type AttendanceSchedule = {
+  classDays: string[];
+  startTime: string | null;
+  endTime: string | null;
+  meetingUrl: string | null;
+} | null;
 
 function AttendanceModal({ message, schedule, onClose }: { message: string; schedule: AttendanceSchedule; onClose: () => void }) {
   return (
@@ -155,6 +160,9 @@ export default function DashboardCourseSidebar({
       return;
     }
     setMarked(true);
+    if (attendanceSchedule?.meetingUrl) {
+      window.open(attendanceSchedule.meetingUrl, "_blank", "noopener,noreferrer");
+    }
   }
 
   return (
@@ -234,6 +242,16 @@ export default function DashboardCourseSidebar({
         <p className="mt-1.5 text-center text-[11px] text-brand-muted">
           Class days: {attendanceSchedule.classDays.join(", ")} · {attendanceSchedule.startTime}–{attendanceSchedule.endTime}
         </p>
+      )}
+      {marked && attendanceSchedule?.meetingUrl && (
+        <a
+          href={attendanceSchedule.meetingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full bg-brand-purple py-3 text-sm font-semibold text-white hover:bg-brand-purple-dark"
+        >
+          <Video size={15} /> Join Class
+        </a>
       )}
 
       <button

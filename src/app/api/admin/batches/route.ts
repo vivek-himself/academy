@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
       classDaysJson: JSON.stringify(classDays),
       startTime: body.startTime || null,
       endTime: body.endTime || null,
+      meetingUrl: body.meetingUrl || null,
       classTimings: formatClassTimings(classDays, body.startTime, body.endTime),
       capacity: body.capacity || null,
       startDate: body.startDate ? new Date(body.startDate) : null,

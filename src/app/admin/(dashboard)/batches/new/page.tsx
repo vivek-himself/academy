@@ -7,6 +7,7 @@ const initial: BatchFormValue = {
   classDays: [],
   startTime: "",
   endTime: "",
+  meetingUrl: "",
   capacity: 0,
   startDate: "",
   endDate: "",

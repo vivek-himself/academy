@@ -122,6 +122,7 @@ model Batch {
   classDaysJson String         @default("[]")
   startTime     String? // "HH:MM", 24-hour
   endTime       String? // "HH:MM", 24-hour
+  meetingUrl    String? // Google Meet / Zoom link students are sent to after marking attendance
   capacity      Int?
   startDate     DateTime?
   endDate       DateTime?

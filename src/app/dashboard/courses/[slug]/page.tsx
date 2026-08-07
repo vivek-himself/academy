@@ -88,7 +88,12 @@ export default async function DashboardCourseWatchPage({ params }: { params: Pro
   const completed = getCompletedModules(enrollment.completedModulesJson);
   const batch = user.batch && user.batch.courseId === dbCourse.id ? user.batch : null;
   const attendanceSchedule = batch
-    ? { classDays: safeJsonParse<string[]>(batch.classDaysJson, []), startTime: batch.startTime, endTime: batch.endTime }
+    ? {
+        classDays: safeJsonParse<string[]>(batch.classDaysJson, []),
+        startTime: batch.startTime,
+        endTime: batch.endTime,
+        meetingUrl: batch.meetingUrl,
+      }
     : null;
 
   return (

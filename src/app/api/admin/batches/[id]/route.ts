@@ -32,6 +32,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if ("startDate" in body) data.startDate = body.startDate ? new Date(body.startDate) : null;
   if ("endDate" in body) data.endDate = body.endDate ? new Date(body.endDate) : null;
   if ("courseId" in body) data.courseId = body.courseId || null;
+  if ("meetingUrl" in body) data.meetingUrl = body.meetingUrl || null;
 
   if ("classDays" in body || "startTime" in body || "endTime" in body) {
     const classDays: string[] = Array.isArray(body.classDays) ? body.classDays : [];
