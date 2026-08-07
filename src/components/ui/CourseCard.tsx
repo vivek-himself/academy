@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Users, Layers, Clock, Heart } from "lucide-react";
+import { Users, Layers, Clock } from "lucide-react";
 import type { Course } from "@/lib/data";
 import { useCurrency } from "@/components/providers/CurrencyProvider";
 
@@ -47,9 +47,6 @@ export default function CourseCard({ course }: { course: Course }) {
           sizes="(max-width: 768px) 100vw, 320px"
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
-        <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-brand-ink">
-          <Heart size={14} />
-        </span>
         <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-brand-ink shadow">
           {course.level} <SignalBarsIcon level={course.level} />
         </span>
