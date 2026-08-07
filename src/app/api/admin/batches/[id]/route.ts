@@ -1,7 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth";
-import { formatClassTimings } from "@/lib/batch";
+import { formatClassTimings, syncBatchProgress } from "@/lib/batch";
+import { safeJsonParse } from "@/lib/json";
+
+async function clampChapters(courseId: string | null, requested: number) {
+  if (!courseId || requested <= 0) return Math.max(0, requested || 0);
+  const course = await prisma.course.findUnique({ where: { id: courseId }, select: { modulesJson: true } });
+  const total = safeJsonParse<unknown[]>(course?.modulesJson, []).length;
+  return Math.min(requested, total);
+}
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -42,7 +50,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     data.classTimings = formatClassTimings(classDays, body.startTime, body.endTime);
   }
 
+  if ("completedChapters" in body || "courseId" in body) {
+    const existing = await prisma.batch.findUnique({ where: { id }, select: { courseId: true, completedChapters: true } });
+    const effectiveCourseId = "courseId" in body ? body.courseId || null : (existing?.courseId ?? null);
+    const requested = "completedChapters" in body ? Number(body.completedChapters) || 0 : (existing?.completedChapters ?? 0);
+    data.completedChapters = await clampChapters(effectiveCourseId, requested);
+  }
+
   const batch = await prisma.batch.update({ where: { id }, data });
+  await syncBatchProgress(prisma, batch.id);
   return NextResponse.json(batch);
 }
 

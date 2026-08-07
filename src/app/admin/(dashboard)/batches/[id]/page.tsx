@@ -20,9 +20,11 @@ export default async function EditBatchPage({ params }: { params: Promise<{ id: 
       include: { students: { select: { id: true, name: true, email: true, batchId: true }, orderBy: { name: "asc" } } },
     }),
     prisma.user.findMany({ select: { id: true, name: true, email: true, batchId: true }, orderBy: { name: "asc" } }),
-    prisma.course.findMany({ select: { id: true, title: true }, orderBy: { title: "asc" } }),
+    prisma.course.findMany({ select: { id: true, title: true, modulesJson: true }, orderBy: { title: "asc" } }),
   ]);
   if (!batch) notFound();
+
+  const courseOptions = courses.map((c) => ({ id: c.id, title: c.title, modules: safeJsonParse<{ title: string; duration: string }[]>(c.modulesJson, []) }));
 
   const initial: BatchFormValue = {
     id: batch.id,
@@ -31,6 +33,7 @@ export default async function EditBatchPage({ params }: { params: Promise<{ id: 
     startTime: batch.startTime ?? "",
     endTime: batch.endTime ?? "",
     meetingUrl: batch.meetingUrl ?? "",
+    completedChapters: batch.completedChapters,
     capacity: batch.capacity ?? 0,
     startDate: toDateInput(batch.startDate),
     endDate: toDateInput(batch.endDate),
@@ -41,7 +44,7 @@ export default async function EditBatchPage({ params }: { params: Promise<{ id: 
     <div>
       <PageHeader title="Edit Batch" subtitle={batch.name} />
       <div className="flex flex-col gap-6">
-        <BatchForm initial={initial} courses={courses} />
+        <BatchForm initial={initial} courses={courseOptions} />
         <BatchRoster batchId={batch.id} members={batch.students} allStudents={allStudents} />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/auth";
+import { syncBatchProgress } from "@/lib/batch";
 
 // General-purpose partial update for a student — used by both the batch roster picker
 // and the student list's "move batch"/status controls, so batch/status writes have one
@@ -20,5 +21,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if ("batchId" in body) data.batchId = body.batchId || null;
 
   const student = await prisma.user.update({ where: { id }, data });
+
+  // A student joining a batch should immediately reflect that batch's current class progress.
+  if ("batchId" in body && body.batchId) {
+    await syncBatchProgress(prisma, body.batchId);
+  }
+
   return NextResponse.json(student);
 }

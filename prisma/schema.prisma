@@ -116,22 +116,23 @@ model Enrollment {
 }
 
 model Batch {
-  id            String         @id @default(cuid())
-  name          String
-  classTimings  String? // display string, derived from classDaysJson/startTime/endTime on save
-  classDaysJson String         @default("[]")
-  startTime     String? // "HH:MM", 24-hour
-  endTime       String? // "HH:MM", 24-hour
-  meetingUrl    String? // Google Meet / Zoom link students are sent to after marking attendance
-  capacity      Int?
-  startDate     DateTime?
-  endDate       DateTime?
-  courseId      String?
-  course        Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  students      User[]
-  notifications Notification[]
+  id                String         @id @default(cuid())
+  name              String
+  classTimings      String? // display string, derived from classDaysJson/startTime/endTime on save
+  classDaysJson     String         @default("[]")
+  startTime         String? // "HH:MM", 24-hour
+  endTime           String? // "HH:MM", 24-hour
+  meetingUrl        String? // Google Meet / Zoom link students are sent to after marking attendance
+  completedChapters Int            @default(0) // how many of the linked course's modules the class has covered so far
+  capacity          Int?
+  startDate         DateTime?
+  endDate           DateTime?
+  courseId          String?
+  course            Course?        @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  students          User[]
+  notifications     Notification[]
 }
 
 model Notification {

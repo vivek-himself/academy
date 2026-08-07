@@ -193,65 +193,82 @@ export default function DashboardCourseSidebar({
         </span>
       </div>
 
+      {attendanceSchedule && (
+        <p className="mt-3 text-xs text-brand-muted">Progress is tracked by your instructor for this batch.</p>
+      )}
+
       <ul className="mt-3 space-y-1 pl-0">
         {modules.map((m, i) => {
           const done = completed.includes(i);
+          const content = (
+            <>
+              <span
+                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
+                  done ? "bg-emerald-500 text-white" : "bg-white text-brand-muted ring-1 ring-brand-border"
+                }`}
+              >
+                {done ? <CheckCircle2 size={12} /> : i + 1}
+              </span>
+              <span className={`flex-1 text-sm ${done ? "text-brand-ink" : "text-brand-ink/80"}`}>{m.title}</span>
+              <span className="text-xs text-brand-muted">{m.duration}</span>
+            </>
+          );
           return (
             <li key={m.title}>
-              <button
-                type="button"
-                onClick={() => toggleModule(i)}
-                className="flex w-full items-center gap-3 py-2 text-left hover:bg-brand-surface"
-              >
-                <span
-                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
-                    done ? "bg-emerald-500 text-white" : "bg-white text-brand-muted ring-1 ring-brand-border"
-                  }`}
+              {attendanceSchedule ? (
+                <div className="flex w-full items-center gap-3 py-2">{content}</div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => toggleModule(i)}
+                  className="flex w-full items-center gap-3 py-2 text-left hover:bg-brand-surface"
                 >
-                  {done ? <CheckCircle2 size={12} /> : i + 1}
-                </span>
-                <span className={`flex-1 text-sm ${done ? "text-brand-ink" : "text-brand-ink/80"}`}>{m.title}</span>
-                <span className="text-xs text-brand-muted">{m.duration}</span>
-              </button>
+                  {content}
+                </button>
+              )}
             </li>
           );
         })}
       </ul>
 
-      <button
-        type="button"
-        onClick={handleMarkAttendance}
-        disabled={marked || marking}
-        className={`mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold ${
-          marked
-            ? "bg-emerald-50 text-emerald-600"
-            : "border border-brand-border text-brand-ink hover:bg-brand-surface disabled:opacity-60"
-        }`}
-      >
-        {marked ? (
-          <>
-            <CheckCheck size={15} /> Attendance Marked Today
-          </>
-        ) : (
-          <>
-            <CalendarClock size={15} /> {marking ? "Marking..." : "Mark Attendance"}
-          </>
-        )}
-      </button>
-      {!marked && attendanceSchedule && attendanceSchedule.classDays.length > 0 && attendanceSchedule.startTime && attendanceSchedule.endTime && (
-        <p className="mt-1.5 text-center text-[11px] text-brand-muted">
-          Class days: {attendanceSchedule.classDays.join(", ")} · {attendanceSchedule.startTime}–{attendanceSchedule.endTime}
-        </p>
-      )}
-      {marked && attendanceSchedule?.meetingUrl && (
-        <a
-          href={attendanceSchedule.meetingUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full bg-brand-purple py-3 text-sm font-semibold text-white hover:bg-brand-purple-dark"
-        >
-          <Video size={15} /> Join Class
-        </a>
+      {attendanceSchedule && (
+        <>
+          <button
+            type="button"
+            onClick={handleMarkAttendance}
+            disabled={marked || marking}
+            className={`mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold ${
+              marked
+                ? "bg-emerald-50 text-emerald-600"
+                : "border border-brand-border text-brand-ink hover:bg-brand-surface disabled:opacity-60"
+            }`}
+          >
+            {marked ? (
+              <>
+                <CheckCheck size={15} /> Attendance Marked Today
+              </>
+            ) : (
+              <>
+                <CalendarClock size={15} /> {marking ? "Marking..." : "Mark Attendance"}
+              </>
+            )}
+          </button>
+          {!marked && attendanceSchedule.classDays.length > 0 && attendanceSchedule.startTime && attendanceSchedule.endTime && (
+            <p className="mt-1.5 text-center text-[11px] text-brand-muted">
+              Class days: {attendanceSchedule.classDays.join(", ")} · {attendanceSchedule.startTime}–{attendanceSchedule.endTime}
+            </p>
+          )}
+          {marked && attendanceSchedule.meetingUrl && (
+            <a
+              href={attendanceSchedule.meetingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-full bg-brand-purple py-3 text-sm font-semibold text-white hover:bg-brand-purple-dark"
+            >
+              <Video size={15} /> Join Class
+            </a>
+          )}
+        </>
       )}
 
       <button
