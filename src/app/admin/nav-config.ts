@@ -19,6 +19,7 @@ import {
   Heart,
   Globe,
   Bell,
+  MessageCircle,
   Image as ImageIcon,
   Settings,
 } from "lucide-react";
@@ -65,7 +66,10 @@ export const navSections: NavSection[] = [
   },
   {
     heading: "Communication",
-    items: [{ label: "Notifications", href: "/admin/notifications", icon: Bell }],
+    items: [
+      { label: "Notifications", href: "/admin/notifications", icon: Bell },
+      { label: "Direct Messages", href: "/admin/messages", icon: MessageCircle },
+    ],
   },
   {
     heading: "Insights & Reporting",

@@ -9,11 +9,14 @@ export default async function MessagesPage() {
   const session = await getStudentSession();
   if (!session) redirect("/login");
 
-  const recipients = await prisma.notificationRecipient.findMany({
-    where: { userId: session.userId },
-    include: { notification: true },
-    orderBy: { notification: { createdAt: "desc" } },
-  });
+  const [recipients, directMessages] = await Promise.all([
+    prisma.notificationRecipient.findMany({
+      where: { userId: session.userId },
+      include: { notification: true },
+      orderBy: { notification: { createdAt: "desc" } },
+    }),
+    prisma.directMessage.findMany({ where: { userId: session.userId }, orderBy: { createdAt: "asc" } }),
+  ]);
 
   const notifications = recipients.map((r) => ({
     id: r.id,
@@ -23,10 +26,18 @@ export default async function MessagesPage() {
     readAt: r.readAt ? r.readAt.toISOString() : null,
   }));
 
+  const messages = directMessages.map((m) => ({
+    id: m.id,
+    sender: m.sender,
+    body: m.body,
+    createdAt: m.createdAt.toISOString(),
+    readAt: m.readAt ? m.readAt.toISOString() : null,
+  }));
+
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold text-brand-ink">Messages</h1>
-      <MessagesTabs notifications={notifications} />
+      <MessagesTabs notifications={notifications} messages={messages} />
     </div>
   );
 }
