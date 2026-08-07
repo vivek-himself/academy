@@ -35,7 +35,6 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  const [notRobot, setNotRobot] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -44,10 +43,6 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
     setError("");
     if (!agreed) {
       setError("Please agree to the Terms & Privacy Policy to continue.");
-      return;
-    }
-    if (!notRobot) {
-      setError("Please confirm you're not a robot.");
       return;
     }
     setSubmitting(true);
@@ -83,7 +78,7 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
         <span className="h-px flex-1 bg-brand-border" />
       </div>
       <p className="mb-4 text-center text-sm font-semibold text-brand-ink">Sign up with your email address</p>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
         <div>
           <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Profile name</label>
           <input
@@ -139,11 +134,6 @@ function AccountStep({ onCreated }: { onCreated: (name: string, email: string) =
           <Link href="/privacy-policy" className="font-semibold text-brand-pink hover:underline">
             Privacy Policy
           </Link>
-        </label>
-
-        <label className="flex items-center gap-2 rounded-lg border border-brand-border px-3 py-2.5 text-sm text-brand-ink">
-          <input type="checkbox" checked={notRobot} onChange={(e) => setNotRobot(e.target.checked)} />
-          I&apos;m not a robot
         </label>
 
         {error && <p className="text-xs font-medium text-red-500">{error}</p>}
