@@ -137,7 +137,7 @@ export default function BatchForm({ initial, courses }: { initial: BatchFormValu
                   <li key={i} className="flex items-center gap-2.5 py-1 text-sm">
                     <span
                       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
-                        done ? "bg-emerald-500 text-white" : "bg-white text-brand-muted ring-1 ring-brand-border"
+                        done ? "bg-emerald-500 text-white" : "bg-brand-card text-brand-muted ring-1 ring-brand-border"
                       }`}
                     >
                       {done ? <CheckCircle2 size={12} /> : i + 1}

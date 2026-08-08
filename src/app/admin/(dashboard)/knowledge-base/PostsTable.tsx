@@ -42,7 +42,7 @@ export default function PostsTable({ posts }: { posts: PostRow[] }) {
             <div className="flex items-center gap-2">
               <span
                 className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                  p.published ? "bg-emerald-100 text-emerald-700" : "bg-neutral-100 text-neutral-500"
+                  p.published ? "bg-emerald-100 text-emerald-700" : "bg-brand-surface text-brand-muted"
                 }`}
               >
                 {p.published ? "Published" : "Draft"}

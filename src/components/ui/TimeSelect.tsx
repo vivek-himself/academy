@@ -34,7 +34,7 @@ export default function TimeSelect({
         <select
           value={h}
           onChange={(e) => updateHour(e.target.value)}
-          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-ink outline-none focus:border-brand-pink"
+          className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2.5 text-sm text-brand-ink outline-none focus:border-brand-pink"
         >
           <option value="">HH</option>
           {HOURS.map((hh) => (
@@ -48,7 +48,7 @@ export default function TimeSelect({
           value={m}
           onChange={(e) => updateMinute(e.target.value)}
           disabled={!h}
-          className="w-full rounded-lg border border-brand-border bg-white px-3 py-2.5 text-sm text-brand-ink outline-none focus:border-brand-pink disabled:opacity-60"
+          className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2.5 text-sm text-brand-ink outline-none focus:border-brand-pink disabled:opacity-60"
         >
           <option value="">MM</option>
           {MINUTES.map((mm) => (

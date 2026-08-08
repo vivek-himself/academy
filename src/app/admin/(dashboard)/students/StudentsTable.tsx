@@ -268,7 +268,7 @@ export default function StudentsTable({
             onChange={(e) => setQuery(e.target.value)}
             type="text"
             placeholder="Search name or email..."
-            className="w-full rounded-full border border-brand-border bg-white py-2.5 pl-11 pr-4 text-sm outline-none focus:border-brand-pink"
+            className="w-full rounded-full border border-brand-border bg-brand-card py-2.5 pl-11 pr-4 text-sm outline-none focus:border-brand-pink"
           />
         </div>
         <div className="flex flex-wrap items-center gap-3">

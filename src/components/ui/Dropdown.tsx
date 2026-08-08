@@ -25,7 +25,7 @@ export default function Dropdown({
         type="button"
         onClick={() => setOpen((o) => !o)}
         className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-medium ${
-          value ? "border-brand-pink/40 bg-brand-pink/5 text-brand-pink" : "border-brand-border bg-white text-brand-ink"
+          value ? "border-brand-pink/40 bg-brand-pink/5 text-brand-pink" : "border-brand-border bg-brand-card text-brand-ink"
         }`}
       >
         {icon} {active ? active.label : label}
@@ -33,7 +33,7 @@ export default function Dropdown({
       {open && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
-          <div className="absolute left-0 top-full z-20 mt-2 w-48 rounded-xl border border-brand-border bg-white p-1.5 shadow-lg">
+          <div className="absolute left-0 top-full z-20 mt-2 w-48 rounded-xl border border-brand-border bg-brand-card p-1.5 shadow-lg">
             {value && (
               <button
                 type="button"

@@ -69,7 +69,7 @@ export default function CoursesTable({ courses }: { courses: CourseRow[] }) {
               <td className="px-5 py-4">
                 <span
                   className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                    c.published ? "bg-emerald-100 text-emerald-700" : "bg-neutral-100 text-neutral-500"
+                    c.published ? "bg-emerald-100 text-emerald-700" : "bg-brand-surface text-brand-muted"
                   }`}
                 >
                   {c.published ? "Published" : "Draft"}
