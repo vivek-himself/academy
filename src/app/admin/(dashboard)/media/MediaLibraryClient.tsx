@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Folder, FolderPlus, Upload, Loader2, Pencil, Trash2, ChevronRight, MoreHorizontal, X } from "lucide-react";
+import { Folder, FolderPlus, Upload, Loader2, Pencil, Trash2, ChevronRight, MoreHorizontal, X, ImagePlus } from "lucide-react";
 import { ShimmerBlock } from "@/components/ui/Shimmer";
 
 type FolderType = { id: string; name: string; _count: { assets: number } };
@@ -115,7 +115,11 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
   const [assetMenuOpen, setAssetMenuOpen] = useState<string | null>(null);
   const [promptState, setPromptState] = useState<PromptState | null>(null);
   const [confirmState, setConfirmState] = useState<ConfirmState | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  // Tracks nested dragenter/dragleave pairs fired as the cursor crosses child elements,
+  // so the drop overlay doesn't flicker off until the drag actually leaves the whole zone.
+  const dragCounter = useRef(0);
   const loading = assets === null;
 
   function refreshFolders() {
@@ -206,6 +210,27 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
     }
   }
 
+  function handleDragEnter(e: React.DragEvent) {
+    e.preventDefault();
+    if (!e.dataTransfer.types.includes("Files")) return;
+    dragCounter.current += 1;
+    setIsDragging(true);
+  }
+
+  function handleDragLeave(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current = Math.max(0, dragCounter.current - 1);
+    if (dragCounter.current === 0) setIsDragging(false);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    dragCounter.current = 0;
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith("image/"));
+    if (files.length) handleUpload(files);
+  }
+
   function handleRenameAsset(asset: Asset) {
     setPromptState({
       title: "Rename image",
@@ -252,7 +277,19 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
   const showEmptyState = !loading && assets.length === 0 && (openFolder || folders.length === 0);
 
   return (
-    <div>
+    <div
+      className="relative"
+      onDragEnter={handleDragEnter}
+      onDragOver={(e) => e.preventDefault()}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {isDragging && (
+        <div className="pointer-events-none absolute inset-0 z-40 flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-brand-pink bg-brand-pink/5">
+          <ImagePlus size={28} className="text-brand-pink" />
+          <p className="text-sm font-semibold text-brand-pink">Drop images to upload</p>
+        </div>
+      )}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 text-sm">
           <button
@@ -315,11 +352,11 @@ export default function MediaLibraryClient({ initialFolders }: { initialFolders:
         </div>
       ) : showEmptyState && !openFolder ? (
         <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
-          No folders or images yet. Create a folder or upload your first image.
+          No folders or images yet. Create a folder, upload your first image, or drag and drop images here.
         </p>
       ) : showEmptyState ? (
         <p className="rounded-2xl border border-brand-border bg-brand-card px-5 py-10 text-center text-sm text-brand-muted">
-          No images in this folder yet. Upload one, or move existing images here.
+          No images in this folder yet. Upload one, drag and drop images here, or move existing images in.
         </p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
