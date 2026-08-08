@@ -78,7 +78,7 @@ export default function DashboardSidebar() {
   return (
     <>
       <div className="flex items-center justify-between border-b border-brand-border bg-white px-4 py-3 lg:hidden">
-        <Logo />
+        <Logo className="h-11 w-auto" />
         <button
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
@@ -89,8 +89,8 @@ export default function DashboardSidebar() {
       </div>
 
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-brand-border bg-white lg:flex">
-        <div className="flex items-center px-5 py-5">
-          <Logo />
+        <div className="flex items-center px-6 py-5">
+          <Logo className="h-11 w-auto" />
         </div>
         <SidebarNav pathname={pathname} />
         <SidebarFooter pathname={pathname} />
@@ -101,8 +101,8 @@ export default function DashboardSidebar() {
           <div className="fixed inset-0 z-50 lg:hidden">
             <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
             <div className="absolute left-0 top-0 flex h-full w-[80%] max-w-xs flex-col bg-white shadow-xl">
-              <div className="flex items-center justify-between px-5 py-5">
-                <Logo />
+              <div className="flex items-center justify-between px-6 py-5">
+                <Logo className="h-11 w-auto" />
                 <button
                   onClick={() => setMobileOpen(false)}
                   aria-label="Close menu"
