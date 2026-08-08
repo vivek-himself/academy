@@ -268,33 +268,35 @@ export default function HomepageEditor({
       >
         {reviewBadges.map((b, i) => (
           <div key={i} className="rounded-xl border border-brand-border p-3">
-            <div className="mb-2 flex items-center gap-2">
+            <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center">
               <input
                 value={b.label}
                 onChange={(e) => setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, label: e.target.value } : r)))}
                 placeholder="Platform (e.g. Google)"
-                className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
+                className="w-full rounded-lg border border-brand-border px-2.5 py-2.5 text-[15px] outline-none focus:border-brand-pink sm:py-1.5 sm:text-sm"
               />
-              <input
-                type="number"
-                min={0}
-                max={5}
-                step={0.1}
-                value={b.rating}
-                onChange={(e) =>
-                  setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, rating: Number(e.target.value) || 0 } : r)))
-                }
-                placeholder="Rating out of 5 (e.g. 4.6)"
-                className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
-              />
-              <button
-                type="button"
-                onClick={() => setReviewBadges(reviewBadges.filter((_, idx) => idx !== i))}
-                aria-label="Remove"
-                className="shrink-0 text-red-500 hover:text-red-600"
-              >
-                <Trash2 size={14} />
-              </button>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min={0}
+                  max={5}
+                  step={0.1}
+                  value={b.rating}
+                  onChange={(e) =>
+                    setReviewBadges(reviewBadges.map((r, idx) => (idx === i ? { ...r, rating: Number(e.target.value) || 0 } : r)))
+                  }
+                  placeholder="Rating out of 5 (e.g. 4.6)"
+                  className="w-full rounded-lg border border-brand-border px-2.5 py-2.5 text-[15px] outline-none focus:border-brand-pink sm:py-1.5 sm:text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={() => setReviewBadges(reviewBadges.filter((_, idx) => idx !== i))}
+                  aria-label="Remove"
+                  className="shrink-0 text-red-500 hover:text-red-600"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
             </div>
             <ImageUploadField
               label=""

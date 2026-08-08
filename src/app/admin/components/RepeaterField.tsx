@@ -56,7 +56,7 @@ export default function RepeaterField({
                         next[i] = { ...next[i], [f.key]: e.target.value };
                         onChange(next);
                       }}
-                      className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
+                      className="w-full rounded-lg border border-brand-border px-2.5 py-2.5 text-[15px] outline-none focus:border-brand-pink sm:py-1.5 sm:text-sm"
                     />
                   ) : (
                     <input
@@ -66,7 +66,7 @@ export default function RepeaterField({
                         next[i] = { ...next[i], [f.key]: e.target.value };
                         onChange(next);
                       }}
-                      className="w-full rounded-lg border border-brand-border px-2.5 py-1.5 text-sm outline-none focus:border-brand-pink"
+                      className="w-full rounded-lg border border-brand-border px-2.5 py-2.5 text-[15px] outline-none focus:border-brand-pink sm:py-1.5 sm:text-sm"
                     />
                   )}
                 </div>
