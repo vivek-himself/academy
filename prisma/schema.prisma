@@ -19,6 +19,15 @@ model AdminUser {
   createdAt    DateTime @default(now())
 }
 
+// Fully separate from AdminUser on purpose — mobile admin access uses its own credentials
+// that must never work for the desktop /admin/login, and vice versa.
+model MobileAdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+}
+
 model User {
   id           String       @id @default(cuid())
   name         String

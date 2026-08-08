@@ -7,7 +7,10 @@ import SettingsEditor, { type SiteStatus } from "./SettingsEditor";
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
-  const settings = await prisma.siteSettings.findUnique({ where: { id: "default" } });
+  const [settings, mobileAdmin] = await Promise.all([
+    prisma.siteSettings.findUnique({ where: { id: "default" } }),
+    prisma.mobileAdminUser.findFirst({ select: { email: true } }),
+  ]);
   const socialLinks = normalizeSocialLinks(safeJsonParse<object>(settings?.socialLinksJson, {}));
 
   return (
@@ -24,6 +27,7 @@ export default async function SettingsPage() {
           siteStatus: (settings?.siteStatus as SiteStatus) ?? "live",
           hasSitePassword: Boolean(settings?.sitePasswordHash),
         }}
+        initialMobileEmail={mobileAdmin?.email ?? null}
       />
     </div>
   );

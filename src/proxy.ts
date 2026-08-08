@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession, COOKIE_NAME } from "@/lib/auth";
+import { verifyMobileAdminSession, MOBILE_ADMIN_COOKIE } from "@/lib/mobileAdminAuth";
+import { isMobileUserAgent } from "@/lib/device";
 import { SITE_UNLOCK_COOKIE, verifyUnlockToken } from "@/lib/siteGate";
 import { prisma } from "@/lib/prisma";
 
@@ -29,9 +31,16 @@ export async function proxy(req: NextRequest) {
   // otherwise nobody could get back in to flip the status back to live.
   if (pathname.startsWith("/admin")) {
     if (pathname === "/admin/login") return NextResponse.next();
-    const token = req.cookies.get(COOKIE_NAME)?.value;
-    const session = await verifySession(token);
-    if (!session) {
+
+    // Mobile and desktop devices are gated against entirely separate credential sets —
+    // a mobile session cookie never satisfies the desktop check and vice versa (verifySession
+    // itself also rejects mobile-scoped tokens, so this isn't just a UA-based formality).
+    const mobile = isMobileUserAgent(req.headers.get("user-agent"));
+    const authed = mobile
+      ? await verifyMobileAdminSession(req.cookies.get(MOBILE_ADMIN_COOKIE)?.value)
+      : await verifySession(req.cookies.get(COOKIE_NAME)?.value);
+
+    if (!authed) {
       const loginUrl = new URL("/admin/login", req.url);
       loginUrl.searchParams.set("next", pathname);
       return NextResponse.redirect(loginUrl);

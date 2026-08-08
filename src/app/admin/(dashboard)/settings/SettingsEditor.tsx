@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Globe, PowerOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Globe, PowerOff, Lock, Smartphone } from "lucide-react";
 import { TextField, TextAreaField } from "../../components/FormField";
 import { SOCIAL_PLATFORMS, type SocialLinksMap } from "@/lib/socialLinks";
 import ThemeToggle from "../../components/ThemeToggle";
@@ -26,7 +26,13 @@ const STATUS_OPTIONS: { value: SiteStatus; label: string; description: string; i
   { value: "password_protected", label: "Password Protected", description: "Visitors must enter a password before seeing the site.", icon: Lock },
 ];
 
-export default function SettingsEditor({ initial }: { initial: Settings }) {
+export default function SettingsEditor({
+  initial,
+  initialMobileEmail,
+}: {
+  initial: Settings;
+  initialMobileEmail: string | null;
+}) {
   const router = useRouter();
   const [settings, setSettings] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -38,6 +44,13 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
   const [pwError, setPwError] = useState("");
   const [pwSaving, setPwSaving] = useState(false);
   const [pwStatus, setPwStatus] = useState("");
+
+  const [mobileEmail, setMobileEmail] = useState(initialMobileEmail ?? "");
+  const [hasMobileAccount, setHasMobileAccount] = useState(Boolean(initialMobileEmail));
+  const [mobilePassword, setMobilePassword] = useState("");
+  const [mobileError, setMobileError] = useState("");
+  const [mobileSaving, setMobileSaving] = useState(false);
+  const [mobileStatus, setMobileStatus] = useState("");
 
   function set<K extends keyof Settings>(key: K, v: Settings[K]) {
     setSettings((prev) => ({ ...prev, [key]: v }));
@@ -108,6 +121,31 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
     setCurrentPassword("");
     setNewPassword("");
     setPwStatus("Password updated.");
+  }
+
+  async function handleSaveMobileAccount(e: React.FormEvent) {
+    e.preventDefault();
+    setMobileError("");
+    setMobileStatus("");
+    if (!hasMobileAccount && !mobilePassword) {
+      setMobileError("Set a password for mobile access.");
+      return;
+    }
+    setMobileSaving(true);
+    const res = await fetch("/api/admin/mobile-account", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: mobileEmail, password: mobilePassword || undefined }),
+    });
+    const data = await res.json();
+    setMobileSaving(false);
+    if (!res.ok) {
+      setMobileError(data.error ?? "Failed to save.");
+      return;
+    }
+    setHasMobileAccount(true);
+    setMobilePassword("");
+    setMobileStatus("Mobile access saved.");
   }
 
   return (
@@ -275,6 +313,49 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
           className="rounded-full border border-brand-ink/20 px-5 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface disabled:opacity-60"
         >
           {pwSaving ? "Updating..." : "Update Password"}
+        </button>
+      </form>
+
+      <form onSubmit={handleSaveMobileAccount} className="flex max-w-sm flex-col gap-4 rounded-2xl border border-brand-border bg-brand-card p-6">
+        <div className="flex items-center gap-2">
+          <Smartphone size={16} className="text-brand-muted" />
+          <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Mobile App Access</h3>
+        </div>
+        <p className="-mt-2 text-xs text-brand-muted">
+          A separate login for the mobile admin experience — entirely independent of your desktop password above. It
+          won&apos;t work on the desktop admin, and your desktop password won&apos;t work here.
+        </p>
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">Mobile Email</label>
+          <input
+            type="email"
+            required
+            value={mobileEmail}
+            onChange={(e) => setMobileEmail(e.target.value)}
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-sm font-semibold text-brand-ink">
+            {hasMobileAccount ? "Change Mobile Password" : "Mobile Password"}
+          </label>
+          <input
+            type="password"
+            minLength={8}
+            value={mobilePassword}
+            onChange={(e) => setMobilePassword(e.target.value)}
+            placeholder={hasMobileAccount ? "Leave blank to keep current password" : "Required, at least 8 characters"}
+            className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+          />
+        </div>
+        {mobileError && <p className="text-xs font-medium text-red-500">{mobileError}</p>}
+        {mobileStatus && <p className="text-xs font-medium text-emerald-600">{mobileStatus}</p>}
+        <button
+          type="submit"
+          disabled={mobileSaving}
+          className="rounded-full border border-brand-ink/20 px-5 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-surface disabled:opacity-60"
+        >
+          {mobileSaving ? "Saving..." : hasMobileAccount ? "Update Mobile Access" : "Enable Mobile Access"}
         </button>
       </form>
     </div>
