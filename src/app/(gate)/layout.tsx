@@ -15,7 +15,16 @@ export const metadata: Metadata = {
 export default function GateLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} h-full antialiased`}>
-      <body className="flex min-h-full flex-col items-center justify-center bg-brand-purple px-4 text-white">{children}</body>
+      {/* Inline styles here because globals.css has an unlayered `body { background, color }`
+          rule that otherwise silently wins over Tailwind's bg-brand-purple/text-white utility
+          classes, regardless of specificity — same root cause as the backdrop-filter issue
+          this build's CSS pipeline hit earlier. Inline styles always take precedence. */}
+      <body
+        className="flex min-h-full flex-col items-center justify-center px-4"
+        style={{ backgroundColor: "var(--color-brand-purple)", color: "#fff" }}
+      >
+        {children}
+      </body>
     </html>
   );
 }
