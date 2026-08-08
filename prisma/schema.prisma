@@ -200,6 +200,8 @@ model SiteSettings {
   defaultSeoTitle       String?
   defaultSeoDescription String?
   socialLinksJson       String   @default("{\"linkedin\":\"#\",\"instagram\":\"#\"}")
+  siteStatus            String   @default("live") // "live" | "offline" | "password_protected"
+  sitePasswordHash      String? // only set when siteStatus has been "password_protected" at least once
   updatedAt             DateTime @updatedAt
 }
 

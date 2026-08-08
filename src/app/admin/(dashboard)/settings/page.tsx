@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { safeJsonParse } from "@/lib/json";
 import { normalizeSocialLinks } from "@/lib/socialLinks";
 import PageHeader from "../../components/PageHeader";
-import SettingsEditor from "./SettingsEditor";
+import SettingsEditor, { type SiteStatus } from "./SettingsEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +21,8 @@ export default async function SettingsPage() {
           defaultSeoTitle: settings?.defaultSeoTitle ?? "",
           defaultSeoDescription: settings?.defaultSeoDescription ?? "",
           socialLinks,
+          siteStatus: (settings?.siteStatus as SiteStatus) ?? "live",
+          hasSitePassword: Boolean(settings?.sitePasswordHash),
         }}
       />
     </div>

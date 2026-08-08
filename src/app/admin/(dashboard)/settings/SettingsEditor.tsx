@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Globe, PowerOff, Lock } from "lucide-react";
 import { TextField, TextAreaField } from "../../components/FormField";
 import { SOCIAL_PLATFORMS, type SocialLinksMap } from "@/lib/socialLinks";
 import ThemeToggle from "../../components/ThemeToggle";
+
+export type SiteStatus = "live" | "offline" | "password_protected";
 
 type Settings = {
   siteName: string;
@@ -14,13 +16,22 @@ type Settings = {
   defaultSeoTitle: string;
   defaultSeoDescription: string;
   socialLinks: SocialLinksMap;
+  siteStatus: SiteStatus;
+  hasSitePassword: boolean;
 };
+
+const STATUS_OPTIONS: { value: SiteStatus; label: string; description: string; icon: typeof Globe }[] = [
+  { value: "live", label: "Live", description: "Visible to everyone, as normal.", icon: Globe },
+  { value: "offline", label: "Offline", description: "Shows a simple \"we'll be right back\" page to all visitors.", icon: PowerOff },
+  { value: "password_protected", label: "Password Protected", description: "Visitors must enter a password before seeing the site.", icon: Lock },
+];
 
 export default function SettingsEditor({ initial }: { initial: Settings }) {
   const router = useRouter();
   const [settings, setSettings] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
+  const [sitePassword, setSitePassword] = useState("");
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -44,8 +55,12 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
   }
 
   async function handleSaveSettings() {
-    setSaving(true);
     setStatus("");
+    if (settings.siteStatus === "password_protected" && !settings.hasSitePassword && !sitePassword) {
+      setStatus("Set a site password before enabling password protection.");
+      return;
+    }
+    setSaving(true);
     const res = await fetch("/api/admin/settings", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -56,12 +71,19 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
         defaultSeoTitle: settings.defaultSeoTitle,
         defaultSeoDescription: settings.defaultSeoDescription,
         socialLinksJson: JSON.stringify(settings.socialLinks),
+        siteStatus: settings.siteStatus,
+        sitePassword: sitePassword || undefined,
       }),
     });
     setSaving(false);
     if (!res.ok) {
-      setStatus("Failed to save.");
+      const data = await res.json().catch(() => null);
+      setStatus(data?.error ?? "Failed to save.");
       return;
+    }
+    if (sitePassword) {
+      setSettings((prev) => ({ ...prev, hasSitePassword: true }));
+      setSitePassword("");
     }
     setStatus("Saved!");
     router.refresh();
@@ -90,6 +112,49 @@ export default function SettingsEditor({ initial }: { initial: Settings }) {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 rounded-2xl border border-brand-border bg-brand-card p-6">
+        <div>
+          <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Website Status</h3>
+          <p className="mt-1 text-xs text-brand-muted">Controls what visitors see when they load the public site. The admin backend always stays reachable.</p>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {STATUS_OPTIONS.map(({ value, label, description, icon: Icon }) => {
+            const active = settings.siteStatus === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                onClick={() => set("siteStatus", value)}
+                aria-pressed={active}
+                className={`flex flex-col items-start gap-2 rounded-xl border p-4 text-left transition-colors ${
+                  active ? "border-brand-pink bg-brand-pink/5" : "border-brand-border hover:bg-brand-surface"
+                }`}
+              >
+                <span className={`flex h-9 w-9 items-center justify-center rounded-full ${active ? "bg-brand-pink text-white" : "bg-brand-surface text-brand-muted"}`}>
+                  <Icon size={16} />
+                </span>
+                <span className={`text-sm font-semibold ${active ? "text-brand-pink" : "text-brand-ink"}`}>{label}</span>
+                <span className="text-xs text-brand-muted">{description}</span>
+              </button>
+            );
+          })}
+        </div>
+        {settings.siteStatus === "password_protected" && (
+          <div className="max-w-sm">
+            <label className="mb-1.5 block text-sm font-semibold text-brand-ink">
+              {settings.hasSitePassword ? "Change Site Password" : "Set Site Password"}
+            </label>
+            <input
+              type="password"
+              value={sitePassword}
+              onChange={(e) => setSitePassword(e.target.value)}
+              placeholder={settings.hasSitePassword ? "Leave blank to keep current password" : "Required"}
+              className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+            />
+          </div>
+        )}
+      </div>
+
       <div className="flex flex-col gap-4 rounded-2xl border border-brand-border bg-brand-card p-6">
         <h3 className="text-sm font-bold uppercase tracking-wide text-brand-muted">Appearance</h3>
         <ThemeToggle />
