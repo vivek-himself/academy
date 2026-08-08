@@ -36,7 +36,7 @@ export function TextField({ label, description, required, maxLength, value, onCh
         maxLength={maxLength}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+        className="w-full rounded-lg border border-brand-border px-3 py-3 text-[15px] outline-none focus:border-brand-pink lg:py-2.5 lg:text-sm"
       />
       <HelpRow description={description} maxLength={maxLength} value={value} />
     </div>
@@ -65,7 +65,7 @@ export function TextAreaField({
         rows={rows}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+        className="w-full rounded-lg border border-brand-border px-3 py-3 text-[15px] outline-none focus:border-brand-pink lg:py-2.5 lg:text-sm"
       />
       <HelpRow description={description} maxLength={maxLength} value={value} />
     </div>
@@ -91,7 +91,7 @@ export function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+        className="w-full rounded-lg border border-brand-border bg-brand-card px-3 py-3 text-[15px] outline-none focus:border-brand-pink lg:py-2.5 lg:text-sm"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -125,7 +125,7 @@ export function NumberField({
         step={step ?? 1}
         value={Number.isFinite(value) ? value : 0}
         onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-        className="w-full rounded-lg border border-brand-border px-3 py-2.5 text-sm outline-none focus:border-brand-pink"
+        className="w-full rounded-lg border border-brand-border px-3 py-3 text-[15px] outline-none focus:border-brand-pink lg:py-2.5 lg:text-sm"
       />
       {description && <p className="mt-1 text-xs text-brand-muted">{description}</p>}
     </div>
