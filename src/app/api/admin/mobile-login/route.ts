@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { signMobileAdminSession, MOBILE_ADMIN_COOKIE } from "@/lib/mobileAdminAuth";
+import { signMobileAdminSession, MOBILE_ADMIN_COOKIE, signDeviceTrust, DEVICE_TRUST_COOKIE } from "@/lib/mobileAdminAuth";
 
 export async function POST(req: NextRequest) {
   const { email, password } = await req.json();
@@ -21,13 +21,23 @@ export async function POST(req: NextRequest) {
   }
 
   const token = await signMobileAdminSession(user.email);
-  const res = NextResponse.json({ ok: true });
+  const deviceTrustToken = await signDeviceTrust(user.email);
+  const res = NextResponse.json({ ok: true, hasPinSetup: Boolean(user.pinHash) });
   res.cookies.set(MOBILE_ADMIN_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
+  });
+  // A full password login always (re-)marks this browser as a trusted device for PIN sign-in,
+  // regardless of whether a PIN is set up yet.
+  res.cookies.set(DEVICE_TRUST_COOKIE, deviceTrustToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 90,
   });
   return res;
 }

@@ -22,10 +22,16 @@ model AdminUser {
 // Fully separate from AdminUser on purpose — mobile admin access uses its own credentials
 // that must never work for the desktop /admin/login, and vice versa.
 model MobileAdminUser {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  // PIN sign-in is a "trusted device" quick-unlock (Apple Passcode style) rather than a
+  // standalone remote credential — see DEVICE_TRUST_COOKIE in lib/mobileAdminAuth.ts. Rate
+  // limiting lives on this row since serverless functions don't share in-memory state.
+  pinHash           String?
+  pinFailedAttempts Int       @default(0)
+  pinLockedUntil    DateTime?
+  createdAt         DateTime  @default(now())
 }
 
 model User {
