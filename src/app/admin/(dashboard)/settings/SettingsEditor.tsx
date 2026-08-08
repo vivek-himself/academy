@@ -222,22 +222,24 @@ export default function SettingsEditor({
           {SOCIAL_PLATFORMS.map(({ key, label, placeholder, icon: Icon }) => {
             const link = settings.socialLinks[key];
             return (
-              <div key={key} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-border text-brand-ink">
-                  <Icon size={16} />
-                </span>
-                <div className="w-28 shrink-0 text-sm font-semibold text-brand-ink">{label}</div>
+              <div key={key} className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:gap-3">
+                <div className="flex shrink-0 items-center gap-3 sm:w-28">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-brand-border text-brand-ink">
+                    <Icon size={16} />
+                  </span>
+                  <span className="text-sm font-semibold text-brand-ink">{label}</span>
+                </div>
                 <input
                   value={link.url}
                   onChange={(e) => setSocialUrl(key, e.target.value)}
                   placeholder={placeholder}
-                  className="min-w-0 flex-1 rounded-lg border border-brand-border px-3 py-2 text-sm outline-none focus:border-brand-pink"
+                  className="min-w-0 flex-1 rounded-lg border border-brand-border px-3 py-3 text-[15px] outline-none focus:border-brand-pink sm:py-2 sm:text-sm"
                 />
                 <button
                   type="button"
                   onClick={() => toggleSocialHidden(key)}
                   aria-pressed={!link.hidden}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-semibold transition-colors ${
+                  className={`flex shrink-0 items-center justify-center gap-1.5 self-start rounded-full border px-3 py-2 text-xs font-semibold transition-colors sm:self-auto ${
                     link.hidden
                       ? "border-brand-border text-brand-muted hover:bg-brand-surface"
                       : "border-emerald-200 bg-emerald-50 text-emerald-700"

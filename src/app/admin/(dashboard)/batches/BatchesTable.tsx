@@ -63,7 +63,7 @@ export default function BatchesTable({ batches }: { batches: BatchRow[] }) {
           const start = formatDate(b.startDate);
           const end = formatDate(b.endDate);
           return (
-            <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+            <div key={b.id} className="flex flex-col gap-3 px-5 py-4 lg:flex-row lg:flex-wrap lg:items-center lg:justify-between">
               <div className="min-w-0">
                 <p className="text-sm font-bold text-brand-ink">{b.name}</p>
                 <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-brand-muted">
@@ -84,15 +84,17 @@ export default function BatchesTable({ batches }: { batches: BatchRow[] }) {
               <div className="flex items-center gap-2">
                 <Link
                   href={`/admin/batches/${b.id}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-brand-ink hover:bg-brand-surface"
+                  className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-brand-border text-sm font-semibold text-brand-ink active:bg-brand-surface lg:h-8 lg:w-8 lg:flex-none lg:text-xs lg:font-normal lg:hover:bg-brand-surface"
                 >
                   <Pencil size={14} />
+                  <span className="lg:hidden">Edit</span>
                 </Link>
                 <button
                   onClick={() => handleDelete(b)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-red-500 hover:bg-red-50"
+                  className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-brand-border text-sm font-semibold text-red-500 active:bg-red-50 lg:h-8 lg:w-8 lg:flex-none lg:text-xs lg:font-normal lg:hover:bg-red-50"
                 >
                   <Trash2 size={14} />
+                  <span className="lg:hidden">Delete</span>
                 </button>
               </div>
             </div>

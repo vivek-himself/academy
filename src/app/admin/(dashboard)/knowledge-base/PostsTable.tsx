@@ -34,30 +34,34 @@ export default function PostsTable({ posts }: { posts: PostRow[] }) {
       {error && <p className="p-4 text-sm font-medium text-red-500">{error}</p>}
       <div className="divide-y divide-brand-border">
         {posts.map((p) => (
-          <div key={p.id} className="flex items-center justify-between px-5 py-4">
-            <div>
-              <p className="text-sm font-medium text-brand-ink">{p.title}</p>
-              <p className="text-xs text-brand-muted">{p.date}</p>
-            </div>
-            <div className="flex items-center gap-2">
+          <div key={p.id} className="flex flex-col gap-3 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-3">
               <span
-                className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
                   p.published ? "bg-emerald-100 text-emerald-700" : "bg-brand-surface text-brand-muted"
                 }`}
               >
                 {p.published ? "Published" : "Draft"}
               </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-brand-ink">{p.title}</p>
+                <p className="text-xs text-brand-muted">{p.date}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
               <Link
                 href={`/admin/knowledge-base/${p.id}`}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-brand-ink hover:bg-brand-surface"
+                className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-brand-border text-sm font-semibold text-brand-ink active:bg-brand-surface lg:h-8 lg:w-8 lg:flex-none lg:text-xs lg:font-normal lg:hover:bg-brand-surface"
               >
                 <Pencil size={14} />
+                <span className="lg:hidden">Edit</span>
               </Link>
               <button
                 onClick={() => handleDelete(p.id, p.title)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-red-500 hover:bg-red-50"
+                className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-brand-border text-sm font-semibold text-red-500 active:bg-red-50 lg:h-8 lg:w-8 lg:flex-none lg:text-xs lg:font-normal lg:hover:bg-red-50"
               >
                 <Trash2 size={14} />
+                <span className="lg:hidden">Delete</span>
               </button>
             </div>
           </div>

@@ -41,14 +41,14 @@ export default function MentorsTable({ mentors }: { mentors: MentorRow[] }) {
       {error && <p className="p-4 text-sm font-medium text-red-500">{error}</p>}
       <div className="divide-y divide-brand-border">
         {mentors.map((m) => (
-          <div key={m.id} className="flex items-center justify-between px-5 py-4">
+          <div key={m.id} className="flex flex-col gap-3 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-3">
               {m.imageDesktopUrl ? (
-                <div className="relative h-10 w-10 overflow-hidden rounded-full">
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full">
                   <Image src={m.imageDesktopUrl} alt={m.name} fill className="object-cover" unoptimized />
                 </div>
               ) : (
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-surface text-xs text-brand-muted">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-surface text-xs text-brand-muted">
                   {m.name.charAt(0)}
                 </span>
               )}
@@ -60,15 +60,17 @@ export default function MentorsTable({ mentors }: { mentors: MentorRow[] }) {
             <div className="flex items-center gap-2">
               <Link
                 href={`/admin/mentors/${m.id}`}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-brand-ink hover:bg-brand-surface"
+                className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-brand-border text-sm font-semibold text-brand-ink active:bg-brand-surface lg:h-8 lg:w-8 lg:flex-none lg:text-xs lg:font-normal lg:hover:bg-brand-surface"
               >
                 <Pencil size={14} />
+                <span className="lg:hidden">Edit</span>
               </Link>
               <button
                 onClick={() => handleDelete(m.id, m.name)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-brand-border text-red-500 hover:bg-red-50"
+                className="flex h-10 flex-1 items-center justify-center gap-1.5 rounded-lg border border-brand-border text-sm font-semibold text-red-500 active:bg-red-50 lg:h-8 lg:w-8 lg:flex-none lg:text-xs lg:font-normal lg:hover:bg-red-50"
               >
                 <Trash2 size={14} />
+                <span className="lg:hidden">Delete</span>
               </button>
             </div>
           </div>
