@@ -13,6 +13,7 @@
   --color-brand-surface: #f5f4f8;
   --color-brand-border: #e7e4ee;
   --color-brand-card: #ffffff;
+  --color-logo-text: #512d6d;
 }
 
 /* Scoped to the admin backend's own <html> tag — never affects the public site or student dashboard. */
@@ -27,6 +28,7 @@
   --color-brand-surface: #18151f;
   --color-brand-border: #322e3d;
   --color-brand-card: #1e1b26;
+  --color-logo-text: #ffffff;
 }
 
 @theme inline {
